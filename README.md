@@ -1,4 +1,5 @@
 # Sparkscript
+note: this is not released yet
 ### Simple to use DiamondFire library for Javascript.
 
 Check out [DiamondFire](https://mcdiamondfire.com), its pretty cool.  
