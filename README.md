@@ -1,6 +1,7 @@
 # Sparkscript
 ### Simple to use DiamondFire library for Javascript.
-Check out [DiamondFire](https://mcdiamondfire.com), its pretty cool.
+
+Check out [DiamondFire](https://mcdiamondfire.com), its pretty cool.  
 
 Example:
 ```javascript
@@ -27,7 +28,19 @@ const code = template.export();
 console.log(code.compressed);
 ```
 
-Keyfeatures:
-\> Read from template data with `require( )...from( )`.
-\> ~~Read & compile from Spark file, buffer or string.~~ **_W.I.P._**
-\> Easy to use template editor.
+Keyfeatures:  
+\> Read from template data with `require( )...from( )`.  
+\> ~~Read & compile from Spark file, buffer or string.~~ **_W.I.P._**  
+\> Easy to use template editor.  
+
+# Build from source
+
+If you can use either `npm` or `yarn` for this.  
+
+```bash
+mkdir sparkscript
+cd sparkscript
+git clone https://github.com/UserUNP/sparkscript .
+npm install
+npm run build
+```
