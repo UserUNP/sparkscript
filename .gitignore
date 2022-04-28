@@ -3,3 +3,4 @@ node_modules
 dist
 actiondump.json
 testrun.js
+yarn-error.log
