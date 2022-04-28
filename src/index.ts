@@ -41,6 +41,8 @@ interface editor {
 	 */
 	_from: (template: Template) => void;
 
+	getTemplate: () => Template;
+
 	// Spark stuff.
 
 	/**
@@ -150,6 +152,10 @@ function df(name: string|undefined, callback: (editor: editor, settings: setting
 	const editor: editor = {
 		_from: (other: Template) => {
 			template._blocks = other.blocks;
+		},
+
+		getTemplate: () => {
+			return template;
 		},
 
 		//* Spark stuff.

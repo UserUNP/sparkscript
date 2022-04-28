@@ -25,20 +25,20 @@ export function blockMapper(type: string, action: string, args: Value[]): Block 
 
 export function valueMapper(type: string, value:{[key:string]:any}, slot?: number): Value {
 	const valuemap: { [key: string]: any } = {
-		"var": Variable,
 		"txt": Text,
 		"num": Number,
+		"var": Variable,
 	} as const;
 	const clazz = valuemap[type];
-	if(clazz === Variable) return new clazz(value.name, value.scope, slot);
 	if(clazz === Text) return new clazz(value.name, slot);
 	if(clazz === Number) return new clazz(value.name, slot);
+	if(clazz === Variable) return new clazz(value.name, value.scope, slot);
 	else throw new Error(`Unknown value type: ${type}`);
 }
 
 export function mapper(type: string, action: string, args: Value[]): Block;
 export function mapper(type: string, value: { [key: string]: any }, slot?: number): Value;
-export default function mapper(type: string, actOrVal: string|{[key:string]:any}, argsOrSlot: number|Value[]=[]): Block|Value {
+export default function mapper(type: string, actOrVal: string|{[key:string]:any}, argsOrSlot: (number|undefined)|Value[]): Block|Value {
 	// check if its for a block
 	if(typeof actOrVal === "string") {
 		const action = actOrVal;

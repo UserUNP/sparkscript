@@ -12,7 +12,7 @@ abstract class Value {
 
 	static from(raw: serializedValue) {
 		const type = raw.item.id;
-		const instance = mapper(type, raw.item.data);
+		const instance = mapper(type, raw.item.data, raw.slot);
 		return instance as Value;
 	}
 
