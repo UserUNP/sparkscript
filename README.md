@@ -44,3 +44,6 @@ git clone https://github.com/UserUNP/sparkscript .
 npm install
 npm run build
 ```
+
+IF you need to use a different version of the actiondump.json file,
+then you'll have to replace it by yourself.
