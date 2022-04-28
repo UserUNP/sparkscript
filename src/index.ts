@@ -20,12 +20,44 @@ import { SetVariable } from "./codeblocks/SetVariable"; export {SetVariable};
 
 // Quick editor & playground.
 
+import mapper, { getActionOwner } from "./mapper";
+
+type action_definition = {
+	/**
+	 * @param name Name of this action
+	 * @param callback Callback for when this action is executed.
+	 */
+	(name: string, callback: (()=>void)): void;
+	/**
+	 * @param name Name of this action
+	 * @param action Action to perform when this action is executed.
+	 */
+	(name: string, action: string): void;
+}
 interface editor {
 	/**
 	 * Overwrite the template with the provided template.
 	 * @param template Template to use.
 	 */
 	_from: (template: Template) => void;
+
+	// Spark stuff.
+
+	/**
+	 * Define an action.
+	 */
+	defAction: action_definition;
+	/**
+	 * Perform a *pre-defined* action.
+	 * @param name Name of the action.
+	 * @param args Arguments to pass to the action.
+	 */
+	action: {
+		[name: string]: (...args: any[]) => void;
+	};
+
+	//
+
 	/**
 	 * Create a new text value.
 	 * @param text Text to make a value from.
@@ -114,10 +146,20 @@ interface settings {
 function df(name: string|undefined, callback: (editor: editor, settings: settings) => void): Template {
 	if(!name) name = "untitled";
 	const template = new Template(name);
-	const editor = {
+	const actDefs: {[name: string]: (()=>void)|string} = {};
+	const editor: editor = {
 		_from: (other: Template) => {
 			template._blocks = other.blocks;
 		},
+
+		//* Spark stuff.
+		defAction: (name: string, cbOrAction: (()=>void)|string) => {
+			actDefs[name] = cbOrAction;
+			Object.keys(actDefs).forEach((name: string) => {
+				editor.action[name] = function(...args: any[]) {doCustmAction(name, ...args);};
+			});
+		},
+		action: {},
 
 		//* Values.
 		text: (text: string, slot?: number) => new Text(text, slot),
@@ -138,7 +180,31 @@ function df(name: string|undefined, callback: (editor: editor, settings: setting
 			evt: (event: string) => template.push(new PlayerEvent(event)),
 		},
 		setvariable: (action: string, variable: Variable,...args: Value[]) => template.push(new SetVariable(action, variable, ...args)),
-	} as const;
+	};
+	function doCustmAction(name: string, ...args: any[]) {
+		if(actDefs[name]) {
+			const action = actDefs[name];
+			if(typeof action === "string") {
+				const actionOwnerType = getActionOwner(action)?.identifier;
+				if(!actionOwnerType) throw new Error(`Action ${action} does not exist.`);
+				const parsedArgs: any = args.map((a: any) => {
+					if(typeof a === "string") return new Text(a);
+					if(typeof a === "number") return new Number(a);
+					if(a instanceof Value) return a;
+					else throw new Error(`Unknown argument type: ${a} is type of ${typeof a}`);
+				});
+				const instance = mapper(actionOwnerType, action || "", parsedArgs);
+				// const instance = new clazz(actionOwnerType, action || "", parsedArgs);
+				template.push(instance as Block);
+			} else {
+				//@ts-ignore
+				action(...args);
+			}
+		} else throw new Error(`Action ${name} is not defined.`);
+	};
+	Object.keys(actDefs).forEach((name: string) => {
+		editor.action[name] = function(...args: any[]) {doCustmAction(name, ...args);};
+	});
 	const settings: settings = { 
 		strict: true,
 		usingCodeutils: false,
@@ -161,7 +227,7 @@ function df(name: string|undefined, callback: (editor: editor, settings: setting
 	return template;
 }
 
-df.from = (raw: string, callback?: (editor: editor, settings: settings) => void) => {
+df.from = (raw: string, callback?: (editor: editor, settings: settings) => void): Template => {
 	const data = JSON.parse(String.fromCharCode.apply(null, new Uint16Array(pako.inflate(new Uint8Array(atob(raw).split('').map(function(e) {return e.charCodeAt(0);})))) as unknown as []).replace(/Â§/g,'\u00A7')) as serializedTemplate;
 	const template = new Template("untitled");
 	for(const block of data.blocks) {

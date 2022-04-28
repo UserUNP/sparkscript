@@ -1,7 +1,5 @@
 "use strict";
 
-import DataStorage, { serializedDataProperty } from "./DataStorage";
-
 export interface serializedValue {
 	slot: number;
 	item: {
@@ -14,10 +12,8 @@ abstract class Value {
 
 	static from(raw: serializedValue) {
 		const type = raw.item.id;
-		const clazz = mapper(type); //? can't use the keyword "class"
-		if (!clazz) throw new Error(`Unknown value type: ${type}`);
-		const data = DataStorage.from(raw.item.data);
-		return new clazz(type, data, raw.slot);
+		const instance = mapper(type, raw.item.data);
+		return instance as Value;
 	}
 
 	data: DataStorage | null = null;
@@ -28,7 +24,7 @@ abstract class Value {
 	 * @param value The value property.
 	 * @param slot Specific slot number.
 	 */
-	constructor(public type: string, value: object, public slot?: number) {
+	constructor(public type: string, value: { [key: string]: any }, public slot?: number) {
 		this.data = DataStorage.from(value);
 		this.data.assignOwner(this);
 	}
@@ -51,15 +47,5 @@ abstract class Value {
 
 export default Value;
 
-import Number from "../values/Number";
-import Text from "../values/Text";
-import Variable from "../values/Variable";
-
-function mapper(type: string): any {
-	const valuemap: { [key: string]: Function } = {
-		"txt": Text,
-		"num": Number,
-		"var": Variable,
-	} as const;
-	return valuemap[type];
-}
+import mapper from "../mapper";
+import DataStorage, { serializedDataProperty } from "./DataStorage";

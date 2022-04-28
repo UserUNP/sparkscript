@@ -25,4 +25,15 @@ describe("editor", () => {
 		expect(template).toBeTruthy();
 	});
 
+	it("can define & execute actions", () => {
+		const template = df("test", (e) => {
+			e.defAction("kick", () => e.player.action("Kick"));
+			e.defAction("send", "SendMessage");
+
+			e.action.send(e.text("Hello world!"), "test");
+			e.action.kick();
+		});
+		expect(template).toBeTruthy();
+	});
+
 });
