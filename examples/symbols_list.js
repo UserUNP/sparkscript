@@ -1,4 +1,4 @@
-const df = require("../dist").default;
+const df = require("sparkscript").default;
 
 const t = df("symbols", (e) => {
 	e.player.event("Join");
