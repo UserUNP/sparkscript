@@ -1,6 +1,5 @@
 node_modules
 .vscode
 dist
-actiondump.json
 testrun.js
 yarn-error.log
