@@ -12,8 +12,12 @@ const template = df("Test template", (e, s) =>{
 	// s short for "settings"
 	e.defAction("onJoin", (shouldWelcomePlayer, message) => {
 		e.player.event("Join");
-		if(shouldWelcomePlayer) e.player.action("SendMessage", e.txt("Welcome %default !"))
-		e.player.action("SendMessage", e.txt(message))
+		if(shouldWelcomePlayer) {
+			e.player.action("SendMessage", e.txt("Welcome %default !"), e.txt(message));
+		}
+		else {
+			e.player.action("SendMessage", e.txt(message))
+		}
 	});
 
 	e.action.onJoin(true, "Your daily dose of DiamondFire.");
