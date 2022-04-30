@@ -40,10 +40,10 @@ jobs:
 workflows:
   test-it:
     jobs:
+      - notify:
+          context: notify-job
       - node/test:
           version: '16.10'
           pkg-manager: yarn
       - coverage:
           context: build-job
-      - notify:
-          context: notify-job
