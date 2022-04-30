@@ -39,4 +39,6 @@ workflows:
           version: '16.10'
           pkg-manager: yarn
       - coverage:
-          context: build-job
+          context:
+            - build-job
+            - notif-job
