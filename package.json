@@ -10,6 +10,11 @@
 	},
 	"author": "UserUNP",
 	"license": "ISC",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/UserUNP/sparkscript.git"
+	},
+	"homepage": "https://github.com/UserUNP/sparkscript",
 	"dependencies": {
 		"@types/pako": "^1.0.3",
 		"@types/ws": "^8.5.3",
@@ -27,5 +32,10 @@
 	"files": [
 		"./dist",
 		"./src"
+	],
+	"keywords": [
+		"diamondfire",
+		"sparkscript",
+		"spark"
 	]
 }
