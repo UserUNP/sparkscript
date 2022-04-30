@@ -17,6 +17,7 @@ jobs:
           password: $DOCKER_PASS
     steps:
       - discord/status:
+          webhook: $DISCORD_WEBHOOK
           success_message: ":green_circle: ***$CIRCLE_JOB*** job Finished successfully."
           failure_message: ":red_circle: ***$CIRCLE_JOB*** job Failed."
       - checkout
