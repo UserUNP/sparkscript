@@ -14,7 +14,7 @@ jobs:
       - image: cimg/base:stable
     steps:
       - discord/status:
-          webhook: https://canary.discord.com/api/webhooks/970096913380675634/7r6tw_14WnaK8wzu4t9HKQ3rLnoKS-KN4Yo1FSCVyoLE0pdaNDtweG3rGUUsO_ejw4zR
+          webhook: $HOOK_URL
 
   coverage:
     docker:
@@ -45,4 +45,5 @@ workflows:
           context: build-job
   notify:
     jobs:
-      - notify
+      - notify:
+          context: notify-job
