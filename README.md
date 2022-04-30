@@ -3,7 +3,7 @@
 
 Check out [DiamondFire](https://mcdiamondfire.com), its pretty cool.  
 
-Latest version: 1.0.0-alpha.1.1
+Latest version: 1.0.0-alpha.1.1  
 No stable version yet..
 
 Example:
