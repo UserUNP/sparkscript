@@ -9,15 +9,6 @@ orbs:
   discord: antonioned/discord@0.1.0
 
 jobs:
-  notify:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - discord/status:
-          webhook: $HOOK_URL
-          success_message: ":green_circle: ***$CIRCLE_JOB*** job Finished successfully."
-          failure_message: ":red_circle: ***$CIRCLE_JOB*** job Failed."
-
   coverage:
     docker:
       - image: cimg/node:17.2-browsers
@@ -25,6 +16,10 @@ jobs:
           username: userunp
           password: $DOCKER_PASS
     steps:
+      - discord/status:
+          webhook: $HOOK_URL
+          success_message: ":green_circle: ***$CIRCLE_JOB*** job Finished successfully."
+          failure_message: ":red_circle: ***$CIRCLE_JOB*** job Failed."
       - checkout
       - browser-tools/install-browser-tools
       - run: yarn install
@@ -40,8 +35,6 @@ jobs:
 workflows:
   test-it:
     jobs:
-      - notify:
-          context: notify-job
       - node/test:
           version: '16.10'
           pkg-manager: yarn
