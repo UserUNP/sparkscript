@@ -6,8 +6,16 @@ version: 2.1
 orbs:
   node: circleci/node@4.7
   browser-tools: circleci/browser-tools@1.2.3
+  discord: antonioned/discord@0.1.0
 
 jobs:
+  notify:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - discord/status:
+          webhook: https://canary.discord.com/api/webhooks/970096913380675634/7r6tw_14WnaK8wzu4t9HKQ3rLnoKS-KN4Yo1FSCVyoLE0pdaNDtweG3rGUUsO_ejw4zR
+
   coverage:
     docker:
       - image: cimg/node:17.2-browsers
@@ -19,7 +27,7 @@ jobs:
       - browser-tools/install-browser-tools
       - run: yarn install
       - run:
-          name: "Run Jest and Collect Coverage Reports"
+          name: Run Jest and Collect Coverage Reports
           command: yarn test --collectCoverage=true
       - store_artifacts:
           path: coverage
@@ -35,3 +43,6 @@ workflows:
           pkg-manager: yarn
       - coverage:
           context: build-job
+  notify:
+    jobs:
+      - notify
