@@ -4,8 +4,8 @@
 	"description": "DiamondFire for Javascript.",
 	"main": "./dist/index.js",
 	"scripts": {
-		"build": "npx rimraf ./dist && npx tsc && npx tscp",
-		"buildwatch": "npx rimraf ./dist && npx tsc -w & npx tscp",
+		"build": "npx rimraf ./dist && npx tsc",
+		"buildwatch": "npx rimraf ./dist && npx tsc -w",
 		"test": "npx jest tests/"
 	},
 	"author": "UserUNP",
