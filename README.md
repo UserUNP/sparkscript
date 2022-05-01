@@ -4,7 +4,7 @@
 Check out [DiamondFire](https://mcdiamondfire.com), its pretty cool.  
 
 *Current build status*: [![CircleCI](https://circleci.com/gh/UserUNP/sparkscript/tree/master.svg?style=svg)](https://circleci.com/gh/UserUNP/sparkscript/tree/master)  
-[![npm sparkscript](https://nodei.co/npm/sparkscript.png)]()  
+[![npm sparkscript](https://nodei.co/npm/sparkscript.png)](https://npmjs.org/package/sparkscript)  
 ***Warning***: *No stable version yet..*
 
 Example:
