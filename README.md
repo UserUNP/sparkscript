@@ -3,8 +3,9 @@
 
 Check out [DiamondFire](https://mcdiamondfire.com), its pretty cool.  
 
-Latest version: 1.0.0-alpha.1.1  
-No stable version yet..
+*Current build status*: [![CircleCI](https://circleci.com/gh/UserUNP/sparkscript/tree/master.svg?style=svg)](https://circleci.com/gh/UserUNP/sparkscript/tree/master)  
+[![npm sparkscript](https://nodei.co/npm/sparkscript.png)]()  
+***Warning***: *No stable version yet..*
 
 Example:
 ```javascript
