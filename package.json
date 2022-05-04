@@ -4,10 +4,9 @@
 	"description": "DiamondFire for Javascript.",
 	"main": "./dist/index.js",
 	"scripts": {
-		"build": "npx rimraf ./dist && npx tsc && npx tscp && npm run setexecutable",
-		"buildwatch": "npx rimraf ./dist && npx tscp -w & npm run setexecutable & npx tsc -w",
+		"build": "npx rimraf ./dist && npx tsc && npx tscp",
+		"buildwatch": "npx rimraf ./dist && npx tscp && npx tsc -w",
 		"test": "npx jest tests/",
-		"copyspark": "copyfiles -u 1 -i ./src/spark/spkc[.*] ./dist/spark/"
 	},
 	"author": "UserUNP",
 	"license": "ISC",
