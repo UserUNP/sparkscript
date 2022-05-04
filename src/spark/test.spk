@@ -1,0 +1,5 @@
+action send(txts..) { "SendMessage", txts } 
+
+event "Join" {
+	send("hello and welcome!");
+}

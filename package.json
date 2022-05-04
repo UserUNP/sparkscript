@@ -4,9 +4,10 @@
 	"description": "DiamondFire for Javascript.",
 	"main": "./dist/index.js",
 	"scripts": {
-		"build": "npx rimraf ./dist && npx tsc",
-		"buildwatch": "npx rimraf ./dist && npx tsc -w",
-		"test": "npx jest tests/"
+		"build": "npx rimraf ./dist && npx tsc && npx tscp && npm run setexecutable",
+		"buildwatch": "npx rimraf ./dist && npx tscp -w & npm run setexecutable & npx tsc -w",
+		"test": "npx jest tests/",
+		"copyspark": "copyfiles -u 1 -i ./src/spark/spkc[.*] ./dist/spark/"
 	},
 	"author": "UserUNP",
 	"license": "ISC",
@@ -16,11 +17,7 @@
 	},
 	"homepage": "https://github.com/UserUNP/sparkscript",
 	"dependencies": {
-		"@types/pako": "^1.0.3",
-		"@types/ws": "^8.5.3",
-		"copyfiles": "^2.4.1",
 		"pako": "^2.0.4",
-		"rimraf": "^3.0.2",
 		"tmp": "^0.2.1",
 		"tslib": "^2.4.0",
 		"ws": "^8.5.0"
@@ -28,10 +25,14 @@
 	"devDependencies": {
 		"@types/jest": "^27.4.1",
 		"@types/node": "^17.0.25",
+		"@types/pako": "^1.0.3",
 		"@types/tmp": "^0.2.3",
+		"@types/ws": "^8.5.3",
 		"jest": "^27.5.1",
+		"rimraf": "^3.0.2",
 		"ts-jest": "^27.1.4",
-		"typescript": "^4.6.3"
+		"typescript": "^4.6.3",
+		"typescript-cp": "^0.1.5"
 	},
 	"files": [
 		"./dist",

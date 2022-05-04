@@ -35,5 +35,5 @@ describe("editor", () => {
 		});
 		expect(template).toBeTruthy();
 	});
-
+	
 });

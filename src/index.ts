@@ -18,6 +18,9 @@ import Variable from './values/Variable'; export {Variable};
 import player, { PlayerAction, PlayerEvent } from "./codeblocks/Player"; export {player};
 import { SetVariable } from "./codeblocks/SetVariable"; export {SetVariable};
 
+// Spark
+import spark from "./spark/emulator"; export {spark};
+
 // Quick editor & playground.
 
 import mapper, { getActionOwner } from "./mapper";
