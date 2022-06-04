@@ -1,13 +1,15 @@
-"use strict";
 
 import pako from "pako";
 import WebSocket from 'ws';
 
-// Componenets.
+// Components.
 import Template, { serializedTemplate } from './components/Template'; export {Template};
 import Block from './components/Block'; export {Block};
-import DataStorage from './components/DataStorage'; export {DataStorage};
 import Value from './components/Value'; export {Value};
+import DataStorage from './components/DataStorage'; export {DataStorage};
+import MinecraftColor from './components/minecraft/MinecraftColor'; export {MinecraftColor};
+import SimpleMinecraftString from './components/minecraft/SimpleMinecraftString'; export {SimpleMinecraftString};
+import MinecraftString from './components/minecraft/MinecraftString'; export {MinecraftString};
 
 // Values.
 import Text from './values/Text'; export {Text};
@@ -17,6 +19,7 @@ import Variable from './values/Variable'; export {Variable};
 // Codeblocks.
 import player, { PlayerAction, PlayerEvent } from "./codeblocks/Player"; export {player};
 import { SetVariable } from "./codeblocks/SetVariable"; export {SetVariable};
+import SelectObject from "./codeblocks/SelectObject"; export {SelectObject};
 
 // Quick editor & playground.
 
@@ -108,6 +111,7 @@ interface editor {
 		evt: (event: string) => void;
 	};
 	setvariable: (action: string, variable: Variable,...args: Value[]) => void;
+	select: (condition: string, ...args: Value[]) => void;
 }
 
 interface settings {
@@ -162,7 +166,7 @@ function df(name: string|undefined, callback: (editor: editor, settings: setting
 		defAction: (name: string, cbOrAction: (()=>void)|string) => {
 			actDefs[name] = cbOrAction;
 			Object.keys(actDefs).forEach((name: string) => {
-				editor.action[name] = function(...args: any[]) {doCustmAction(name, ...args);};
+				editor.action[name] = function(...args: any[]) {doCustomAction(name, ...args);};
 			});
 		},
 		action: {},
@@ -186,8 +190,9 @@ function df(name: string|undefined, callback: (editor: editor, settings: setting
 			evt: (event: string) => template.push(new PlayerEvent(event)),
 		},
 		setvariable: (action: string, variable: Variable,...args: Value[]) => template.push(new SetVariable(action, variable, ...args)),
+		select: (condition: string, ...args: Value[]) => template.push(new SelectObject(condition, ...args)),
 	};
-	function doCustmAction(name: string, ...args: any[]) {
+	function doCustomAction(name: string, ...args: any[]) {
 		if(actDefs[name]) {
 			const action = actDefs[name];
 			if(typeof action === "string") {
@@ -209,7 +214,7 @@ function df(name: string|undefined, callback: (editor: editor, settings: setting
 		} else throw new Error(`Action ${name} is not defined.`);
 	};
 	Object.keys(actDefs).forEach((name: string) => {
-		editor.action[name] = function(...args: any[]) {doCustmAction(name, ...args);};
+		editor.action[name] = function(...args: any[]) {doCustomAction(name, ...args);};
 	});
 	const settings: settings = { 
 		strict: true,

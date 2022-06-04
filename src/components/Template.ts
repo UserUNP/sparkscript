@@ -1,4 +1,3 @@
-"use strict";
 
 import Block, { serializedBlock } from "./Block";
 import pako from "pako";
@@ -28,7 +27,7 @@ export default class Template {
 	}
 
 	export(): { compressed: string, serialized: serializedTemplate, sendToCodeutils: Function } {
-		const result: serializedTemplate = { blocks: [] };
+		const result: serializedTemplate = { blocks: [], name: this.name, author: this.author };
 		let compressed: string = "";
 
 		for (const block of this._blocks) {

@@ -1,4 +1,3 @@
-"use strict";
 
 import Value from "../components/Value";
 

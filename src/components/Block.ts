@@ -1,4 +1,3 @@
-"use strict";
 
 export interface serializedBlock {
 	id: "block";

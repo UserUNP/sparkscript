@@ -1,38 +1,42 @@
-"use strict";
 
 import Value from "./components/Value";
 import Block from "./components/Block";
 
 import { PlayerAction, PlayerEvent } from "./codeblocks/Player";
 import { SetVariable } from "./codeblocks/SetVariable";
+import SelectObject from "./codeblocks/SelectObject";
 
 import Number from "./values/Number";
 import Text from "./values/Text";
 import Variable from "./values/Variable";
 
+const blockMap: { [key: string]: any } = {
+	"event": PlayerEvent,
+	"player_action": PlayerAction,
+	"set_var": SetVariable,
+	"select_obj": SelectObject,
+} as const;
+
+const valueMap: { [key: string]: any } = {
+	"txt": Text,
+	"num": Number,
+	"var": Variable,
+} as const;
+
 export function blockMapper(type: string, action: string, args: Value[]): Block {
-	const blockmap: { [key: string]: any } = {
-		"event": PlayerEvent,
-		"player_action": PlayerAction,
-		"set_var": SetVariable,
-	} as const;
-	const clazz = blockmap[type];
+	const clazz = blockMap[type];
 	if(clazz === PlayerEvent) return new clazz(action);
-	if(clazz == PlayerAction) return new clazz(action, ...args);
-	if(clazz == SetVariable) return new clazz(action, ...args);
+	else if(clazz === PlayerAction) return new clazz(action, ...args);
+	else if(clazz === SetVariable) return new clazz(action, ...args);
+	else if(clazz === SelectObject) return new clazz(action, ...args);
 	else throw new Error(`Unknown block type: ${type}`);
 }
 
 export function valueMapper(type: string, value:{[key:string]:any}, slot?: number): Value {
-	const valuemap: { [key: string]: any } = {
-		"txt": Text,
-		"num": Number,
-		"var": Variable,
-	} as const;
-	const clazz = valuemap[type];
+	const clazz = valueMap[type];
 	if(clazz === Text) return new clazz(value.name, slot);
-	if(clazz === Number) return new clazz(value.name, slot);
-	if(clazz === Variable) return new clazz(value.name, value.scope, slot);
+	else if(clazz === Number) return new clazz(value.name, slot);
+	else if(clazz === Variable) return new clazz(value.name, value.scope, slot);
 	else throw new Error(`Unknown value type: ${type}`);
 }
 

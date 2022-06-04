@@ -14,25 +14,24 @@ const df = require("sparkscript").default;
 
 const template = df("Test template", (e, s) =>{
   // e short for "editor"
-  // s short for "settings"
-  e.defAction("onJoin", (shouldWelcomePlayer, message) => {
-    e.player.event("Join");
-    if(shouldWelcomePlayer) {
-      e.player.action("SendMessage", e.txt("Welcome %default !"), e.txt(message));
-    }
-    else {
-      e.player.action("SendMessage", e.txt(message))
-    }
+  // s short for "settings"   
+  e.defAction("give_items", (/* args */) => {
+    e.player.action("SetHotbar", e.mc("stone_sword", { name: "epic sword" }))
   });
 
-  e.action.onJoin(true, "Your daily dose of DiamondFire.");
+  e.player.event("Join");
+  e.action.give_items();
+  
+  e.player.event("Respawn");
+  e.action.give_items();
+
 });
 
 const code = template.export();
 console.log(code.compressed);
 ```
 
-Keyfeatures:  
+Key features:  
 \> Read from template data with `require( )...from( )`.  
 \> ~~Read & compile from Spark file, buffer or string.~~ **_W.I.P._**  
 \> Easy to use template editor.  
