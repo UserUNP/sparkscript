@@ -2702,9 +2702,9 @@ typedarray-to-buffer@^3.1.5:
     is-typedarray "^1.0.0"
 
 typescript-cp@^0.1.5:
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/typescript-cp/-/typescript-cp-0.1.5.tgz#9a38876a8abaf40157c5015b959bd89f6f2b5994"
-  integrity sha512-aklGoWuuN2Fawe+5aEVB2aKkSz4nKOMP6N+3pF/lWPsdE6/or9gCwPtC2CivepHM/Z3XvfaT6rxnnhyuwzspiQ==
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/typescript-cp/-/typescript-cp-0.1.6.tgz#fe163877ea93669472722d6dd0f6ec042605ddc1"
+  integrity sha512-LtBhQAd6QPNOTXCiYKFkrOMQPoKoyWL0QIPti4OE0HhS2Yq851qEh1tL2IJamD9QSuUz5MAg4K9w5p8l/98wZg==
   dependencies:
     chokidar "^3.5.1"
     commander "^8.1.0"
