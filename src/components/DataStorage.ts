@@ -1,4 +1,3 @@
-
 import Value from "./Value";
 
 export interface serializedDataProperty {

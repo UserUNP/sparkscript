@@ -1,9 +1,9 @@
-
 export interface serializedBlock {
 	id: "block";
 	block: string;
 	args: { items: serializedValue[] };
 	action?: string;
+	data?: string;
 }
 
 abstract class Block {

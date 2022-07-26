@@ -1,4 +1,3 @@
-
 import Block from "../components/Block";
 import Value from "../components/Value";
 import Variable from "../values/Variable";
@@ -10,7 +9,7 @@ export class SetVariable extends Block {
 	 * @param variable Variable to set.
 	 * @param args Arguments to pass.
 	 */
-	constructor(action: string, variable: Variable, ...args: Value[]) {
+	constructor(action: string, public variable: Variable, ...args: Value[]) {
 		super("set_var", action, [variable, ...args]);
 	}
 

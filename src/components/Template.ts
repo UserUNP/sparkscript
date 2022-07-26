@@ -1,4 +1,3 @@
-
 import Block, { serializedBlock } from "./Block";
 import pako from "pako";
 import WebSocket from 'ws';
