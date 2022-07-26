@@ -3,41 +3,68 @@ import Value from "./components/Value";
 import Block from "./components/Block";
 
 import { PlayerAction, PlayerEvent } from "./codeblocks/Player";
+import { EntityEvent, EntityAction } from "./codeblocks/Entity";
 import { SetVariable } from "./codeblocks/SetVariable";
 import SelectObject from "./codeblocks/SelectObject";
+import GameAction from "./codeblocks/GameAction";
+import Func from "./codeblocks/Func";
 
-import Number from "./values/Number";
 import Text from "./values/Text";
+import Number from "./values/Number";
 import Variable from "./values/Variable";
+import Location from "./values/Location";
+import Potion from "./values/Potion";
+import GameValue from "./values/GameValue";
+import Vector from "./values/Vector";
 
 const blockMap: { [key: string]: any } = {
 	"event": PlayerEvent,
 	"player_action": PlayerAction,
+	"entity_event": EntityEvent,
+	"entity_action": EntityAction,
 	"set_var": SetVariable,
 	"select_obj": SelectObject,
+	"game_action": GameAction,	
+	"func": Func
+	
 } as const;
 
 const valueMap: { [key: string]: any } = {
 	"txt": Text,
 	"num": Number,
 	"var": Variable,
+	"loc": Location,
+	"pot": Potion,
+	"g_val": GameValue,
+	"vec": Vector
 } as const;
 
 export function blockMapper(type: string, action: string, args: Value[]): Block {
 	const clazz = blockMap[type];
-	if(clazz === PlayerEvent) return new clazz(action);
-	else if(clazz === PlayerAction) return new clazz(action, ...args);
-	else if(clazz === SetVariable) return new clazz(action, ...args);
-	else if(clazz === SelectObject) return new clazz(action, ...args);
-	else throw new Error(`Unknown block type: ${type}`);
+	switch(clazz) {
+
+		case PlayerEvent: return new clazz(action, ...args);
+		case PlayerAction: return new clazz(action, ...args);
+		case SelectObject: return new clazz(action, ...args);
+
+		default: throw new Error(`Unknown block type: ${type}`);
+	}
 }
 
 export function valueMapper(type: string, value:{[key:string]:any}, slot?: number): Value {
 	const clazz = valueMap[type];
-	if(clazz === Text) return new clazz(value.name, slot);
-	else if(clazz === Number) return new clazz(value.name, slot);
-	else if(clazz === Variable) return new clazz(value.name, value.scope, slot);
-	else throw new Error(`Unknown value type: ${type}`);
+	switch(clazz) {
+
+		case Text: return new clazz(value.name, slot);
+		case Number: return new clazz(value.name, slot);
+		case Variable: return new clazz(value.name, value.scope, slot);
+		case Location: return new clazz(value.loc.x, value.loc.y, value.loc.z, value.loc.pitch, value.loc.yaw, slot);
+		case Potion: return new clazz(value.pot, value.dur, value.amp, slot);
+		case GameValue: return new clazz(value.type, value.target, slot);
+		case Vector: return new clazz(value.x, value.y, value.z, slot);
+
+		default: throw new Error(`Unknown value type: ${type}`);
+	}
 }
 
 export function mapper(type: string, action: string, args: Value[]): Block;
