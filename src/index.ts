@@ -1,25 +1,29 @@
 
-import pako from "pako";
-import WebSocket from 'ws';
+import pako			from "pako";
+import WebSocket	from 'ws';
 
 // Components.
-import Template, { serializedTemplate } from './components/Template'; export {Template};
-import Block from './components/Block'; export {Block};
-import Value from './components/Value'; export {Value};
-import DataStorage from './components/DataStorage'; export {DataStorage};
-import MinecraftColor from './components/minecraft/MinecraftColor'; export {MinecraftColor};
-import SimpleMinecraftString from './components/minecraft/SimpleMinecraftString'; export {SimpleMinecraftString};
-import MinecraftString from './components/minecraft/MinecraftString'; export {MinecraftString};
+import Template, { serializedTemplate }	from './components/Template';							export {Template};
+import Block							from './components/Block';								export {Block};
+import Value							from './components/Value';								export {Value};
+import DataStorage						from './components/DataStorage';						export {DataStorage};
+import MinecraftColor					from './components/minecraft/MinecraftColor';			export {MinecraftColor};
+import SimpleMinecraftString			from './components/minecraft/SimpleMinecraftString';	export {SimpleMinecraftString};
+import MinecraftString					from './components/minecraft/MinecraftString';			export {MinecraftString};
 
 // Values.
-import Text from './values/Text'; export {Text};
-import Number from './values/Number'; export {Number};
-import Variable from './values/Variable'; export {Variable};
+import Text			from './values/Text';		export {Text};
+import Number		from './values/Number';		export {Number};
+import Variable		from './values/Variable';	export {Variable};
+import Location		from "./values/Location";	export {Location};
+import Potion		from "./values/Potion";		export {Potion};
+import GameValue	from "./values/GameValue";	export {GameValue};
+import Vector 		from "./values/Vector";		export {Vector};
 
 // Codeblocks.
-import player, { PlayerAction, PlayerEvent } from "./codeblocks/Player"; export {player};
-import { SetVariable } from "./codeblocks/SetVariable"; export {SetVariable};
-import SelectObject from "./codeblocks/SelectObject"; export {SelectObject};
+import player, { PlayerAction, PlayerEvent }	from "./codeblocks/Player";			export {player};
+import { SetVariable }							from "./codeblocks/SetVariable";	export {SetVariable};
+import SelectObject								from "./codeblocks/SelectObject";	export {SelectObject};
 
 // Quick editor & playground.
 
@@ -30,7 +34,7 @@ type action_definition = {
 	 * @param name Name of this action
 	 * @param callback Callback for when this action is executed.
 	 */
-	(name: string, callback: (()=>void)): void;
+	(name: string, callback: ()=>void): void;
 	/**
 	 * @param name Name of this action
 	 * @param action Action to perform when this action is executed.
@@ -70,7 +74,7 @@ interface editor {
 	 * @returns A new Text value.
 	 */
 	text: (text: string, slot?: number) => Text;
-	txt: (text: string, slot?: number) => Text;
+	txt: (txt: string, slot?: number) => Text;
 	/**
 	 * Create a new number value.
 	 * @param number Number to make a value from.
@@ -78,7 +82,7 @@ interface editor {
 	 * @returns A new Number value.
 	 */
 	number: (number: number, slot?: number) => Number;
-	num: (number: number, slot?: number) => Number;
+	num: (num: number, slot?: number) => Number;
 	/**
 	 * Create a new variable value.
 	 * @param variable Name of the variable.
@@ -88,7 +92,43 @@ interface editor {
 	 */
 	variable: (name: string, scope: "local" | "game" | "save", slot?: number) => Variable;
 	var: (name: string, scope: "local" | "game" | "save", slot?: number) => Variable;
-	
+	/**
+	 * Create a new location value.
+	 * @param x X coordinate.
+	 * @param y Y coordinate.
+	 * @param z Z coordinate.
+	 * @param pitch Pitch, defaults to 0.
+	 * @param yaw Yaw, defaults to 0.
+	 */
+	location: (x: number, y: number, z: number, pitch: number, yaw: number, slot?: number) => Location;
+	loc: (x: number, y: number, z: number, pitch: number, yaw: number, slot?: number) => Location;
+	/**
+	 * Create a new potion value.
+	 * @param potion The potion name.
+	 * @param duration The duration of the potion.
+	 * @param amplifier Strength of the potion.
+ 	 */
+	potion: (potion: string, duration: number, amplifier: number, slot?: number) => Potion;
+	pot: (pot: string, dur: number, amp: number, slot?: number) => Potion;
+	/**
+	 * Create a new vector value.
+	 * @param x X coordinate.
+	 * @param y Y coordinate.
+	 * @param z Z coordinate.
+	 */
+	vector: (x: number, y: number, z: number, slot?: number) => Vector;
+	vec: (x: number, y: number, z: number, slot?: number) => Vector;
+
+	game: {
+		/**
+		 * Create a new game value.
+		 * @param value The value.
+		 * @param target The target of the value, "Default" is the default target.
+		 */
+		value: (value: string, target: string, slot?: number) => GameValue;
+		val: (val: string, target: string, slot?: number) => GameValue;
+	}
+
 	player: {
 		/**
 		 * Do a player action.
@@ -173,13 +213,29 @@ function df(name: string|undefined, callback: (editor: editor, settings: setting
 
 		//* Values.
 		text: (text: string, slot?: number) => new Text(text, slot),
-		txt: (text: string, slot?: number) => new Text(text, slot),
+		txt: (txt: string, slot?: number) => new Text(txt, slot),
 
 		number: (number: number, slot?: number) => new Number(number, slot),
-		num: (number: number, slot?: number) => new Number(number, slot),
+		num: (num: number, slot?: number) => new Number(num, slot),
 
-		variable: (name: string, scope: "local" | "game" | "save", slot: number=0) => new Variable(name, scope, slot),
-		var: (name: string, scope: "local" | "game" | "save"="game", slot: number=0) => new Variable(name, scope, slot),
+		variable: (name: string, scope: "local" | "game" | "save", slot?: number) => new Variable(name, scope, slot),
+		var: (name: string, scope: "local" | "game" | "save"="game", slot?: number) => new Variable(name, scope, slot),
+
+		location: (x: number, y: number, z: number, pitch: number=90, yaw: number=0, slot?: number) => new Location(x, y, z, pitch, yaw, slot),
+		loc: (x: number, y: number, z: number, pitch: number=90, yaw: number=0, slot?: number) => new Location(x, y, z, pitch, yaw, slot),
+
+		potion: (potion: string, duration: number, amplifier: number=0, slot?: number) => new Potion(potion, duration, amplifier, slot),
+		pot: (pot: string, dur: number, amp: number=0, slot?: number) => new Potion(pot, dur, amp, slot),
+
+		vector: (x: number, y: number, z: number, slot?: number) => new Vector(x, y, z, slot),
+		vec: (x: number, y: number, z: number, slot?: number) => new Vector(x, y, z, slot),
+
+		game: {
+			//* Game values.
+			value: (value: string, target: string, slot?: number) => new GameValue(value, target, slot),
+			val: (val: string, target: string, slot?: number) => new GameValue(val, target, slot),
+			//* Game actions.
+		},
 
 		//* Codeblocks.
 		player: {
@@ -201,8 +257,7 @@ function df(name: string|undefined, callback: (editor: editor, settings: setting
 				const parsedArgs: any = args.map((a: any) => {
 					if(typeof a === "string") return new Text(a);
 					if(typeof a === "number") return new Number(a);
-					if(a instanceof Value) return a;
-					else throw new Error(`Unknown argument type: ${a} is type of ${typeof a}`);
+					else return a;
 				});
 				const instance = mapper(actionOwnerType, action || "", parsedArgs);
 				// const instance = new clazz(actionOwnerType, action || "", parsedArgs);
@@ -220,7 +275,7 @@ function df(name: string|undefined, callback: (editor: editor, settings: setting
 		strict: true,
 		usingCodeutils: false,
 		cuConf: {
-			port: 31372,
+			port: 31371,
 			host: "localhost",
 			protocol: "ws",
 		},
