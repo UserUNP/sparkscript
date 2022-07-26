@@ -1,4 +1,3 @@
-
 import Value from "../components/Value";
 
 const varscopes: {[key: string]: string} = {

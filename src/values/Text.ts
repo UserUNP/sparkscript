@@ -1,4 +1,3 @@
-
 import Value from "../components/Value";
 
 export default class Text extends Value {
