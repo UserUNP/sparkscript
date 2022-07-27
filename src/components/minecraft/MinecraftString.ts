@@ -1,4 +1,3 @@
-
 import MinecraftColor from "./MinecraftColor";
 import SimpleMinecraftString from "./SimpleMinecraftString";
 import { serializedSimpleMCString } from "./SimpleMinecraftString";

@@ -1,4 +1,3 @@
-
 import MinecraftColor from "./MinecraftColor";
 
 export interface serializedSimpleMCString {
@@ -21,7 +20,7 @@ interface options {
 }
 
 export default class SimpleMinecraftString {
-
+	
 	bold: boolean;
 	italic: boolean;
 	underlined: boolean;

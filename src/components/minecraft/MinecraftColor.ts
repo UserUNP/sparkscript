@@ -1,4 +1,3 @@
-
 export default class MinecraftColor {
 
 	/**
@@ -52,6 +51,7 @@ export default class MinecraftColor {
 	 * @returns A new MinecraftColor.
 	 */
 	static fromCode(code: string) {
+		code = code.replace("§", "");
 		if(!MinecraftColor.colorMap[code]) throw new Error("Invalid color code");
 		const color = MinecraftColor.colorMap[code];
 		const rgb = MinecraftColor.colors[color];
