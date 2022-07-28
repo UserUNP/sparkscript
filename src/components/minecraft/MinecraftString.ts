@@ -119,7 +119,7 @@ export default class MinecraftString {
 	 * Export the Minecraft string to a list of simple Minecraft strings.
 	 * @returns Vanilla Minecraft text with the given formatting.
 	 */
-	export() {
-		return this.segments.map(s => s.export());
+	export(nbt: boolean=false) {
+		return this.segments.map(s => s.export(nbt));
 	}
 }

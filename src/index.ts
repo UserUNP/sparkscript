@@ -12,13 +12,14 @@ import SimpleMinecraftString			from './components/minecraft/SimpleMinecraftStrin
 import MinecraftString					from './components/minecraft/MinecraftString';			export {MinecraftString};
 
 // Values.
-import Text			from './values/Text';		export {Text};
-import Number		from './values/Number';		export {Number};
-import Variable		from './values/Variable';	export {Variable};
-import Location		from "./values/Location";	export {Location};
-import Potion		from "./values/Potion";		export {Potion};
-import GameValue	from "./values/GameValue";	export {GameValue};
-import Vector 		from "./values/Vector";		export {Vector};
+import MinecraftItem	from "./values/MinecraftItem";	export {MinecraftItem};
+import Text				from './values/Text';			export {Text};
+import Number			from './values/Number';			export {Number};
+import Variable			from './values/Variable';		export {Variable};
+import Location			from "./values/Location";		export {Location};
+import Potion			from "./values/Potion";			export {Potion};
+import GameValue		from "./values/GameValue";		export {GameValue};
+import Vector 			from "./values/Vector";			export {Vector};
 
 // Codeblocks.
 import player, { PlayerAction, PlayerEvent }	from "./codeblocks/Player";			export {player};
@@ -66,6 +67,18 @@ interface editor {
 	};
 
 	//
+
+	/**
+	 * Create a Minecraft item value.
+	 * @param count Amount of items.
+	 * @param id Item ID name.
+	 * @param name Item name.
+	 */
+	item: (count: number, id: string, name: string | MinecraftString, slot?: number) => MinecraftItem;
+	/**
+	 * Alias for `item(...)`.
+	 */
+	mc: (count: number, id: string, name: string | MinecraftString, slot?: number) => MinecraftItem;
 
 	/**
 	 * Create a new text value.
@@ -212,6 +225,9 @@ function df(name: string|undefined, callback: (editor: editor, settings: setting
 		action: {},
 
 		//* Values.
+		item: (amount: number, id: string, name: string | MinecraftString, slot?: number) => new MinecraftItem(amount, id, name, slot),
+		mc: (amount: number, id: string, name: string | MinecraftString, slot?: number) => new MinecraftItem(amount, id, name, slot),
+
 		text: (text: string, slot?: number) => new Text(text, slot),
 		txt: (txt: string, slot?: number) => new Text(txt, slot),
 

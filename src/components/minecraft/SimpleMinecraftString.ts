@@ -1,13 +1,14 @@
 import MinecraftColor from "./MinecraftColor";
+import { Byte } from "nbt-ts";
 
 export interface serializedSimpleMCString {
 	text: string,
 	color: string,
-	bold: boolean,
-	italic: boolean,
-	underlined: boolean,
-	strikethrough: boolean,
-	obfuscated: boolean
+	bold: boolean | Byte,
+	italic: boolean | Byte,
+	underlined: boolean | Byte,
+	strikethrough: boolean | Byte,
+	obfuscated: boolean | Byte,
 }
 
 interface options {
@@ -47,15 +48,15 @@ export default class SimpleMinecraftString {
 	 * Export the Minecraft string as a JSON object.
 	 * @returns The serialized version of this string.
 	 */
-	export(): serializedSimpleMCString {
+	export(nbt: boolean = false): serializedSimpleMCString {
 		return {
 			text: this.text,
 			color: this.color.toString(),
-			bold: this.bold,
-			italic: this.italic,
-			underlined: this.underlined,
-			strikethrough: this.strikethrough,
-			obfuscated: this.obfuscated
+			bold: nbt ? new Byte(this.bold?1:0) : this.bold,
+			italic: nbt ? new Byte(this.italic?1:0) : this.italic,
+			underlined: nbt ? new Byte(this.underlined?1:0) : this.underlined,
+			strikethrough: nbt ? new Byte(this.strikethrough?1:0) : this.strikethrough,
+			obfuscated: nbt ? new Byte(this.obfuscated?1:0) : this.obfuscated
 		};
 	}
 
@@ -78,11 +79,11 @@ export default class SimpleMinecraftString {
 	static from(obj: serializedSimpleMCString): SimpleMinecraftString {
 		return new SimpleMinecraftString(obj.text, {
 			color: MinecraftColor.from(obj.color),
-			bold: obj.bold,
-			italic: obj.italic,
-			underlined: obj.underlined,
-			strikethrough: obj.strikethrough,
-			obfuscated: obj.obfuscated
+			bold: (typeof obj.bold==="boolean")?obj.bold:!!obj.bold.value,
+			italic: (typeof obj.italic==="boolean")?obj.italic:!!obj.italic.value,
+			underlined: (typeof obj.underlined==="boolean")?obj.underlined:!!obj.underlined.value,
+			strikethrough: (typeof obj.strikethrough==="boolean")?obj.strikethrough:!!obj.strikethrough.value,
+			obfuscated: (typeof obj.obfuscated==="boolean")?obj.obfuscated:!!obj.obfuscated.value
 		});
 	}
 
