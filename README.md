@@ -16,7 +16,7 @@ const template = df("Test template", (e, s) =>{
   // e short for "editor"
   // s short for "settings"   
   e.defAction("give_items", (/* args */) => {
-    e.player.action("SetHotbar", e.mc("cod", "§b§l<-§c§okiller fish§b§l->"), e.mc("bow", "§b§l<-§c§ole bow§b§l->"))
+    e.player.action("SetHotbar", e.mc(1, "cod", "§b§l<-§c§okiller fish§b§l->"), e.mc(1, "bow", "§b§l<-§c§ole bow§b§l->"))
   });
 
   e.player.event("Join");
