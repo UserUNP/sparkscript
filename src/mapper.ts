@@ -3,11 +3,11 @@ import Value from "./components/Value";
 import Block from "./components/Block";
 
 import { PlayerAction, PlayerEvent } from "./codeblocks/Player";
-import { EntityEvent, EntityAction } from "./codeblocks/Entity";
+// import { EntityEvent, EntityAction } from "./codeblocks/Entity";
 import { SetVariable } from "./codeblocks/SetVariable";
 import SelectObject from "./codeblocks/SelectObject";
-import GameAction from "./codeblocks/GameAction";
-import Func from "./codeblocks/Func";
+// import GameAction from "./codeblocks/GameAction";
+// import Func from "./codeblocks/Func";
 
 import Text from "./values/Text";
 import Number from "./values/Number";
@@ -20,12 +20,12 @@ import Vector from "./values/Vector";
 const blockMap: { [key: string]: any } = {
 	"event": PlayerEvent,
 	"player_action": PlayerAction,
-	"entity_event": EntityEvent,
-	"entity_action": EntityAction,
+	// "entity_event": EntityEvent,
+	// "entity_action": EntityAction,
 	"set_var": SetVariable,
 	"select_obj": SelectObject,
-	"game_action": GameAction,	
-	"func": Func
+	// "game_action": GameAction,	
+	// "func": Func
 	
 } as const;
 
