@@ -42,7 +42,14 @@ export default class MinecraftItem extends Value {
 		//! not tested. yet.
 		// @ts-ignore // idk what im doing // its 2 am im tired.
 		if(!vanillaModify) this.data.raw.item.tag.PublicBukkitValues[`hypercube:${key}`] = typeof value==="number"?nbt.parse(`${value}d`):nbt.parse(`"${value}"`);
+		if(vanillaModify) throw new Error("vanillaModify is not implemented yet.");
 		return this;
+	}
+
+	export(containingBlockArguments: Value[]) {
+		const result = super.export(containingBlockArguments);
+		result.item.data.item = nbt.stringify(result.item.data.item);
+		return result;
 	}
 
 }
