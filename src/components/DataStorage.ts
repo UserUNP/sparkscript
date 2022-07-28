@@ -57,7 +57,14 @@ export default class DataStorage {
 	 * @returns True if the key exists, false otherwise.
 	 */
 	has(key: string): boolean {
-		return this.raw.hasOwnProperty(key);
+		return this.keys.includes(key);
+	}
+
+	/**
+	 * Alias for `DataStorage.keys`.
+	 */
+	list() {
+		return this.keys;
 	}
 
 	/**
