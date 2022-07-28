@@ -1,6 +1,7 @@
 
 import pako			from "pako";
 import WebSocket	from 'ws';
+import utils		from "./utilities"; export { utils }
 
 // Components.
 import Template, { serializedTemplate }	from './components/Template';							export {Template};
