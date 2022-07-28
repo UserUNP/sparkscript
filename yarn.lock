@@ -595,10 +595,10 @@
     jest-matcher-utils "^27.0.0"
     pretty-format "^27.0.0"
 
-"@types/node@*", "@types/node@^17.0.25":
-  version "17.0.39"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.39.tgz#3652d82e2a16b4ea679d5ea3143b816c91b7e113"
-  integrity sha512-JDU3YLlnPK3WDao6/DlXLOgSNpG13ct+CwIO17V8q0/9fWJyeMJJ/VyZ1lv8kDprihvZMydzVwf0tQOqGiY2Nw==
+"@types/node@*", "@types/node@^18.6.1":
+  version "18.6.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.6.1.tgz#828e4785ccca13f44e2fb6852ae0ef11e3e20ba5"
+  integrity sha512-z+2vB6yDt1fNwKOeGbckpmirO+VBDuQqecXkgeIqDlaOtmKn6hPR/viQ8cxCfqLU4fTlvM3+YjM367TukWdxpg==
 
 "@types/pako@^2.0.0":
   version "2.0.0"
@@ -2695,9 +2695,9 @@ typedarray-to-buffer@^3.1.5:
     is-typedarray "^1.0.0"
 
 typescript-cp@^0.1.5:
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/typescript-cp/-/typescript-cp-0.1.5.tgz#9a38876a8abaf40157c5015b959bd89f6f2b5994"
-  integrity sha512-aklGoWuuN2Fawe+5aEVB2aKkSz4nKOMP6N+3pF/lWPsdE6/or9gCwPtC2CivepHM/Z3XvfaT6rxnnhyuwzspiQ==
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/typescript-cp/-/typescript-cp-0.1.6.tgz#fe163877ea93669472722d6dd0f6ec042605ddc1"
+  integrity sha512-LtBhQAd6QPNOTXCiYKFkrOMQPoKoyWL0QIPti4OE0HhS2Yq851qEh1tL2IJamD9QSuUz5MAg4K9w5p8l/98wZg==
   dependencies:
     chokidar "^3.5.1"
     commander "^8.1.0"
