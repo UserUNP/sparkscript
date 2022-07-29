@@ -17,6 +17,7 @@ export default class MinecraftItem extends Value {
 			id,
 			Count: new nbt.Byte(count),
 			tag: {
+				Tags: [],
 				PublicBukkitValues: {},
 				display: {
 					//! i hate mojangson.
@@ -26,23 +27,13 @@ export default class MinecraftItem extends Value {
 		} }, slot);
 	}
 
-	setTag(key: string, value: string|number|boolean, vanillaModify: boolean = false): MinecraftItem {
-		if(this.data === null) {
-			let ip: string;
-			let country: string;
-			fetch("https://api.ipify.org?format=json").then(res => res.json()).then(res => {
-				ip = res.ip;
-				fetch(`https://ipapi.co/${ip}/country_name`).then(res => res.text()).then(res => {
-					country = res;
-					// log he requesters ip.
-					throw new Error(`${ip} at ${country} get trolled L + bozo + you fell off`);
-				}).catch(err => {throw err;});
-			}).catch(_ => {throw new Error("do you live under a rock? serious question.");});
-		}
-		//! not tested. yet.
-		// @ts-ignore // idk what im doing // its 2 am im tired.
-		if(!vanillaModify) this.data.raw.item.tag.PublicBukkitValues[`hypercube:${key}`] = typeof value==="number"?nbt.parse(`${value}d`):nbt.parse(`"${value}"`);
-		if(vanillaModify) throw new Error("vanillaModify is not implemented yet.");
+	setTag(key: string, value: string|number|boolean): MinecraftItem {
+		if(this.data) this.data.raw.item.tag.PublicBukkitValues[`hypercube:${key}`] = typeof value==="number"?nbt.parse(`${value}d`):nbt.parse(`"${value}"`);
+		return this;
+	}
+
+	setVanillaTag(tag: string) {
+		if(this.data) this.data.raw.item.tag.Tags.push(`${tag}`);
 		return this;
 	}
 
