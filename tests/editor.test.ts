@@ -1,3 +1,4 @@
+import "../src/mapper";
 import { PlayerAction } from "../src/codeblocks/Player";
 import df from "../src/index";
 
