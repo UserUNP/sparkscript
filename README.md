@@ -3,11 +3,11 @@
 
 Check out [DiamondFire](https://mcdiamondfire.com), its pretty cool.  
 
-*Current build status*: [![CircleCI](https://circleci.com/gh/UserUNP/sparkscript/tree/master.svg?style=svg)](https://circleci.com/gh/UserUNP/sparkscript/tree/master)  
+-[![CircleCI](https://github.com/UserUNP/sparkscript/actions/workflows/sparkscript.yml/badge.svg)](https://github.com/UserUNP/sparkscript/actions/workflows/sparkscript.yml)-  
 [![npm sparkscript](https://nodei.co/npm/sparkscript.png)](https://npmjs.org/package/sparkscript)  
-***Warning***: *No stable version yet..*
+***Warning***: *No stable version yet..*  
 
-Example:
+Example: *for current git build*
 ```javascript
 // import df from "sparkscript";
 const df = require("sparkscript").default;
@@ -33,14 +33,14 @@ console.log(code.compressed);
 
 Key features:  
 \> Read from template data with `require( )...from( )`.  
-\> ~~Read & compile from Spark file, buffer or string.~~ **_W.I.P._**  
+\> ~~Read & compile from Spark file, buffer or string.~~ **_not anytime soon._**  
 \> Easy to use template editor.  
 
 # Build from source
 
-If you can use either `npm` or `yarn` for this.  
+You can use either `npm` or `yarn` for this.  
 
-```bash
+```sh
 mkdir sparkscript
 cd sparkscript
 git clone https://github.com/UserUNP/sparkscript .
@@ -49,4 +49,4 @@ npm run build
 ```
 
 IF you need to use a different version of the actiondump.json file,
-then you'll have to replace it by yourself.
+then you'll have to replace it by yourself, for now.
