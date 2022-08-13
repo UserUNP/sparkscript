@@ -3,7 +3,8 @@
 
 Check out [DiamondFire](https://mcdiamondfire.com), its pretty cool.  
 
--[![CircleCI](https://github.com/UserUNP/sparkscript/actions/workflows/sparkscript.yml/badge.svg)](https://github.com/UserUNP/sparkscript/actions/workflows/sparkscript.yml)-  
+[![gh-actions](https://github.com/UserUNP/sparkscript/actions/workflows/sparkscript.yml/badge.svg)](https://github.com/UserUNP/sparkscript/actions/workflows/sparkscript.yml)
+[![gh-actions](https://github.com/UserUNP/sparkscript/actions/workflows/codeql.yml/badge.svg)](https://github.com/UserUNP/sparkscript/actions/workflows/codeql.yml)  
 [![npm sparkscript](https://nodei.co/npm/sparkscript.png)](https://npmjs.org/package/sparkscript)  
 ***Warning***: *No stable version yet..*  
 
