@@ -36,7 +36,9 @@
 	},
 	"files": [
 		"./dist",
-		"./src"
+		"./src",
+		"./README.md",
+		"./LICENSE"
 	],
 	"keywords": [
 		"diamondfire", "df",
