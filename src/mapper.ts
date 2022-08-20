@@ -3,11 +3,11 @@ import Value from "./components/Value";
 import Block from "./components/Block";
 
 import { PlayerAction, PlayerEvent } from "./codeblocks/Player";
-// import { EntityEvent, EntityAction } from "./codeblocks/Entity";
+import { EntityEvent, EntityAction } from "./codeblocks/Entity";
 import { SetVariable } from "./codeblocks/SetVariable";
 import SelectObject from "./codeblocks/SelectObject";
-// import GameAction from "./codeblocks/GameAction";
-// import Func from "./codeblocks/Func";
+import GameAction from "./codeblocks/GameAction";
+import Func from "./codeblocks/Func";
 
 import Text from "./values/Text";
 import Number from "./values/Number";
@@ -20,12 +20,12 @@ import Vector from "./values/Vector";
 const blockMap: { [key: string]: any } = {
 	"event": PlayerEvent,
 	"player_action": PlayerAction,
-	// "entity_event": EntityEvent,
-	// "entity_action": EntityAction,
+	"entity_event": EntityEvent,
+	"entity_action": EntityAction,
 	"set_var": SetVariable,
 	"select_obj": SelectObject,
-	// "game_action": GameAction,	
-	// "func": Func
+	"game_action": GameAction,	
+	"func": Func
 	
 } as const;
 
@@ -43,9 +43,14 @@ export function blockMapper(type: string, action: string, args: Value[]): Block 
 	const clazz = blockMap[type];
 	switch(clazz) {
 
-		case PlayerEvent: return new clazz(action, ...args);
+		case PlayerEvent: return new clazz(action);
 		case PlayerAction: return new clazz(action, ...args);
 		case SelectObject: return new clazz(action, ...args);
+		case EntityEvent: return new clazz(action, ...args);
+		case EntityAction: return new clazz(action, ...args);
+		case GameAction: return new clazz(action, ...args);
+		case SetVariable: return new clazz(action, ...args);
+		case Func: return new clazz(action, ...args);
 
 		default: throw new Error(`Unknown block type: ${type}`);
 	}
