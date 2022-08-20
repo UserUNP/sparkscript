@@ -5,12 +5,13 @@ Check out [DiamondFire](https://mcdiamondfire.com), its pretty cool.
 
 [![gh-actions](https://github.com/UserUNP/sparkscript/actions/workflows/sparkscript.yml/badge.svg)](https://github.com/UserUNP/sparkscript/actions/workflows/sparkscript.yml)
 [![gh-actions](https://github.com/UserUNP/sparkscript/actions/workflows/codeql.yml/badge.svg)](https://github.com/UserUNP/sparkscript/actions/workflows/codeql.yml)  
-[![npm sparkscript](https://nodei.co/npm/sparkscript.png)](https://npmjs.org/package/sparkscript)  
+[![npm-sparkscript](https://nodei.co/npm/sparkscript.png)](https://npmjs.org/package/sparkscript)  
 ***Warning***: *No stable version yet..*  
 
 Example: *for current git build*
 ```javascript
 // import df from "sparkscript";
+// import the quick editor
 const df = require("sparkscript").default;
 
 const template = df("Test template", (e, s) =>{
