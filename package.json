@@ -8,7 +8,7 @@
 		"fastbuild": "npx tsc && npx tscp",
 		"buildwatch": "npx rimraf ./dist && npx tscp && npx tsc -w",
 		"test": "npx jest tests/",
-		"unixfix": "find . -type f -print0 | xargs -0 dos2unix"
+		"dos2unix": "find . -type f -print0 | xargs -0 dos2unix"
 	},
 	"author": "UserUNP",
 	"license": "ISC",
