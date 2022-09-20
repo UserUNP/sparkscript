@@ -1,4 +1,4 @@
-const df = require("../dist").default;
+const df = require("../").default;
 // const df = require("sparkscript").default;
 
 const template = df("test template", (e, s) => {
