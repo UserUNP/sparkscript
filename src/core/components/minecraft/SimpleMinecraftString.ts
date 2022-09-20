@@ -1,7 +1,7 @@
 import MinecraftColor from "./MinecraftColor";
 import { Byte } from "nbt-ts";
 
-export interface SerializedSimpleMCString {
+export interface SimpleRawMCString {
 	text: string,
 	color: string,
 	bold: boolean | Byte,
@@ -48,7 +48,7 @@ export default class SimpleMinecraftString {
 	 * Export the Minecraft string as a JSON object.
 	 * @returns The serialized version of this string.
 	 */
-	export(nbt: boolean = false): SerializedSimpleMCString {
+	export(nbt: boolean = false): SimpleRawMCString {
 		return {
 			text: this.text,
 			color: this.color.toString(),
@@ -76,7 +76,7 @@ export default class SimpleMinecraftString {
 		return `${altCode?styles:""}${styles.join(altCode)}${color}${this.text}`;
 	}
 	
-	static from(obj: SerializedSimpleMCString): SimpleMinecraftString {
+	static from(obj: SimpleRawMCString): SimpleMinecraftString {
 		return new SimpleMinecraftString(obj.text, {
 			color: MinecraftColor.from(obj.color),
 			bold: (typeof obj.bold==="boolean")?obj.bold:!!obj.bold.value,
