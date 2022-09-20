@@ -1,6 +1,4 @@
-import Template			from "./components/Template";
-import Value 			from "./components/Value";
-import MinecraftString	from "./components/minecraft/MinecraftString";
+import Template			from "./core/components/Template";
 
 import MinecraftItem	from "./values/MinecraftItem";
 import Text			 	from './values/Text';
@@ -26,7 +24,7 @@ function getEditor(template: Template, customAction: { actDefs: actDefs, doCusto
 	const actDefs = customAction.actDefs;
 	const doCustomAction = customAction.doCustomAction;
 	const editor: Ieditor = {
-		_from: (other: Template) => {
+		_from: (other) => {
 			template._blocks = other.blocks;
 		},
 
@@ -35,69 +33,69 @@ function getEditor(template: Template, customAction: { actDefs: actDefs, doCusto
 		},
 
 		//* Spark stuff.
-		defAction: (name: string, cbOrAction: (()=>void)|string) => {
+		defAction: (name, cbOrAction) => {
 			actDefs[name] = cbOrAction;
-			Object.keys(actDefs).forEach((name: string) => {
+			Object.keys(actDefs).forEach((name) => {
 				editor.action[name] = function(...args: any[]) {doCustomAction(name, ...args);};
 			});
 		},
 		action: {},
 
 		//* Values.
-		item: (amount: number, id: string, name: string | MinecraftString, slot?: number) => new MinecraftItem(amount, id, name, slot),
-		mc: (amount: number, id: string, name: string | MinecraftString, slot?: number) => new MinecraftItem(amount, id, name, slot),
+		item: (id, amount, name, slot?) => new MinecraftItem(id, amount, name, slot),
+		mc: (id, amount, name, slot?) => new MinecraftItem(id, amount, name, slot),
 
-		text: (text: string, slot?: number) => new Text(text, slot),
-		txt: (txt: string, slot?: number) => new Text(txt, slot),
+		text: (text, slot?) => new Text(text, slot),
+		txt: (txt, slot?) => new Text(txt, slot),
 
-		number: (number: number, slot?: number) => new Number(number, slot),
-		num: (num: number, slot?: number) => new Number(num, slot),
+		number: (number, slot?) => new Number(number, slot),
+		num: (num, slot?) => new Number(num, slot),
 
-		variable: (name: string, scope: "local" | "game" | "save", slot?: number) => new Variable(name, scope, slot),
-		var: (name: string, scope: "local" | "game" | "save"="game", slot?: number) => new Variable(name, scope, slot),
+		variable: (name, scope, slot?) => new Variable(name, scope, slot),
+		var: (name, scope="game", slot?) => new Variable(name, scope, slot),
 
-		location: (x: number, y: number, z: number, pitch: number=90, yaw: number=0, slot?: number) => new Location(x, y, z, pitch, yaw, slot),
-		loc: (x: number, y: number, z: number, pitch: number=90, yaw: number=0, slot?: number) => new Location(x, y, z, pitch, yaw, slot),
+		location: (x, y, z, pitch=90, yaw=0, slot?) => new Location(x, y, z, pitch, yaw, slot),
+		loc: (x, y, z, pitch=90, yaw=0, slot?) => new Location(x, y, z, pitch, yaw, slot),
 
-		potion: (potion: string, duration: number, amplifier: number=0, slot?: number) => new Potion(potion, duration, amplifier, slot),
-		pot: (pot: string, dur: number, amp: number=0, slot?: number) => new Potion(pot, dur, amp, slot),
+		potion: (potion, duration, amplifier=0, slot?) => new Potion(potion, duration, amplifier, slot),
+		pot: (pot, dur, amp=0, slot?) => new Potion(pot, dur, amp, slot),
 
-		vector: (x: number, y: number, z: number, slot?: number) => new Vector(x, y, z, slot),
-		vec: (x: number, y: number, z: number, slot?: number) => new Vector(x, y, z, slot),
+		vector: (x, y, z, slot?) => new Vector(x, y, z, slot),
+		vec: (x, y, z, slot?) => new Vector(x, y, z, slot),
 
 		game: {
 			//* Game values.
-			value: (value: string, target: string, slot?: number) => new GameValue(value, target, slot),
-			val: (val: string, target: string, slot?: number) => new GameValue(val, target, slot),
+			value: (value, target, slot?) => new GameValue(value, target, slot),
+			val: (val, target, slot?) => new GameValue(val, target, slot),
 			//* Game action.
-			action: (action: string, ...args: Value[]) => template.push(new GameAction(action, ...args)),
-			act: (action: string, ...args: Value[]) => template.push(new GameAction(action, ...args)),
+			action: (action, ...args) => template.push(new GameAction(action, ...args)),
+			act: (action, ...args) => template.push(new GameAction(action, ...args)),
 		},
 
 		//* Codeblocks.
 		player: {
-			action: (action: string, ...args: Value[]) => template.push(new PlayerAction(action, ...args)),
-			act: (action: string, ...args: Value[]) => template.push(new PlayerAction(action, ...args)),
+			action: (action, ...args) => template.push(new PlayerAction(action, ...args)),
+			act: (action, ...args) => template.push(new PlayerAction(action, ...args)),
 			
-			event: (event: string) => template.push(new PlayerEvent(event)),
-			evt: (event: string) => template.push(new PlayerEvent(event)),
+			event: (event) => template.push(new PlayerEvent(event)),
+			evt: (event) => template.push(new PlayerEvent(event)),
 		},
 		entity: {
-			action: (action: string, ...args: Value[]) => template.push(new EntityAction(action, ...args)),
-			act: (action: string, ...args: Value[]) => template.push(new EntityAction(action, ...args)),
+			action: (action, ...args) => template.push(new EntityAction(action, ...args)),
+			act: (action, ...args) => template.push(new EntityAction(action, ...args)),
 
-			event: (event: string) => template.push(new EntityEvent(event)),
-			evt: (event: string) => template.push(new EntityEvent(event)),
+			event: (event) => template.push(new EntityEvent(event)),
+			evt: (event) => template.push(new EntityEvent(event)),
 		},
 
-		function: (name: string, ...args: Value[]) => template.push(new Func(name, ...args)),
-		func: (name: string, ...args: Value[]) => template.push(new Func(name, ...args)),
+		function: (name, ...args) => template.push(new Func(name, ...args)),
+		func: (name, ...args) => template.push(new Func(name, ...args)),
 
-		setvariable: (action: string, variable: Variable,...args: Value[]) => template.push(new SetVariable(action, variable, ...args)),
-		setvar: (action: string, variable: Variable,...args: Value[]) => template.push(new SetVariable(action, variable, ...args)),
+		setvariable: (action, variable,...args) => template.push(new SetVariable(action, variable, ...args)),
+		setvar: (action, variable,...args) => template.push(new SetVariable(action, variable, ...args)),
 
-		select: (condition: string, ...args: Value[]) => template.push(new SelectObject(condition, ...args)),
-		sel: (condition: string, ...args: Value[]) => template.push(new SelectObject(condition, ...args)),
+		select: (condition, ...args) => template.push(new SelectObject(condition, ...args)),
+		sel: (condition, ...args) => template.push(new SelectObject(condition, ...args)),
 	};
 	return editor;
 }

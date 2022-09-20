@@ -1,4 +1,10 @@
-import Value from "../components/Value";
+import Value from "../core/components/Value";
+
+export interface Ivec {
+	x: number;
+	y: number;
+	z: number;
+}
 
 export default class Vector extends Value {
 	/**
@@ -7,7 +13,7 @@ export default class Vector extends Value {
 	 * @param y Y coordinate.
 	 * @param z Z coordinate.
 	 */
-	constructor(public x: number, public y: number, public z: number, slot?: number) {
-		super("vec", { x, y, z }, slot);
+	constructor(public x: Ivec["x"], public y: Ivec["y"], public z: Ivec["z"], slot?: number) {
+		super("vec", { x, y, z } as Ivec, slot);
 	}
 }

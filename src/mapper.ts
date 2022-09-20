@@ -1,6 +1,6 @@
 
-import Value from "./components/Value";
-import Block from "./components/Block";
+import Value from "./core/components/Value";
+import Block from "./core/components/Block";
 
 import { PlayerAction, PlayerEvent } from "./codeblocks/Player";
 import { EntityEvent, EntityAction } from "./codeblocks/Entity";

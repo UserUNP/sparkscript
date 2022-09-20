@@ -1,17 +1,18 @@
-export interface serializedBlock {
+export interface RawDFBlock {
 	id: "block";
 	block: string;
-	args: { items: serializedValue[] };
+	args: { items: RawDFValue[] };
 	action?: string;
+	target?: string;
 	data?: string;
 }
 
 abstract class Block {
 	
-	static from(raw: serializedBlock) {
+	static from(raw: RawDFBlock) {
 		const type = raw.block;
-		const args = raw.args.items.map(arg => Value.from(arg));
-		const instance = mapper(type, raw.action||"", args);
+		const args = raw.args.items.map((arg: any) => Value.from(arg));
+		const instance = mapper(type, raw.data||raw.action||"", args);
 		return instance as Block;
 	}
 
@@ -25,7 +26,7 @@ abstract class Block {
 	 * Export the codeblock to a JSON object.
 	 * @returns DiamondFire JSON-ified codeblock.
 	 */
-	export(): serializedBlock {
+	export(): RawDFBlock {
 		return {
 			id: "block",
 			block: this.type,
@@ -37,5 +38,5 @@ abstract class Block {
 
 export default Block;
 
-import mapper from "../mapper";
-import Value, { serializedValue } from "./Value";
+import mapper from "../../mapper";
+import Value, { RawDFValue } from "./Value";

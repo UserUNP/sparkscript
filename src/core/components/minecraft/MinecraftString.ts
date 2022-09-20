@@ -1,8 +1,8 @@
 import MinecraftColor from "./MinecraftColor";
 import SimpleMinecraftString from "./SimpleMinecraftString";
-import { serializedSimpleMCString } from "./SimpleMinecraftString";
+import { SerializedSimpleMCString } from "./SimpleMinecraftString";
 
-export type serializedMCString = serializedSimpleMCString[];
+export type SerializedMCString = SerializedSimpleMCString[];
 
 export default class MinecraftString {
 	
