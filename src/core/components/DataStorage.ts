@@ -1,8 +1,6 @@
 import Value from "./Value";
 
-export interface serializedDataProperty {
-	[key: string]: any;
-}
+export type RawDFValueDataRecord = Record<string, any>;
 
 export default class DataStorage {
 
@@ -11,15 +9,15 @@ export default class DataStorage {
 	 * @param raw Raw data to be converted to DataStorage.
 	 * @returns DataStorage object.
 	 */
-	static from(raw: serializedDataProperty) {
+	static from(raw: RawDFValueDataRecord) {
 		const storage = new DataStorage();
-		for (const key in raw) {
-			storage.set(key, raw[key]);
+		for (const [k, v] of Object.entries(raw)) {
+			storage.set(k as keyof RawDFValueDataRecord, v);
 		}
 		return storage;
 	}
 
-	raw: serializedDataProperty = {};
+	raw: RawDFValueDataRecord = {};
 	owner: Value | null = null;
 
 	/**
@@ -37,8 +35,8 @@ export default class DataStorage {
 	 * @param value Value to be set.
 	 * @returns Chainable DataStorage object.
 	 */
-	set(key: string, value: any): this {
-		this.raw[key] = value;
+	set(key: keyof RawDFValueDataRecord, value: any): this {
+		this.raw = {...this.raw, [key]: value} as RawDFValueDataRecord;
 		return this;
 	}
 
@@ -57,7 +55,7 @@ export default class DataStorage {
 	 * @returns True if the key exists, false otherwise.
 	 */
 	has(key: string): boolean {
-		return this.keys.includes(key);
+		return this.keys.includes(key as string);
 	}
 
 	/**

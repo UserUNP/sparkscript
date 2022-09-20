@@ -4,13 +4,13 @@ import WebSocket	from 'ws';
 import utils		from "./utilities"; export { utils }
 
 // Components.
-import Template, { serializedTemplate }	from './components/Template';							export {Template};
-import Block							from './components/Block';								export {Block};
-import Value							from './components/Value';								export {Value};
-import DataStorage						from './components/DataStorage';						export {DataStorage};
-import MinecraftColor					from './components/minecraft/MinecraftColor';			export {MinecraftColor};
-import SimpleMinecraftString			from './components/minecraft/SimpleMinecraftString';	export {SimpleMinecraftString};
-import MinecraftString					from './components/minecraft/MinecraftString';			export {MinecraftString};
+import Template, { RawDFTemplate }	from './core/components/Template';							export {Template};
+import Block							from './core/components/Block';								export {Block};
+import Value							from './core/components/Value';								export {Value};
+import DataStorage						from './core/components/DataStorage';						export {DataStorage};
+import MinecraftColor					from './core/components/minecraft/MinecraftColor';			export {MinecraftColor};
+import SimpleMinecraftString			from './core/components/minecraft/SimpleMinecraftString';	export {SimpleMinecraftString};
+import MinecraftString					from './core/components/minecraft/MinecraftString';			export {MinecraftString};
 
 // Values.
 import MinecraftItem	from "./values/MinecraftItem";	export {MinecraftItem};
@@ -32,46 +32,17 @@ import Func			from "./codeblocks/Func";			export {Func};
 
 // Quick editor & playground.
 
-import mapper, { getActionOwner }	from "./mapper";
-import genEditor					from "./quickeditor";
-import Ieditor 						from "./Iquickeditor";
-
-interface settings {
-	/**
-	 * If disabled, Type & action checking will be skipped.
-	 */
-	strict: boolean;
-	/**
-	 * Set to ```true``` if you need to use codeutilities.
-	 */
-	usingCodeutils: boolean;
-	/**
-	 * Configuration for codeutilities WebSocket (if used).
-	 */
-	cuConf: {
-		/**
-		 * Port of the WebSocket. defaults to 31372.
-		 */
-		port: number | 31372;
-		/**
-		 * Host of the WebSocket. defaults to localhost.
-		 */
-		host: string | "localhost";
-		/**
-		 * Protocol of the WebSocket. defaults to ws.
-		 */
-		protocol: "ws" | "wss" | "http" | "https";
-	},
-	author?: string;
-	name?: string;
-}
+import mapper, { getActionOwner }		from "./mapper";
+import getEditor						from "./quickeditor";
+import getEditorSettings, { Isettings }	from "./qeSettings";
+import Ieditor 							from "./Iquickeditor";
 
 /**
  * New template.
  * @param name Name of the template, not required.
  * @param callback Callback for editing the template.
  */
-function quickEditor(name: string|undefined, callback: (editor: Ieditor, settings: settings) => void): Template {
+function quickEditor(name: string|false, callback: (editor: Ieditor, settings: Isettings) => void): Template {
 	if(!name) name = "untitled";
 	const template = new Template(name);
 	const actDefs: {[name: string]: (()=>void)|string} = {};
@@ -88,7 +59,6 @@ function quickEditor(name: string|undefined, callback: (editor: Ieditor, setting
 					else return a;
 				});
 				const instance = mapper(actionOwnerType, action || "", parsedArgs);
-				// const instance = new clazz(actionOwnerType, action || "", parsedArgs);
 				template.push(instance as Block);
 			} else {
 				//@ts-ignore
@@ -101,18 +71,9 @@ function quickEditor(name: string|undefined, callback: (editor: Ieditor, setting
 	});
 
 	// Quick editor.
-	const editor = genEditor(template, { actDefs, doCustomAction });
+	const editor = getEditor(template, { actDefs, doCustomAction });
+	const settings = getEditorSettings(name)
 
-	const settings: settings = { 
-		strict: true,
-		usingCodeutils: false,
-		cuConf: {
-			port: 31371,
-			host: "localhost",
-			protocol: "ws",
-		},
-		name,
-	};
 	callback(editor, settings);
 	template.author = settings.author;
 	template.name = settings.name;
@@ -125,8 +86,8 @@ function quickEditor(name: string|undefined, callback: (editor: Ieditor, setting
 	return template;
 }
 
-quickEditor.from = (raw: string, callback?: (editor: Ieditor, settings: settings) => void): Template => {
-	const data = JSON.parse(String.fromCharCode.apply(null, new Uint16Array(pako.inflate(new Uint8Array(atob(raw).split('').map(function(e) {return e.charCodeAt(0);})))) as unknown as []).replace(/Â§/g,'\u00A7')) as serializedTemplate;
+quickEditor.from = (raw: string, callback?: (editor: Ieditor, settings: Isettings) => void): Template => {
+	const data = JSON.parse(String.fromCharCode.apply(null, new Uint16Array(pako.inflate(new Uint8Array(atob(raw).split('').map(function(e) {return e.charCodeAt(0);})))) as unknown as []).replace(/Â§/g,'\u00A7')) as RawDFTemplate;
 	const template = new Template("untitled");
 	for(const block of data.blocks) {
 		template.push(Block.from(block));

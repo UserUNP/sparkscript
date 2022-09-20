@@ -1,6 +1,9 @@
-import Template			from "./components/Template";
-import Value 			from "./components/Value";
-import MinecraftString	from "./components/minecraft/MinecraftString";
+import DFTarget		from	"./core/DFTarget";
+import DFVarScopes	from	"./core/DFVarScopes";
+
+import Template			from "./core/components/Template";
+import Value 			from "./core/components/Value";
+import MinecraftString	from "./core/components/minecraft/MinecraftString";
 
 import MinecraftItem	from "./values/MinecraftItem";
 import Text			 	from './values/Text';
@@ -52,11 +55,11 @@ export default interface editor {
 	 * @param id Item ID name.
 	 * @param name Item name.
 	 */
-	item: (count: number, id: string, name: string | MinecraftString, slot?: number) => MinecraftItem;
+	item: (id: `minecraft:${string}`, count: number, name: string | MinecraftString, slot?: number) => MinecraftItem;
 	/**
 	 * Alias for `item(...)`.
 	 */
-	mc: (count: number, id: string, name: string | MinecraftString, slot?: number) => MinecraftItem;
+	mc: (id: `minecraft:${string}`, count: number, name: string | MinecraftString, slot?: number) => MinecraftItem;
 
 	/**
 	 * Create a new text value.
@@ -81,8 +84,8 @@ export default interface editor {
 	 * @param slot Slot to put the value in.
 	 * @returns A new Variable value.
 	 */
-	variable: (name: string, scope: "local" | "game" | "save", slot?: number) => Variable;
-	var: (name: string, scope: "local" | "game" | "save", slot?: number) => Variable;
+	variable: (name: string, scope: DFVarScopes, slot?: number) => Variable;
+	var: (name: string, scope: DFVarScopes, slot?: number) => Variable;
 	/**
 	 * Create a new location value.
 	 * @param x X coordinate.
@@ -116,8 +119,8 @@ export default interface editor {
 		 * @param value The value.
 		 * @param target The target of the value, "Default" is the default target.
 		 */
-		value: (value: string, target: string, slot?: number) => GameValue;
-		val: (val: string, target: string, slot?: number) => GameValue;
+		value: (value: string, target: DFTarget, slot?: number) => GameValue;
+		val: (val: string, target: DFTarget, slot?: number) => GameValue;
 		/**
 		 * Do a game action.
 		 * @param action Action to perform.

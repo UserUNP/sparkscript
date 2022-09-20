@@ -1,5 +1,5 @@
-import Block, { serializedBlock } from "../components/Block";
-import Value from "../components/Value";
+import Block, { RawDFBlock } from "../core/components/Block";
+import Value from "../core/components/Value";
 
 export default class Func extends Block {
 	
@@ -12,7 +12,7 @@ export default class Func extends Block {
 		super("func", name, args);
 	}
 
-	export(): serializedBlock {
+	export(): RawDFBlock {
 		const result = super.export();
 		delete result.action;
 		result.data = this.name;

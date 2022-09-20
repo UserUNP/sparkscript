@@ -1,9 +1,9 @@
-import Block, { serializedBlock } from "./Block";
+import Block, { RawDFBlock } from "./Block";
 import pako from "pako";
 import WebSocket from 'ws';
 
-export interface serializedTemplate {
-	blocks: serializedBlock[];
+export interface RawDFTemplate {
+	blocks: RawDFBlock[];
 	author?: string,
 	name?: string
 }
@@ -20,21 +20,18 @@ export default class Template {
 	 * @param name Template name, defaults to "untitled".
 	 * @param author Template author, defaults to "anonymous".
 	 */
-	constructor(public name?: string, public author?: string) {
+	constructor(public name: string|false, public author?: string) {
 		this.name = name || "untitled";
 		this.author = author || "anonymous";
 	}
 
-	export(): { compressed: string, serialized: serializedTemplate, sendToCodeutils: Function } {
-		const result: serializedTemplate = { blocks: [], name: this.name, author: this.author };
+	export(): { compressed: string, serialized: RawDFTemplate, sendToCodeutils: Function } {
+		const result: RawDFTemplate = { blocks: [], name: `${this.name}`, author: this.author };
 		let compressed: string = "";
 
 		for (const block of this._blocks) {
 			result.blocks.push(block.export());
 		}
-		
-		result.author = this.author;
-		result.name = this.name;
 
 		compressed = String.fromCharCode.apply(null, new Uint16Array(pako.gzip(JSON.stringify(result))) as unknown as []);
 		compressed = btoa(compressed);
