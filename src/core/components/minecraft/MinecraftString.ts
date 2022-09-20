@@ -69,6 +69,8 @@ export default class MinecraftString {
 	static readonly regex = /§[\dA-FK-OR].*?(?=§[\dA-FK-OR])|§[\dA-FK-OR].*/gi;
 	static readonly colorRegex = /§[\dA-F].*?(?=§[\dA-F])|§[\dA-F].*/gi;
 	static readonly styleRegex = /§[K-OR].*?(?=§[K-OR])|§[K-OR].*/gi;
+	static readonly javaStringLimit = 2_147_483_647;
+	static readonly mcStringLimit = 262144;
 
 	/**
 	 * The segments of the Minecraft string.
@@ -81,9 +83,14 @@ export default class MinecraftString {
 	 * Construct a Minecraft string from a string of text,
 	 * can include color and style codes.
 	 * @param text The text to parse.
+	 * @param unsafe Test the length against the Java string limit instead of Minecraft's.
 	 */
-	constructor(text: string) {
+	constructor(text: string, unsafe: boolean=false) {
 		text = `§f${text}`;
+		if(text.length > MinecraftString.mcStringLimit || text.length > MinecraftString.javaStringLimit) {
+			if(unsafe) throw new Error(`A Minecraft string shouldn't surpass the Java String limit. Overshot by ${MinecraftString.javaStringLimit-text.length} chars, includes 2 chars for the default text color "§f".`);
+			else throw new Error(`String too big. limit is ${MinecraftString.mcStringLimit} chars. Overshot by ${MinecraftString.mcStringLimit-text.length} chars, includes 2 chars for the default text color "§f".`)
+		}
 		this.raw = text;
 		const colorSegments = text.match(MinecraftString.colorRegex);
 		if(!colorSegments) throw new Error("??? what the..");
