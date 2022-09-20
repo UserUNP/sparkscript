@@ -1,5 +1,5 @@
 import Block, { RawDFBlock } from "./Block";
-import pako from "pako";
+import zlib from "node:zlib";
 import WebSocket from 'ws';
 
 export interface RawDFTemplate {
@@ -28,13 +28,9 @@ export default class Template {
 	export(): { compressed: string, serialized: RawDFTemplate, sendToCodeutils: Function } {
 		const result: RawDFTemplate = { blocks: [], name: `${this.name}`, author: this.author };
 		let compressed: string = "";
+		for (const block of this._blocks) result.blocks.push(block.export());
+		compressed = zlib.gzipSync(JSON.stringify(result)).toString("base64");
 
-		for (const block of this._blocks) {
-			result.blocks.push(block.export());
-		}
-
-		compressed = String.fromCharCode.apply(null, new Uint16Array(pako.gzip(JSON.stringify(result))) as unknown as []);
-		compressed = btoa(compressed);
 		return {
 			compressed,
 			serialized: result,

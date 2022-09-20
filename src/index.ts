@@ -1,5 +1,4 @@
-
-import pako			from "pako";
+import zlib 		from "node:zlib";
 import WebSocket	from 'ws';
 import utils		from "./utilities"; export { utils }
 
@@ -87,11 +86,11 @@ function quickEditor(name: string|false, callback: (editor: Ieditor, settings: I
 }
 
 quickEditor.from = (raw: string, callback?: (editor: Ieditor, settings: Isettings) => void): Template => {
-	const data = JSON.parse(String.fromCharCode.apply(null, new Uint16Array(pako.inflate(new Uint8Array(atob(raw).split('').map(function(e) {return e.charCodeAt(0);})))) as unknown as []).replace(/Â§/g,'\u00A7')) as RawDFTemplate;
-	const template = new Template("untitled");
-	for(const block of data.blocks) {
-		template.push(Block.from(block));
-	}
+	const data: RawDFTemplate = JSON.parse(zlib.gunzipSync(Buffer.from(raw, "base64")).toString()) as RawDFTemplate;
+	
+	const template = new Template(data.name ?? false);
+	for(const block of data.blocks) template.push(Block.from(block));
+	
 	return quickEditor(template.name, (e, s) => {
 		e._from(template);
 		if(callback) callback(e, s);
