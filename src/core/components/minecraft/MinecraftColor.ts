@@ -42,7 +42,7 @@ export default class MinecraftColor {
         "7": "gray",
         "8": "dark_gray",
         "0": "black"
-	} as {[code:string]:string};
+	} as Record<string, string>;
 
 
 	/**
