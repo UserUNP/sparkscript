@@ -1,3 +1,3 @@
-type DFVarScopes = "local" | "game" | "save";
+type DFVarScopes = "game" | "unsaved" | "save";
 
 export default DFVarScopes;
