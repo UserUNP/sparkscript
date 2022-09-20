@@ -6,12 +6,12 @@ Check out [DiamondFire](https://mcdiamondfire.com), its pretty cool.
 [![gh-actions](https://github.com/UserUNP/sparkscript/actions/workflows/sparkscript.yml/badge.svg)](https://github.com/UserUNP/sparkscript/actions/workflows/sparkscript.yml)
 [![gh-actions](https://github.com/UserUNP/sparkscript/actions/workflows/codeql.yml/badge.svg)](https://github.com/UserUNP/sparkscript/actions/workflows/codeql.yml)  
 [![npm-sparkscript](https://nodei.co/npm/sparkscript.png)](https://npmjs.org/package/sparkscript)  
-***Warning***: *No stable version yet..*  
+***Warning***: *No stable version yet.. everything might flop and/or change*  
 
 Example: *for current git build*
 ```javascript
-// import df from "sparkscript";
 // import the quick editor
+// import df from "sparkscript";
 const df = require("sparkscript").default;
 
 const template = df("Test template", (e, s) =>{
@@ -32,6 +32,28 @@ const template = df("Test template", (e, s) =>{
 const code = template.export();
 console.log(code.compressed);
 ```
+What i want next release: *subject to change*
+```javascript
+const df = require("sparkscript").default;
+
+const core = df("core", (e, s) => {
+  s.library = true;
+  s.lib.default(); // generate the base
+  s.lib.args = [
+    s.lib.arg("message", df.TEXT, "message to send"),
+    s.lib.arg("times", df.NUM, "*insert short description*")
+  ]
+
+  e.repeat.multiple(s.lib.get("times"), (loop) => {
+    loop.player.action("SendMessage", s.lib.get("message"))
+  });
+});
+
+const template = df.assembleLibrary(">> how2df !!1", core, template_1, template_2/* ... etc */)
+const code = template.export();
+console.log(code.compressed);
+```
+
 
 Key features:  
 \> Read from template data with `require( )...from( )`.  

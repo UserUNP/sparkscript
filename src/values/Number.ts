@@ -1,4 +1,6 @@
-import Value from "../components/Value";
+import Value from "../core/components/Value";
+
+export type num = `${number}`;
 
 export default class Number extends Value {
 	/**
@@ -6,6 +8,6 @@ export default class Number extends Value {
 	 * @param number Number.
 	 */
 	constructor(public number: number, slot?: number) {
-		super("num", { name: String(number) }, slot);
+		super("num", { name: `${number}` as num } as {name: num}, slot);
 	}
 }

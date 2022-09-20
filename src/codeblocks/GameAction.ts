@@ -1,5 +1,5 @@
-import Block from "../components/Block";
-import Value from "../components/Value";
+import Block from "../core/components/Block";
+import Value from "../core/components/Value";
 
 export default class GameAction extends Block {
 	/**

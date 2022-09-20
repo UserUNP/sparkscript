@@ -1,6 +1,25 @@
-import Value from "../components/Value";
-import MinecraftString from "../components/minecraft/MinecraftString";
-import nbt = require("nbt-ts");
+import Value from "../core/components/Value";
+import MinecraftString from "../core/components/minecraft/MinecraftString";
+import nbt from "nbt-ts";
+
+type ValuesOf<T> = T[keyof T];
+
+export interface Imetadata {
+	id: `minecraft:${string}`;
+	Count: nbt.Byte;
+	tag: {
+		Tags: string[];
+		PublicBukkitValues: {
+			[key: `hypercube:${string}`]:	| number
+											| bigint
+											| string
+		}
+		display: {
+			Name: string | MinecraftString,
+			Lore: (string | MinecraftString)[]
+		}
+	}
+}
 
 export default class MinecraftItem extends Value {
 	
@@ -10,9 +29,11 @@ export default class MinecraftItem extends Value {
 	 * @param id Item ID name.
 	 * @param name Item name.
 	 */
-	constructor(public count: number, public id: string, public name: string | MinecraftString, slot?: number) {
-		id = `minecraft:${id.replace("minecraft:", "")}`;
-		if(typeof name === "string") name = new MinecraftString(name);
+	constructor(public id: Imetadata["id"], public count: number, public name: Imetadata["tag"]["display"]["Name"], slot?: number) {
+		if(typeof name === "string") {
+			name = name.indexOf("minecraft:") == -1 ? `minecraft:${name}` : name
+			name = new MinecraftString(name);
+		}
 		super("item", { item: {
 			id,
 			Count: new nbt.Byte(count),
@@ -20,20 +41,21 @@ export default class MinecraftItem extends Value {
 				Tags: [],
 				PublicBukkitValues: {},
 				display: {
-					//! i hate mojangson.
-					Name: JSON.stringify(name.export())
+					Name: JSON.stringify(name.export()),
+					Lore: []
 				}
 			}
-		} }, slot);
+		} as Imetadata } as {item: Imetadata}, slot);
 	}
 
-	setTag(key: string, value: string|number|boolean): MinecraftItem {
-		if(this.data) this.data.raw.item.tag.PublicBukkitValues[`hypercube:${key}`] = typeof value==="number"?nbt.parse(`${value}d`):nbt.parse(`"${value}"`);
+	setTag(key: string, value: ValuesOf<Imetadata["tag"]["PublicBukkitValues"]>): MinecraftItem {
+		this.data.raw.item.tag.PublicBukkitValues[`hypercube:${key}`] =	
+			typeof value==="number" ? new nbt.Int(value).value : `${value}`;
 		return this;
 	}
 
 	setVanillaTag(tag: string) {
-		if(this.data) this.data.raw.item.tag.Tags.push(`${tag}`);
+		this.data.raw.item.tag.Tags.push(`${tag}`);
 		return this;
 	}
 
