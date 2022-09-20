@@ -4,8 +4,8 @@ const raw = "H4sIAAAAAAAAA42PzQrCQAyEX6Xm3INe9wlEUATxJEViN9TidiO78Y+y72627UVE8BQ
 
 // pirate the template, lol
 const template = df.from(raw, (e, s) => {
-	s.author = "UserUNP";
-	s.name = "Example Template";
+  s.author = "UserUNP";
+  s.name = "Example Template";
 });
 
 const code = template.export();
