@@ -1,6 +1,6 @@
 import Value from "../core/components/Value";
 
-export type text = string;
+export type txt = string;
 
 export default class Text extends Value {
 	/**
@@ -8,6 +8,6 @@ export default class Text extends Value {
 	 * @param text The text.
 	 */
 	constructor(public text: string, slot?: number) {
-		super("txt", { name: text as text } as {name: text}, slot);
+		super("txt", { name: text as txt } as {name: txt}, slot);
 	}
 }
