@@ -30,7 +30,6 @@ import GameAction	from "./codeblocks/GameAction";		export {GameAction};
 import Func			from "./codeblocks/Func";			export {Func};
 
 // Quick editor & playground.
-
 import mapper, { getActionOwner }		from "./mapper";
 import getEditor						from "./editor/quickeditor";
 import getEditorSettings, { Isettings }	from "./editor/qeSettings";
@@ -44,7 +43,7 @@ import Ieditor 							from "./editor/Iquickeditor";
 function quickEditor(name: string|false, callback: (editor: Ieditor, settings: Isettings) => void): Template {
 	if(!name) name = "untitled";
 	const template = new Template(name);
-	const actDefs: {[name: string]: (()=>void)|string} = {};
+	const actDefs: {[name: string]: ((...args: any[])=>void)|string} = {};
 
 	function doCustomAction(name: string, ...args: any[]) {
 		if(actDefs[name]) {
@@ -59,10 +58,7 @@ function quickEditor(name: string|false, callback: (editor: Ieditor, settings: I
 				});
 				const instance = mapper(actionOwnerType, action || "", parsedArgs);
 				template.push(instance as Block);
-			} else {
-				//@ts-ignore
-				action(...args);
-			}
+			} else action(...args);
 		} else throw new Error(`Action ${name} is not defined.`);
 	};
 	Object.keys(actDefs).forEach((name: string) => {
