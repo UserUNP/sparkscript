@@ -1,5 +1,4 @@
-# Sparkscript
-### Simple to use DiamondFire library for Javascript.
+## Simple to use DiamondFire library for Javascript.
 
 Check out [DiamondFire](https://mcdiamondfire.com), its pretty cool.  
 
@@ -17,8 +16,9 @@ const df = require("sparkscript").default;
 const template = df("Test template", (e, s) =>{
   // e short for "editor"
   // s short for "settings" 
-  e.defAction("give_items", (/* args */) => {
-    e.player.action("SetHotbar", e.mc(1, "cod", "§b§l<-§c§okiller fish§b§l->"), e.mc(1, "bow", "§b§l<-§c§ole bow§b§l->"))
+  e.defAction("give_items", (/* args */) => { //! strings & numbers get parsed into their respective df values
+    e.player.action("SetHotbar", e.mc(1, "cod", "§b§l<-§c§o killer fish §b§l->"), e.mc(1, "bow", "§b§l<-§c§o le bow §b§l->"))
+    //* you can use & for other things. use § for color codes
   });
 
   e.player.event("Join");
@@ -42,10 +42,11 @@ const core = df("core", (e, s) => {
   s.lib.args = [
     s.lib.arg("message", df.TEXT, "message to send"),
     s.lib.arg("times", df.NUM, "*insert short description*")
-  ]
+  ];
+  s.lib.icon = "cod";
 
   e.repeat.multiple(s.lib.get("times"), (loop) => {
-    loop.player.action("SendMessage", s.lib.get("message"))
+    loop.player.action("SendMessage", s.lib.get("message"));
   });
 });
 
@@ -56,7 +57,7 @@ console.log(code.compressed);
 
 
 Key features:  
-\> Read from template data with `require( )...from( )`.  
+\> Read from template data with `require( ).default.from( )`.  
 \> ~~Read & compile from Spark file, buffer or string.~~ **_not anytime soon._**  
 \> Easy to use template editor.  
 
