@@ -8,3 +8,4 @@ export enum DFVarType {
 	LIST,
 	DICT,
 }
+//? the types that a variable can be, not the type of values.
