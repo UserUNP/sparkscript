@@ -1,7 +1,7 @@
 export default class MinecraftColor {
 
 	/**
-	 * Object containing the Minecraft color codes and their corresponding hex values.
+	 * Object map containing the Minecraft color codes and their corresponding hex values.
 	 */
 	static readonly colors = {
         dark_red: ["AA","00","00"],
@@ -23,7 +23,7 @@ export default class MinecraftColor {
     } as {[name:string]:[string,string,string]};
 
 	/**
-	 * Object containing the Minecraft color codes and their corresponding names.
+	 * Object map containing the Minecraft color codes and their corresponding names.
 	 */
 	static readonly colorMap = {
 		"4": "dark_red",
@@ -42,17 +42,16 @@ export default class MinecraftColor {
         "7": "gray",
         "8": "dark_gray",
         "0": "black"
-	} as Record<string, string>;
-
+	};
 
 	/**
 	 * Returns a new MinecraftColor with the given color code.
 	 * @param code Minecraft color code.
 	 * @returns A new MinecraftColor.
 	 */
-	static fromCode(code: string) {
-		code = code.replace("§", "");
-		if(!MinecraftColor.colorMap[code]) throw new Error("Invalid color code");
+	static fromCode(code: keyof typeof MinecraftColor.colorMap) {
+		code = code.replace("§", "") as keyof typeof MinecraftColor.colorMap;
+		if(!MinecraftColor.colorMap[code]) throw new Error(`Invalid color code "${code}"`);
 		const color = MinecraftColor.colorMap[code];
 		const rgb = MinecraftColor.colors[color];
 		return new MinecraftColor(parseInt(rgb[0], 16), parseInt(rgb[1], 16), parseInt(rgb[2], 16));
@@ -64,9 +63,9 @@ export default class MinecraftColor {
 	 * @param hex Hex string representation of the color.
 	 * @returns A new MinecraftColor.
 	 */
-	static fromHex(hex: string) {
+	static fromHex(hex: `#${string}`) {
 		hex.replace("#", "");
-		if(hex.length !== 6) throw new Error("Invalid hex color");
+		if(hex.length !== 6) throw new Error(`Invalid hex color "${hex}". I don't think you need more than 6 characters for a hex color`);
 		const r = parseInt(hex.substr(0, 2), 16);
 		const g = parseInt(hex.substr(2, 2), 16);
 		const b = parseInt(hex.substr(4, 2), 16);
@@ -78,9 +77,9 @@ export default class MinecraftColor {
 	 * @param hexOrCode Hex string or Minecraft color code.
 	 * @returns A new MinecraftColor.
 	 */
-	static from(hexOrCode: string) {
-		if(hexOrCode.startsWith("#")) return MinecraftColor.fromHex(hexOrCode);
-		return MinecraftColor.fromCode(hexOrCode);
+	static from(hexOrCode: `#${string}` | keyof typeof MinecraftColor.colorMap) {
+		if(hexOrCode.startsWith("#")) return MinecraftColor.fromHex(hexOrCode as `#${string}`);
+		return MinecraftColor.fromCode(hexOrCode as keyof typeof MinecraftColor.colorMap);
 	}
 
 	constructor(...values: number[]);
@@ -91,28 +90,32 @@ export default class MinecraftColor {
 	 * @param blue Blue amount.
 	 */
 	constructor(public red: number, public green: number, public blue: number) {
-		if(red < 0 || red > 255) throw new Error("Expected red color to be in range 0 to 255, got "+red);
-		if(green < 0 || green > 255) throw new Error("Expected green color to be in range 0 to 255, got "+green);
-		if(blue < 0 || blue > 255) throw new Error("Expected blue color to be in range 0 to 255, got"+blue);
+		if(red < 0 || red > 255) throw new Error(`Expected red color to be in range 0 to 255, got ${red}`);
+		if(green < 0 || green > 255) throw new Error(`Expected green color to be in range 0 to 255, got ${green}`);
+		if(blue < 0 || blue > 255) throw new Error(`Expected blue color to be in range 0 to 255, got ${blue}`);
 	}
 
 	/**
 	 * Stringify the color into a readable format.
-	 * @param papermc PaperMC compatible string.
+	 * @param spigotmc Should turn into a SpigotMC compatible color code.
+	 * @param codeSymbol Character symbol to use for SpigotMC if true.
 	 * @returns Hex string representation of the color.
 	 */
-	toString(papermc: boolean = false) {
+	toString(spigotmc: boolean = false, codeSymbol: string = "&") {
 		const r = this.red.toString(16);
 		const g = this.green.toString(16);
 		const b = this.blue.toString(16);
-		if(papermc) { 
-			let result = "&x"
-			result += "&"+r.substring(0,1);
-			result += "&"+r.substring(1,2);
-			result += "&"+g.substring(0,1);
-			result += "&"+g.substring(1,2);
-			result += "&"+b.substring(0,1);
-			result += "&"+b.substring(1,2);
+		if(spigotmc) { 
+			const c = codeSymbol;
+			let result = `${c}x`
+			result += `${c}${r.substring(0,1)}`;
+			result += `${c}${r.substring(1,2)}`;
+
+			result += `${c}${g.substring(0,1)}`;
+			result += `${c}${g.substring(1,2)}`;
+			
+			result += `${c}${b.substring(0,1)}`;
+			result += `${c}${b.substring(1,2)}`;
 			return result;
 		}
 		return `#${r}${g}${b}`;
@@ -124,7 +127,7 @@ export default class MinecraftColor {
 	 */
 	toCode() {
 		for(const code in MinecraftColor.colorMap) {
-			const color = MinecraftColor.colorMap[code];
+			const color = MinecraftColor.colorMap[code as keyof typeof MinecraftColor.colorMap];
 			const rgb = MinecraftColor.colors[color];
 			if(this.red === parseInt(rgb[0], 16) && this.green === parseInt(rgb[1], 16) && this.blue === parseInt(rgb[2], 16)) return code;
 		}
