@@ -81,6 +81,7 @@ function quickEditor(name: string|false, callback: (editor: Ieditor, settings: I
 	return template;
 }
 
+// Import from raw data.
 quickEditor.from = (raw: string, callback?: (editor: Ieditor, settings: Isettings) => void): Template => {
 	const data: RawDFTemplate = JSON.parse(zlib.gunzipSync(Buffer.from(raw, "base64")).toString()) as RawDFTemplate;
 	
@@ -92,6 +93,17 @@ quickEditor.from = (raw: string, callback?: (editor: Ieditor, settings: Isetting
 		if(callback) callback(e, s);
 	});
 }
+
+// Variable types.
+import DFVarType from "./core/DFVarType";
+quickEditor.NEVER	= DFVarType.NEVER;
+quickEditor.ANY		= DFVarType.ANY;
+quickEditor.TXT		= DFVarType.TXT;
+quickEditor.NUM		= DFVarType.NUM;
+quickEditor.VAR		= DFVarType.VAR;
+quickEditor.ITEM	= DFVarType.ITEM;
+quickEditor.LIST	= DFVarType.LIST;
+quickEditor.DICT	= DFVarType.DICT;
 
 export default quickEditor;
 

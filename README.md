@@ -40,7 +40,7 @@ const core = df("core", (e, s) => {
   s.library = true;
   s.lib.default(); // generate the base
   s.lib.args = [
-    s.lib.arg("message", df.TEXT, "message to send"),
+    s.lib.arg("message", df.TXT, "message to send"),
     s.lib.arg("times", df.NUM, "*insert short description*")
   ];
   s.lib.icon = "cod";
