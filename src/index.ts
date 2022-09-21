@@ -3,7 +3,7 @@ import WebSocket	from 'ws';
 import utils		from "./utilities"; export { utils }
 
 // Components.
-import Template, { RawDFTemplate }	from './core/components/Template';							export {Template};
+import Template, { RawDFTemplate }		from './core/components/Template';							export {Template};
 import Block							from './core/components/Block';								export {Block};
 import Value							from './core/components/Value';								export {Value};
 import DataStorage						from './core/components/DataStorage';						export {DataStorage};
@@ -32,9 +32,9 @@ import Func			from "./codeblocks/Func";			export {Func};
 // Quick editor & playground.
 
 import mapper, { getActionOwner }		from "./mapper";
-import getEditor						from "./quickeditor";
-import getEditorSettings, { Isettings }	from "./qeSettings";
-import Ieditor 							from "./Iquickeditor";
+import getEditor						from "./editor/quickeditor";
+import getEditorSettings, { Isettings }	from "./editor/qeSettings";
+import Ieditor 							from "./editor/Iquickeditor";
 
 /**
  * New template.
