@@ -1,20 +1,20 @@
-import Template			from "./core/components/Template";
+import Template			from "../core/components/Template";
 
-import MinecraftItem	from "./values/MinecraftItem";
-import Text			 	from './values/Text';
-import Number			from './values/Number';
-import Variable			from './values/Variable';
-import Location			from "./values/Location";
-import Potion			from "./values/Potion";
-import GameValue		from "./values/GameValue";
-import Vector 			from "./values/Vector";
+import MinecraftItem	from "../values/MinecraftItem";
+import Text			 	from '../values/Text';
+import Number			from '../values/Number';
+import Variable			from '../values/Variable';
+import Location			from "../values/Location";
+import Potion			from "../values/Potion";
+import GameValue		from "../values/GameValue";
+import Vector 			from "../values/Vector";
 
-import { PlayerAction, PlayerEvent }	from "./codeblocks/Player";
-import { EntityAction, EntityEvent }	from "./codeblocks/Entity";
-import { SetVariable }					from "./codeblocks/SetVariable";
-import SelectObject						from "./codeblocks/SelectObject";
-import GameAction						from "./codeblocks/GameAction";
-import Func								from "./codeblocks/Func";
+import { PlayerAction, PlayerEvent }	from "../codeblocks/Player";
+import { EntityAction, EntityEvent }	from "../codeblocks/Entity";
+import { SetVariable }					from "../codeblocks/SetVariable";
+import SelectObject						from "../codeblocks/SelectObject";
+import GameAction						from "../codeblocks/GameAction";
+import Func								from "../codeblocks/Func";
 
 import Ieditor	from "./Iquickeditor";
 
@@ -28,8 +28,10 @@ function getEditor(template: Template, customAction: { actDefs: actDefs, doCusto
 			template._blocks = other.blocks;
 		},
 
-		getTemplate: () => {
-			return template;
+		getTemplate: () => template,
+
+		get: (index: number) => {
+			return template.blocks[index] ?? null;
 		},
 
 		//* Spark stuff.

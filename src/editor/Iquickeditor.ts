@@ -3,6 +3,7 @@ import DFVarScopes		from	"../core/DFVarScopes";
 
 import Template			from "../core/components/Template";
 import Value 			from "../core/components/Value";
+import Block			from "../core/components/Block";
 import MinecraftString	from "../core/components/minecraft/MinecraftString";
 
 import MinecraftItem	from "../values/MinecraftItem";
@@ -14,17 +15,26 @@ import Potion			from "../values/Potion";
 import GameValue		from "../values/GameValue";
 import Vector 			from "../values/Vector";
 
-type action_definition = {
+type DefineAction = {
 	/**
 	 * @param name Name of this action
 	 * @param callback Callback for when this action is executed.
 	 */
-	(name: string, callback: ()=>void): void;
+	(name: string, callback: (...args: any[])=>void): void;
 	/**
 	 * @param name Name of this action
 	 * @param action Action to perform when this action is executed.
 	 */
 	(name: string, action: string): void;
+}
+
+type GetCodeblock = {
+	/**
+	 * Get codeblock by index in order.
+	 * @param index Codeblock index, indexes start at 0.
+	 */
+	(index: number): Block;
+	//TODO: get by name
 }
 
 export default interface editor {
@@ -34,20 +44,23 @@ export default interface editor {
 	 */
 	_from: (template: Template) => void;
 
+	/**
+	 * Get the current template.
+	 */
 	getTemplate: () => Template;
+
+	get: GetCodeblock;
 
 	/**
 	 * Define an action.
 	 */
-	defAction: action_definition;
+	defAction: DefineAction;
 	/**
 	 * Perform a *pre-defined* action.
 	 * @param name Name of the action.
 	 * @param args Arguments to pass to the action.
 	 */
-	action: {
-		[name: string]: (...args: any[]) => void;
-	};
+	action: { [name: string]: (...args: any[]) => void; };
 
 	/**
 	 * Create a Minecraft item value.
