@@ -31,6 +31,7 @@
 		"noUnusedParameters": true,
 		"resolveJsonModule": true, /* Enable importing .json files */
 		"allowJs": true, /* Allow JavaScript files to be a part of your program. Use the `checkJS` option to get errors from these files. */
+		"strictPropertyInitialization": true,
 	},
 	"exclude": [
 		"node_modules",
