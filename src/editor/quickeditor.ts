@@ -18,7 +18,7 @@ import Func								from "../codeblocks/Func";
 
 import Ieditor	from "./Iquickeditor";
 
-type actDefs = {[name: string]: (()=>void)|string};
+type actDefs = Record<string, (()=>void) | string>;
 
 function getEditor(template: Template, customAction: { actDefs: actDefs, doCustomAction: (name: string, ...args: any[]) => any }): Ieditor {
 	const actDefs = customAction.actDefs;

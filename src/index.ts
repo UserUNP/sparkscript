@@ -31,7 +31,7 @@ import Func			from "./codeblocks/Func";			export {Func};
 
 // Quick editor & playground.
 import mapper, { getActionOwner }		from "./mapper";
-import getEditor						from "./editor/quickeditor";
+import getEditor						from "./editor/quickeditor"; export { getEditor }
 import getEditorSettings, { Isettings }	from "./editor/qeSettings";
 import Ieditor 							from "./editor/Iquickeditor";
 
