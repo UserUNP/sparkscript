@@ -1,3 +1,6 @@
+import MCColor from "../../MCColor";
+import MCColorCode from "../../MCColorCode";
+
 export default class MinecraftColor {
 
 	/**
@@ -20,29 +23,29 @@ export default class MinecraftColor {
         gray: ["AA","AA","AA"],
         dark_gray: ["55","55","55"],
         black: ["00","00","00"]
-    } as {[name:string]:[string,string,string]};
+    } as Record<string, [string,string,string]>;
 
 	/**
 	 * Object map containing the Minecraft color codes and their corresponding names.
 	 */
 	static readonly colorMap = {
-		"4": "dark_red",
-        "c": "red",
-        "6": "gold",
-        "e": "yellow",
+		"1": "dark_blue",
         "2": "dark_green",
-        "a": "green",
-        "b": "aqua",
         "3": "dark_aqua",
-        "1": "dark_blue",
-        "9": "blue",
-        "d": "light_purple",
+		"4": "dark_red",
         "5": "dark_purple",
-        "f": "white",   
+        "6": "gold",
         "7": "gray",
         "8": "dark_gray",
-        "0": "black"
-	};
+        "9": "blue",
+        "0": "black",
+        "a": "green",
+        "b": "aqua",
+        "c": "red",
+        "d": "light_purple",
+        "e": "yellow",
+        "f": "white",
+	} as Record<MCColorCode, MCColor>;
 
 	/**
 	 * Returns a new MinecraftColor with the given color code.
@@ -101,7 +104,7 @@ export default class MinecraftColor {
 	 * @param codeSymbol Character symbol to use for SpigotMC if true.
 	 * @returns Hex string representation of the color.
 	 */
-	toString(spigotmc: boolean = false, codeSymbol: string = "&") {
+	toString<T extends boolean = false>(spigotmc: T, codeSymbol: string = "&"): T extends true ? string :`#${string}` {
 		const r = this.red.toString(16);
 		const g = this.green.toString(16);
 		const b = this.blue.toString(16);
@@ -116,7 +119,7 @@ export default class MinecraftColor {
 			
 			result += `${c}${b.substring(0,1)}`;
 			result += `${c}${b.substring(1,2)}`;
-			return result;
+			return result as T extends true ? string : `#${string}`;
 		}
 		return `#${r}${g}${b}`;
 	}

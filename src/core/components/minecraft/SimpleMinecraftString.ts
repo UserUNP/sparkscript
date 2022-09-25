@@ -2,22 +2,22 @@ import MinecraftColor from "./MinecraftColor";
 import { Byte } from "nbt-ts";
 
 export interface SimpleRawMCString {
-	text: string,
-	color: string,
-	bold: boolean | Byte,
-	italic: boolean | Byte,
-	underlined: boolean | Byte,
-	strikethrough: boolean | Byte,
-	obfuscated: boolean | Byte,
+	text: string;
+	color: `#${string}`;
+	bold: boolean | Byte;
+	italic: boolean | Byte;
+	underlined: boolean | Byte;
+	strikethrough: boolean | Byte;
+	obfuscated: boolean | Byte;
 }
 
 interface options {
-	color?: MinecraftColor,
-	bold?: boolean,
-	italic?: boolean,
-	underlined?: boolean,
-	strikethrough?: boolean,
-	obfuscated?: boolean
+	color?: MinecraftColor;
+	bold?: boolean;
+	italic?: boolean;
+	underlined?: boolean;
+	strikethrough?: boolean;
+	obfuscated?: boolean;
 }
 
 export default class SimpleMinecraftString {
@@ -49,14 +49,15 @@ export default class SimpleMinecraftString {
 	 * @returns The serialized version of this string.
 	 */
 	export(nbt: boolean = false): SimpleRawMCString {
+		const ifNBT = (property: Exclude<keyof options, "color">) => nbt ? new Byte(this[property] ? 1 : 0) : this[property]; 
 		return {
 			text: this.text,
-			color: this.color.toString(),
-			bold: nbt ? new Byte(this.bold?1:0) : this.bold,
-			italic: nbt ? new Byte(this.italic?1:0) : this.italic,
-			underlined: nbt ? new Byte(this.underlined?1:0) : this.underlined,
-			strikethrough: nbt ? new Byte(this.strikethrough?1:0) : this.strikethrough,
-			obfuscated: nbt ? new Byte(this.obfuscated?1:0) : this.obfuscated
+			color: this.color.toString(false),
+			bold: ifNBT("bold"),
+			italic: ifNBT("italic"),
+			underlined: ifNBT("underlined"),
+			strikethrough: ifNBT("strikethrough"),
+			obfuscated: ifNBT("obfuscated")
 		};
 	}
 
@@ -70,8 +71,8 @@ export default class SimpleMinecraftString {
 		let styles = [];
 		if (this.bold) styles.push("l");
 		if (this.italic) styles.push("o");
+		if (this.strikethrough) styles.push("m");
 		if (this.underlined) styles.push("n");
-		if (this.strikethrough) styles.push("s");
 		if (this.obfuscated) styles.push("k");
 		return `${altCode?styles:""}${styles.join(altCode)}${color}${this.text}`;
 	}

@@ -1,3 +1,4 @@
+import MCColorCode from "../../MCColorCode";
 import MinecraftColor from "./MinecraftColor";
 import SimpleMinecraftString from "./SimpleMinecraftString";
 import { SimpleRawMCString } from "./SimpleMinecraftString";
@@ -95,7 +96,7 @@ export default class MinecraftString {
 		const colorSegments = text.match(MinecraftString.colorRegex);
 		if(!colorSegments) throw new Error("??? what the..");
 		for(let colorSegment of colorSegments) {
-			const color = MinecraftColor.fromCode(colorSegment.substring(1,2));
+			const color = MinecraftColor.fromCode(colorSegment.substring(1,2) as MCColorCode);
 			const styleSegments = colorSegment.match(MinecraftString.styleRegex);
 			
 			colorSegment = colorSegment.replace(new RegExp(`§${colorSegment.substring(1,2)}`, "g"), "");
