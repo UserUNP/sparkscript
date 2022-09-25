@@ -96,14 +96,16 @@ quickEditor.from = (raw: string, callback?: (editor: Ieditor, settings: Isetting
 
 // Variable types.
 import DFVarType from "./core/DFVarType";
-quickEditor.NEVER	= DFVarType.NEVER;
-quickEditor.ANY		= DFVarType.ANY;
-quickEditor.TXT		= DFVarType.TXT;
-quickEditor.NUM		= DFVarType.NUM;
-quickEditor.VAR		= DFVarType.VAR;
-quickEditor.ITEM	= DFVarType.ITEM;
-quickEditor.LIST	= DFVarType.LIST;
-quickEditor.DICT	= DFVarType.DICT;
+quickEditor.NEVER	= DFVarType.	NEVER;
+quickEditor.ANY		= DFVarType.	  ANY;
+quickEditor.TXT		= DFVarType.	  TXT;
+quickEditor.NUM		= DFVarType.	  NUM;
+quickEditor.VAR		= DFVarType.	  VAR;
+quickEditor.ITEM	= DFVarType.	 ITEM;
+quickEditor.LIST	= DFVarType.	 LIST;
+quickEditor.POT		= DFVarType.	  POT;
+quickEditor.SND		= DFVarType.	  SND;
+quickEditor.DICT	= DFVarType.	 DICT;
 
 export default quickEditor;
 
