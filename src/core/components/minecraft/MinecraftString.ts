@@ -1,7 +1,9 @@
-import MCColorCode from "../../MCColorCode";
+import MCStyleCode from "../../MCStyleCode";
+import MCStyle from "../../MCStyle";
 import MinecraftColor from "./MinecraftColor";
 import SimpleMinecraftString from "./SimpleMinecraftString";
 import { SimpleRawMCString } from "./SimpleMinecraftString";
+import MCColorCode from "../../MCColorCode";
 
 export type RawMCString = SimpleRawMCString[];
 
@@ -11,13 +13,13 @@ export default class MinecraftString {
 	 * Object containing the style codes and their corresponding style.
 	 */
 	static readonly styleMap = {
-		"r": "reset",
-		"k": "obfuscated",
 		"l": "bold",
-		"n": "underlined",
 		"o": "italic",
-		"m": "strikethrough"
-	} as {[code:string]:string};
+		"m": "strikethrough",
+		"n": "underlined",
+		"k": "obfuscated",
+		"r": "reset",
+	} as Record<MCStyleCode, MCStyle>
 
 	/**
 	 * Apply the obfuscated style to the string.
@@ -102,7 +104,7 @@ export default class MinecraftString {
 			colorSegment = colorSegment.replace(new RegExp(`§${colorSegment.substring(1,2)}`, "g"), "");
 			if(styleSegments) colorSegment = colorSegment.replace(new RegExp(`${styleSegments.join("|")}`, "g"), "");
 
-			const colorSegmentStyle: {[key:string]:MinecraftColor|boolean} = {
+			const colorSegmentStyle = {
 				color,
 				obfuscated: false,
 				bold: false,
@@ -113,9 +115,9 @@ export default class MinecraftString {
 
 			if(colorSegment.length > 0) this.segments.push(new SimpleMinecraftString(colorSegment, { color }));
 			if(styleSegments) for(let styleSegment of styleSegments) {
-				const style = MinecraftString.styleMap[styleSegment.substring(1,2)];
-				styleSegment = styleSegment.replace(new RegExp(`§${styleSegment.substring(1,2)}`, "g"), "");
+				const style = MinecraftString.styleMap[styleSegment.substring(1,2) as MCStyleCode] as Exclude<MCStyle, "reset">;
 				colorSegmentStyle[style] = true;
+				styleSegment = styleSegment.replace(new RegExp(`§${styleSegment.substring(1,2)}`, "g"), "");
 				if(styleSegment.length > 0) this.segments.push(new SimpleMinecraftString(styleSegment, {...colorSegmentStyle, [style]: true }));
 				colorSegment = colorSegment.replace(styleSegment, "");
 			}

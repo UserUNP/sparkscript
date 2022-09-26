@@ -1,6 +1,9 @@
 
 import Value from "./core/components/Value";
-import Block from "./core/components/Block";
+import { RawDFValueDataRecord } from "./core/components/DataStorage";
+
+import DFBlockCodename from "./core/DFBlockCodename";
+import DFValueCodename from "./core/DFValueCodename";
 
 import { PlayerAction, PlayerEvent } from "./codeblocks/Player";
 import { EntityEvent, EntityAction } from "./codeblocks/Entity";
@@ -15,83 +18,97 @@ import Variable from "./values/Variable";
 import Location from "./values/Location";
 import Potion from "./values/Potion";
 import GameValue from "./values/GameValue";
+import MinecraftItem from "./values/MinecraftItem";
 import Vector from "./values/Vector";
 
-const blockMap: { [key: string]: any } = {
-	"event": PlayerEvent,
-	"player_action": PlayerAction,
-	"entity_event": EntityEvent,
-	"entity_action": EntityAction,
-	"set_var": SetVariable,
-	"select_obj": SelectObject,
-	"game_action": GameAction,	
-	"func": Func
-	
+const blockMap = {
+	"event": (e: string,_: Value[]) => new PlayerEvent(e),
+	"player_action": (act: string, args: Value[]) => new PlayerAction(act, ...args),
+	"entity_event": (e: string,_: Value[]) => new EntityEvent(e),
+	"entity_action": (act: string, args: Value[]) => new EntityAction(act, ...args),
+	"set_var": (act: string, args: Value[]) => new SetVariable(act, ...args),
+	"select_obj": (cond: string, args: Value[]) => new SelectObject(cond, ...args),
+	"game_action": (act: string, args: Value[]) => new GameAction(act, ...args),	
+	"func": (name: string, args: Value[]) => new Func(name, ...args),
 } as const;
 
-const valueMap: { [key: string]: any } = {
-	"txt": Text,
-	"num": Number,
-	"var": Variable,
-	"loc": Location,
-	"pot": Potion,
-	"g_val": GameValue,
-	"vec": Vector
+const valueMap = {
+	"txt": (v: RawDFValueDataRecord, s?: number) => new Text(v.name, s),
+	"num": (v: RawDFValueDataRecord, s?: number) => new Number(v.name, s),
+	"var": (v: RawDFValueDataRecord, s?: number) => new Variable(v.name, v.scope, s),
+	"loc": (v: RawDFValueDataRecord, s?: number) => new Location(v.loc.x, v.loc.y, v.loc.z, v.loc.pitch, v.loc.yaw, s),
+	"pot": (v: RawDFValueDataRecord, s?: number) => new Potion(v.pot, v.dur, v.amp, s),
+	"g_val": (v: RawDFValueDataRecord, s?: number) => new GameValue(v.type, v.target, s),
+	"item": (v: RawDFValueDataRecord, s?: number) => MinecraftItem.fromNBT(v.item, s),
+	"vec": (v: RawDFValueDataRecord, s?: number) => new Vector(v.x, v.y, v.z, s),
 } as const;
 
-export function blockMapper(type: string, action: string, args: Value[]): Block {
-	const clazz = blockMap[type];
-	switch(clazz) {
-
-		case PlayerEvent: return new clazz(action);
-		case PlayerAction: return new clazz(action, ...args);
-		case SelectObject: return new clazz(action, ...args);
-		case EntityEvent: return new clazz(action, ...args);
-		case EntityAction: return new clazz(action, ...args);
-		case GameAction: return new clazz(action, ...args);
-		case SetVariable: return new clazz(action, ...args);
-		case Func: return new clazz(action, ...args);
-
-		default: throw new Error(`Unknown block type: ${type}`);
-	}
+export function blockMapper<T extends DFBlockCodename>(type: T, actionOrData: string, args: Value[]): ReturnType<typeof blockMap[T]> {
+	const constructor = blockMap[type];
+	if(!constructor) throw new Error(`Type "${type}" cannot be recongized as a DiamondFire block type. Template may be corrupted or invalid.`)
+	return constructor(actionOrData, args) as ReturnType<typeof blockMap[T]>;
 }
 
-export function valueMapper(type: string, value:{[key:string]:any}, slot?: number): Value {
-	const clazz = valueMap[type];
-	switch(clazz) {
-
-		case Text: return new clazz(value.name, slot);
-		case Number: return new clazz(value.name, slot);
-		case Variable: return new clazz(value.name, value.scope, slot);
-		case Location: return new clazz(value.loc.x, value.loc.y, value.loc.z, value.loc.pitch, value.loc.yaw, slot);
-		case Potion: return new clazz(value.pot, value.dur, value.amp, slot);
-		case GameValue: return new clazz(value.type, value.target, slot);
-		case Vector: return new clazz(value.x, value.y, value.z, slot);
-
-		default: throw new Error(`Unknown value type: ${type}`);
-	}
+export function valueMapper<T extends DFValueCodename>(type: T, value: RawDFValueDataRecord, slot?: number): ReturnType<typeof valueMap[T]> {
+	const constructor = valueMap[type];
+	if(!constructor) throw new Error(`Type "${type}" cannot be recongized as a DiamondFire value type. Template may be corrupted or invalid.`)
+	return constructor(value, slot) as ReturnType<typeof valueMap[T]>;
 }
 
-export function mapper(type: string, action: string, args: Value[]): Block;
-export function mapper(type: string, value: { [key: string]: any }, slot?: number): Value;
-export default function mapper(type: string, actOrVal: string|{[key:string]:any}, argsOrSlot: (number|undefined)|Value[]): Block|Value {
+/**
+ * ## Official sparkscript type mapper
+ * Convert DiamondFire's raw value or codeblock type to the respective sparkscript typeof class.  
+ * by @UserUNP
+ */
+export type SparkscriptMapper<T extends DFBlockCodename | DFValueCodename> = T extends DFBlockCodename ? ReturnType<typeof blockMap[T]> : T extends DFValueCodename ? ReturnType<typeof valueMap[T]> : never;
+
+/**
+ * Raw DiamondFire codeblock data -> Respective sparkscript type.
+ * @param type Block codename.
+ * @param action Block's action or data.
+ * @param args Arguments to put into the codeblock.
+ */
+ export function mapper<T extends DFBlockCodename>(type: T, action: string, args: Value[]): ReturnType<typeof blockMap[T]>;
+ /**
+  * Raw DiamondFire value data -> Respective sparkscript type.
+  * @param type Value codename.
+  * @param value Value's data.
+  * @param slot Value's slot in order. Indexes start at 0.
+  */
+ export function mapper<T extends DFValueCodename>(type: T, value: RawDFValueDataRecord, slot?: number): ReturnType<typeof valueMap[T]>;
+/**
+ * Raw DiamondFire data -> Respective sparkscript type.
+ * @param type Block/Value codename.
+ * @param actOrVal Block/Value action or data.
+ * @param argsOrSlot Codeblock's arguments or Value's slot.
+ */
+export default function mapper<T extends DFBlockCodename | DFValueCodename>(type: T, actOrVal: string|RawDFValueDataRecord, argsOrSlot: (number|undefined)|Value[]): SparkscriptMapper<T> {
 	// check if its for a block
 	if(typeof actOrVal === "string") {
 		const action = actOrVal;
 		const args = argsOrSlot as Value[];
-		return blockMapper(type, action, args);
+		return blockMapper(type as DFBlockCodename, action, args) as SparkscriptMapper<T>;
 	} else {
 		const value = actOrVal;
 		const slot = argsOrSlot as number;
-		return valueMapper(type, value, slot);
+		return valueMapper(type as DFValueCodename, value, slot) as SparkscriptMapper<T>;
 	}
 }
 
 import dump from "./actiondump.json";
 
-export function getCodeblockByType(type: string) {
-	const codeblock: any = dump.codeblocks.find(c => c.identifier === type);
+export function codeblockSupported(type: string): type is DFBlockCodename {
+	return Object.keys(blockMap).includes(type)
+}
+
+export function valueSupported(type: string): type is DFValueCodename {
+	return Object.keys(valueMap).includes(type)
+}
+
+export function getCodeblockByType(type: DFBlockCodename) {
+	const codeblock = dump.codeblocks.find(c => c.identifier === type);
 	if(!codeblock) return null;
+	if(!Object.keys(blockMap).includes(type)) console.warn(`[sparkscript] WARNING: Codeblock type "${codeblock}" is not implemented into the mapper`)
 	return codeblock;
 }
 
@@ -107,13 +124,13 @@ export function getActionOwner(action: string) {
 	return getCodeblockByName(actionName.codeblockName);
 }
 
-export function getCodeblockActions(type: string) {
+export function getCodeblockActions(type: DFBlockCodename) {
 	const codeblock = getCodeblockByType(type);
 	if(!codeblock) return [];
 	return dump.actions.filter(a => a.codeblockName === codeblock.name);
 }
 
-export function getCodeblockAction(type: string, name: string) {
+export function getCodeblockAction(type: DFBlockCodename, name: string) {
 	const codeblock = getCodeblockByType(type);
 	if(!codeblock) return null;
 	return dump.actions.find(a => a.codeblockName === codeblock.name && a.name === name);

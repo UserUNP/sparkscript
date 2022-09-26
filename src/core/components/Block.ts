@@ -1,6 +1,6 @@
 export interface RawDFBlock {
 	id: "block";
-	block: string;
+	block: DFBlockCodename;
 	args: { items: RawDFValue[] };
 	action?: string;
 	target?: string;
@@ -20,7 +20,7 @@ abstract class Block {
 	 * Create a new codeblock.
 	 * @param type Type of the codeblock.
 	 */
-	constructor(public type: string, public action: string, public args: Value[]=[]) {}
+	constructor(public type: DFBlockCodename, public action: string, public args: Value[]=[]) {}
 
 	/**
 	 * Export the codeblock to a JSON object.
@@ -39,4 +39,5 @@ abstract class Block {
 export default Block;
 
 import mapper from "../../mapper";
+import DFBlockCodename from "../DFBlockCodename";
 import Value, { RawDFValue } from "./Value";

@@ -13,6 +13,6 @@ export default class GameValue extends Value {
 	 * @param target The target of the value, "Default" is the default target.
 	 */
 	constructor(public value: Ig_val["type"], public target: Ig_val["target"] = "Default", slot?: number) {
-		super("Ig_val", { type: value, target } as Ig_val, slot);
+		super("g_val", { type: value, target } as Ig_val, slot);
 	}
 }

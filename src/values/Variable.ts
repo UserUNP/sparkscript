@@ -1,5 +1,5 @@
 import Value from "../core/components/Value";
-import DFVarScopes from "../core/DFVarScopes";
+import DFVarScope from "../core/DFVarScope";
 
 const varScopeMap: {[key: string]: string} = {
 	'local':'local',
@@ -11,7 +11,7 @@ const varScopeMap: {[key: string]: string} = {
 
 export interface Ivar {
 	name: string;
-	scope: DFVarScopes;
+	scope: DFVarScope;
 }
 
 export default class Variable extends Value {

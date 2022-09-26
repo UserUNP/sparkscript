@@ -1,5 +1,8 @@
+/**
+ * All types that a variable can be.
+ */
 enum DFVarType {
-	NEVER, //* use if you already know a var can't be set to anything
+	NEVER, //* use if you already know a var can't be set to anything, just like typescript's never type
 	ANY,
 	TXT,
 	NUM,
@@ -10,6 +13,5 @@ enum DFVarType {
 	SND,
 	DICT,
 }
-//? the types that a variable can be, not the type of values.
 
 export default DFVarType;

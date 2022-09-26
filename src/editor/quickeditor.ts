@@ -18,9 +18,13 @@ import Func								from "../codeblocks/Func";
 
 import Ieditor	from "./Iquickeditor";
 
-type actDefs = Record<string, (()=>void) | string>;
+type actDefs = Record<string, ((...args: any[])=>void) | string>;
 
-function getEditor(template: Template, customAction: { actDefs: actDefs, doCustomAction: (name: string, ...args: any[]) => any }): Ieditor {
+function getEditor(_template: Template|false, customAction: { actDefs: actDefs, doCustomAction: (name: string, ...args: any[]) => any }): Ieditor {
+	let template: Template;
+	if(!_template) template = new Template(false);
+	else template = _template;
+
 	const actDefs = customAction.actDefs;
 	const doCustomAction = customAction.doCustomAction;
 	const editor: Ieditor = {
@@ -44,8 +48,8 @@ function getEditor(template: Template, customAction: { actDefs: actDefs, doCusto
 		action: {},
 
 		//* Values.
-		item: (id, amount, name, slot?) => new MinecraftItem(id, amount, name, slot),
-		mc: (id, amount, name, slot?) => new MinecraftItem(id, amount, name, slot),
+		item: (id, name, amount, slot?) => new MinecraftItem(id, name, amount, slot),
+		mc: (id, name, amount, slot?) => new MinecraftItem(id, name, amount, slot),
 
 		text: (text, slot?) => new Text(text, slot),
 		txt: (txt, slot?) => new Text(txt, slot),

@@ -1,7 +1,7 @@
 export interface RawDFValue {
 	slot: number;
 	item: {
-		id: string;
+		id: DFValueCodename;
 		data: RawDFValueDataRecord
 	}
 }
@@ -22,7 +22,7 @@ abstract class Value {
 	 * @param value The value property.
 	 * @param slot Specific slot number.
 	 */
-	constructor(public type: string, value: { [x: string]: any }, public slot?: number) {
+	constructor(public type: DFValueCodename, value: RawDFValueDataRecord, public slot?: number) {
 		this.data = DataStorage.from(value);
 		this.data.assignOwner(this);
 	}
@@ -46,4 +46,5 @@ abstract class Value {
 export default Value;
 
 import mapper from "../../mapper";
+import DFValueCodename from "../DFValueCodename";
 import DataStorage, { RawDFValueDataRecord } from "./DataStorage";

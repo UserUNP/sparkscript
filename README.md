@@ -17,7 +17,7 @@ const template = df("Test template", (e, s) =>{
   // e short for "editor"
   // s short for "settings" 
   e.defAction("give_items", (/* args */) => { //! strings & numbers get parsed into their respective df values
-    e.player.action("SetHotbar", e.mc(1, "cod", "§b§l<-§c§o killer fish §b§l->"), e.mc(1, "bow", "§b§l<-§c§o le bow §b§l->"))
+    e.player.action("SetHotbar", e.mc("cod", "§b§l<-§c§o killer fish §b§l->"), e.mc("bow", "§b§l<-§c§o le bow §b§l->"))
     //* you can use & for other things. use § for color codes
   });
 

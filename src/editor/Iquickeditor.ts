@@ -1,5 +1,5 @@
 import DFTarget			from	"../core/DFTarget";
-import DFVarScopes		from	"../core/DFVarScopes";
+import DFVarScope		from	"../core/DFVarScope";
 
 import Template			from "../core/components/Template";
 import Value 			from "../core/components/Value";
@@ -68,11 +68,11 @@ export default interface editor {
 	 * @param id Item ID name.
 	 * @param name Item name.
 	 */
-	item: (id: `minecraft:${string}`, count: number, name: string | MinecraftString, slot?: number) => MinecraftItem;
+	item: (id: `minecraft:${string}`, name: string | MinecraftString, count: number, slot?: number) => MinecraftItem;
 	/**
 	 * Alias for `item(...)`.
 	 */
-	mc: (id: `minecraft:${string}`, count: number, name: string | MinecraftString, slot?: number) => MinecraftItem;
+	mc: (id: `minecraft:${string}`, name: string | MinecraftString, count: number, slot?: number) => MinecraftItem;
 
 	/**
 	 * Create a new text value.
@@ -97,8 +97,8 @@ export default interface editor {
 	 * @param slot Slot to put the value in.
 	 * @returns A new Variable value.
 	 */
-	variable: (name: string, scope: DFVarScopes, slot?: number) => Variable;
-	var: (name: string, scope: DFVarScopes, slot?: number) => Variable;
+	variable: (name: string, scope: DFVarScope, slot?: number) => Variable;
+	var: (name: string, scope: DFVarScope, slot?: number) => Variable;
 	/**
 	 * Create a new location value.
 	 * @param x X coordinate.
