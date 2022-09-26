@@ -8,7 +8,7 @@
 		"test": "npx jest tests/",
 		"cleanbuild": "npx rimraf ./dist && npx tsc && npx tscp",
 		"buildwatch": "npx rimraf ./dist && npx tscp && npx tsc -w",
-		"dos2unix": "find . -type f -print0 | xargs -0 dos2unix"
+		"crlfix": "find . -type f -print0 | xargs -0 dos2unix"
 	},
 	"author": "UserUNP",
 	"license": "ISC",
