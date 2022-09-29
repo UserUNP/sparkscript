@@ -23,7 +23,7 @@ export default class MinecraftColor {
         gray: ["AA","AA","AA"],
         dark_gray: ["55","55","55"],
         black: ["00","00","00"]
-    } as Record<string, [string,string,string]>;
+    } as Record<MCColor, [string,string,string]>;
 
 	/**
 	 * Object map containing the Minecraft color codes and their corresponding names.

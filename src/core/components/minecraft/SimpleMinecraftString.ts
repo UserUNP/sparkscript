@@ -11,7 +11,7 @@ export interface SimpleRawMCString {
 	obfuscated: boolean | Byte;
 }
 
-interface options {
+interface IsegmentOptions {
 	color?: MinecraftColor;
 	bold?: boolean;
 	italic?: boolean;
@@ -35,7 +35,7 @@ export default class SimpleMinecraftString {
 	 * @param options The options to apply to the string.
 	 * @returns A new Minecraft string with the given formatting.
 	 */
-	constructor(public text: string, options: options = {}) {
+	constructor(public text: string, options: IsegmentOptions = {}) {
 		this.bold = options.bold || false;
 		this.italic = options.italic || false;
 		this.underlined = options.underlined || false;
@@ -49,7 +49,7 @@ export default class SimpleMinecraftString {
 	 * @returns The serialized version of this string.
 	 */
 	export(nbt: boolean = false): SimpleRawMCString {
-		const ifNBT = (property: Exclude<keyof options, "color">) => nbt ? new Byte(this[property] ? 1 : 0) : this[property]; 
+		const ifNBT = (property: Exclude<keyof IsegmentOptions, "color">) => nbt ? new Byte(this[property] ? 1 : 0) : this[property]; 
 		return {
 			text: this.text,
 			color: this.color.toString(false),
