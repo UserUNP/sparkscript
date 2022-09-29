@@ -105,4 +105,12 @@ function getEditor(_template: Template|false, customAction: { actDefs: actDefs, 
 	};
 	return editor;
 }
+
+/**
+ * Quickly generate an editor.
+ */
+getEditor.q = (t?: Template) => {
+	return getEditor(t||false, {actDefs:{}, doCustomAction: ()=>undefined})
+}
+
 export default getEditor;

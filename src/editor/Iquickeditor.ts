@@ -60,7 +60,7 @@ export default interface editor {
 	 * @param name Name of the action.
 	 * @param args Arguments to pass to the action.
 	 */
-	action: { [name: string]: (...args: any[]) => void; };
+	action: Record<string, ((...args: any[])=>void) | string>;
 
 	/**
 	 * Create a Minecraft item value.
