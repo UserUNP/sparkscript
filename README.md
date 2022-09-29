@@ -1,6 +1,5 @@
-## Simple to use DiamondFire library for Javascript.
-
-Check out [DiamondFire](https://mcdiamondfire.com), its pretty cool.  
+## Simple to use DiamondFire library for Javascript.  
+__Check out [DiamondFire](https://mcdiamondfire.com), its pretty cool.__
 
 [![gh-actions](https://github.com/UserUNP/sparkscript/actions/workflows/sparkscript.yml/badge.svg)](https://github.com/UserUNP/sparkscript/actions/workflows/sparkscript.yml)
 [![gh-actions](https://github.com/UserUNP/sparkscript/actions/workflows/codeql.yml/badge.svg)](https://github.com/UserUNP/sparkscript/actions/workflows/codeql.yml)  
