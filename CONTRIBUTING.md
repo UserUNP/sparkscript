@@ -1,2 +1,2 @@
-Follow specified rules in `.editorconfig`,
-and please don't make a new line for curly braces.  
+Follow specified rules in `.editorconfig`, or use an extension to automatically apply them.  
+Don't type a new line for a curly bracket. Don't put semicolons on curly brackets.

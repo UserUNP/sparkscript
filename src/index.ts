@@ -60,7 +60,7 @@ function quickEditor(name: string|false, callback: (editor: Ieditor, settings: I
 				template.push(instance as Block);
 			} else action(...args);
 		} else throw new Error(`Action ${name} is not defined.`);
-	};
+	}
 	Object.keys(actDefs).forEach((name: string) => {
 		editor.action[name] = function(...args: any[]) {doCustomAction(name, ...args);};
 	});
