@@ -36,21 +36,20 @@ What i want next release: *subject to change*
 ```javascript
 const df = require("sparkscript").default;
 
-const core = df("core", (e, s) => {
-  s.library = true;
-  s.lib.default(); // generate the base
-  s.lib.args = [
+const core = df.lib("core", (e, s, arg) => {
+  // arg( ) used for referencing input variables
+  s.args = [
     s.lib.arg("message", df.TXT, "message to send"),
     s.lib.arg("times", df.NUM, "*insert short description*")
   ];
-  s.lib.icon = "cod";
+  s.icon = "cod";
 
-  e.repeat.multiple(s.lib.get("times"), (loop) => {
+  e.repeat.multiple(arg("times"), (loop) => {
     loop.player.action("SendMessage", s.lib.get("message"));
   });
 });
 
-const template = df.assembleLibrary(">> how2df !!1", core, template_1, template_2/* ... etc */)
+const template = df.lib.assemble(">> how2df !!1", core, template_1, template_2/* ... etc */)
 const code = template.export();
 console.log(code.compressed);
 ```
