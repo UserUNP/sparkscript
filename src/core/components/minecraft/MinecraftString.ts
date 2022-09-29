@@ -2,7 +2,7 @@ import MCStyleCode from "../../MCStyleCode";
 import MCStyle from "../../MCStyle";
 import MinecraftColor from "./MinecraftColor";
 import SimpleMinecraftString from "./SimpleMinecraftString";
-import { SimpleRawMCString } from "./SimpleMinecraftString";
+import { SimpleRawMCString, IsegmentOptions } from "./SimpleMinecraftString";
 import MCColorCode from "../../MCColorCode";
 
 export type RawMCString = SimpleRawMCString[];
@@ -19,7 +19,7 @@ export default class MinecraftString {
 		"n": "underlined",
 		"k": "obfuscated",
 		"r": "reset",
-	} as Record<MCStyleCode, MCStyle>
+	} as Record<MCStyleCode, MCStyle>;
 
 	/**
 	 * Apply the obfuscated style to the string.
@@ -91,8 +91,8 @@ export default class MinecraftString {
 	constructor(text: string, unsafe: boolean=false) {
 		text = `§f${text}`;
 		if(text.length > MinecraftString.mcStringLimit || text.length > MinecraftString.javaStringLimit) {
-			if(unsafe) throw new Error(`A Minecraft string shouldn't surpass the Java String limit. Overshot by ${MinecraftString.javaStringLimit-text.length} chars, includes 2 chars for the default text color "§f".`);
-			else throw new Error(`String too big. limit is ${MinecraftString.mcStringLimit} chars. Overshot by ${MinecraftString.mcStringLimit-text.length} chars, includes 2 chars for the default text color "§f".`)
+			if(unsafe) throw new Error(`A Minecraft string shouldn't surpass the Java String limit. Overshot by ${text.length-MinecraftString.javaStringLimit} chars, includes 2 chars for the default text color "§f".`);
+			else throw new Error(`String too big. limit is ${MinecraftString.mcStringLimit} chars. Overshot by ${text.length-MinecraftString.mcStringLimit} chars, includes 2 chars for the default text color "§f".`)
 		}
 		this.raw = text;
 		const colorSegments = text.match(MinecraftString.colorRegex);
@@ -104,7 +104,7 @@ export default class MinecraftString {
 			colorSegment = colorSegment.replace(new RegExp(`§${colorSegment.substring(1,2)}`, "g"), "");
 			if(styleSegments) colorSegment = colorSegment.replace(new RegExp(`${styleSegments.join("|")}`, "g"), "");
 
-			const colorSegmentStyle = {
+			const colorSegmentStyleOpts: IsegmentOptions = {
 				color,
 				obfuscated: false,
 				bold: false,
@@ -116,9 +116,9 @@ export default class MinecraftString {
 			if(colorSegment.length > 0) this.segments.push(new SimpleMinecraftString(colorSegment, { color }));
 			if(styleSegments) for(let styleSegment of styleSegments) {
 				const style = MinecraftString.styleMap[styleSegment.substring(1,2) as MCStyleCode] as Exclude<MCStyle, "reset">;
-				colorSegmentStyle[style] = true;
+				colorSegmentStyleOpts[style] = true;
 				styleSegment = styleSegment.replace(new RegExp(`§${styleSegment.substring(1,2)}`, "g"), "");
-				if(styleSegment.length > 0) this.segments.push(new SimpleMinecraftString(styleSegment, {...colorSegmentStyle, [style]: true }));
+				if(styleSegment.length > 0) this.segments.push(new SimpleMinecraftString(styleSegment, {...colorSegmentStyleOpts, [style]: true }));
 				colorSegment = colorSegment.replace(styleSegment, "");
 			}
 		}
@@ -129,7 +129,7 @@ export default class MinecraftString {
 	 * Export the Minecraft string to a list of simple Minecraft strings.
 	 * @returns Vanilla Minecraft text with the given formatting.
 	 */
-	export(nbt: boolean = false) {
+	export(nbt: boolean=false) {
 		return this.segments.map(s => s.export(nbt));
 	}
 }

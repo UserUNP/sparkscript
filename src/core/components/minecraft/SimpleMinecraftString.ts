@@ -11,7 +11,7 @@ export interface SimpleRawMCString {
 	obfuscated: boolean | Byte;
 }
 
-interface IsegmentOptions {
+export interface IsegmentOptions {
 	color?: MinecraftColor;
 	bold?: boolean;
 	italic?: boolean;
