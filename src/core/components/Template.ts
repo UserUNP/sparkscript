@@ -32,6 +32,8 @@ export default class Template {
 	}
 
 	export(): { compressed: string, serialized: RawDFTemplate, sendToCodeutils: Function } {
+		if(this.length == 0) console.trace("[sparkscript] WARNING: Exporting an empty template.")
+
 		const result: RawDFTemplate = { blocks: [], name: `${this.name}`, author: this.author };
 		let compressed: string = "";
 		for (const block of this._blocks) result.blocks.push(block.export());
