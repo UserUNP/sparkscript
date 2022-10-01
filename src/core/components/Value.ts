@@ -11,7 +11,7 @@ abstract class Value {
 	static from(raw: RawDFValue) {
 		const type = raw.item.id;
 		const instance = mapper(type, raw.item.data, raw.slot);
-		return instance as Value;
+		return instance;
 	}
 
 	data: DataStorage;

@@ -11,9 +11,9 @@ abstract class Block {
 	
 	static from(raw: RawDFBlock) {
 		const type = raw.block;
-		const args = raw.args.items.map((arg: any) => Value.from(arg));
+		const args: Value[] = raw.args.items.map((arg: any) => Value.from(arg));
 		const instance = mapper(type, raw.data||raw.action||"", args);
-		return instance as Block;
+		return instance;
 	}
 
 	/**
