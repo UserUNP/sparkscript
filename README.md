@@ -38,8 +38,8 @@ const df = require("sparkscript").default;
 const core = df.lib("core", (e, s, arg) => {
   // arg( ) used for referencing input variables
   s.args = [
-    s.lib.arg("message", df.TXT, "message to send"),
-    s.lib.arg("times", df.NUM, "*insert short description*")
+    arg("message", df.TXT, "message to send"),
+    arg("times", df.NUM, "*insert short description*")
   ];
   s.icon = "cod";
 
