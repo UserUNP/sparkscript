@@ -1,6 +1,7 @@
 import Block, { RawDFBlock } from "./Block";
 import zlib from "node:zlib";
 import WebSocket from 'ws';
+import getEditor from "../../editor/quickeditor";
 
 export interface RawDFTemplate {
 	blocks: RawDFBlock[];
@@ -14,6 +15,11 @@ export default class Template {
 	 */
 	_blocks: Block[] = [];
 	cuSocket?: WebSocket;
+
+	/**
+	 * Self editor.
+	 */
+	public readonly self = getEditor.default(this);
 	
 	/**
 	 * Create a new template.

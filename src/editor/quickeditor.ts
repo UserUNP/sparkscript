@@ -17,10 +17,17 @@ import GameAction						from "../codeblocks/GameAction";
 import Func								from "../codeblocks/Func";
 
 import Ieditor	from "./Iquickeditor";
+import mapper, { getActionOwner, codeblockSupported } from "../mapper";
 
-type actDefs = Record<string, ((...args: any[])=>void) | string>;
+export type ActDefs = Record<string, ((...args: any[])=>void) | string>;
 
-function getEditor(_template: Template|false, customAction: { actDefs: actDefs, doCustomAction: (name: string, ...args: any[]) => any }): Ieditor {
+/**
+ * Generate a quick editor.
+ * @param _template Template to edit.
+ * @param customAction Action definitons and/or doCustomAction function
+ * @returns The quick editor.
+ */
+function getEditor(_template: Template|false, customAction: { actDefs: ActDefs, doCustomAction?: (name: string, ...args: any[]) => any }): Ieditor {
 	let template: Template;
 	if(!_template) template = new Template(false);
 	else template = _template;
@@ -41,9 +48,7 @@ function getEditor(_template: Template|false, customAction: { actDefs: actDefs, 
 		//* Spark stuff.
 		defAction: (name, cbOrAction) => {
 			actDefs[name] = cbOrAction;
-			Object.keys(actDefs).forEach((name) => {
-				editor.action[name] = function(...args: any[]) {doCustomAction(name, ...args);};
-			});
+			getEditor.applyActions(editor, actDefs, doCustomAction)
 		},
 		action: {},
 
@@ -107,10 +112,42 @@ function getEditor(_template: Template|false, customAction: { actDefs: actDefs, 
 }
 
 /**
- * Quickly generate an editor.
+ * Default custom function executor.
+ * @param tempToModify Template to act on.
+ * @param actDefs Action definitions.
+ * @param name Name of action.
+ * @param args Arguments to pass to the action.
+ * @returns User-specified output.
  */
-getEditor.q = (t?: Template) => {
-	return getEditor(t||false, {actDefs:{}, doCustomAction: ()=>undefined})
+getEditor.defaultCustomAction = (tempToModify: Template, actDefs: ActDefs, name: string, ...args: any[]) => {
+	if(actDefs[name]) {
+		const action = actDefs[name];
+		if(typeof action === "string") {
+			const actionOwnerType = getActionOwner(action)?.identifier;
+			if(!actionOwnerType) throw new Error(`Action ${action} doesn't exist. If you're sure it must then the action dump may be outdated..`);
+			const parsedArgs = args.map((a: any) => {
+				if(typeof a === "string") return new Text(a);
+				if(typeof a === "number") return new Number(a);
+				else return a;
+			});
+			if(!codeblockSupported(actionOwnerType)) throw new Error(`Type "${actionOwnerType}" (from action ${action}) cannot be recongized as a DiamondFire block type, this maybe because it is not implemented yet.`)
+			const instance = mapper(actionOwnerType, action || "", parsedArgs);
+			tempToModify.push(instance);
+		} else return action(...args);
+	} else throw new Error(`Action ${name} is not defined.`);
+}
+getEditor.defaultActDefs = {} as ActDefs;
+getEditor.applyActions = (editor: Ieditor, actDefs: ActDefs, doCustomAction?: (name: string, ...args: any[]) => any) => {
+	Object.keys(actDefs).forEach(name => {
+		editor.action[name] = (...args: any[]) => { doCustomAction ? doCustomAction(name, ...args) : getEditor.defaultCustomAction(editor.getTemplate(), actDefs, name); }
+	});
+}
+
+/**
+ * Quickly generate an editor, with default specifications.
+ */
+getEditor.default = (t?: Template): Ieditor => {
+	return getEditor(t||false, {actDefs:{}})
 }
 
 export default getEditor;

@@ -28,7 +28,7 @@ export interface Isettings {
 	name: string|false;
 }
 
-export default function getEditorSettings(name: Isettings["name"]) {
+export default function getEditorSettings(name: Isettings["name"]): Isettings {
 	return { 
 		strict: true,
 		usingCodeutils: false,
@@ -38,6 +38,6 @@ export default function getEditorSettings(name: Isettings["name"]) {
 			protocol: "ws",
 		},
 		name,
-	} as Isettings
+	};
 }
 

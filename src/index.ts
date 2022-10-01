@@ -30,10 +30,10 @@ import GameAction	from "./codeblocks/GameAction";		export {GameAction};
 import Func			from "./codeblocks/Func";			export {Func};
 
 // Quick editor & playground.
-import mapper, { getActionOwner, SparkscriptMapper, codeblockSupported }	from "./mapper";				export { SparkscriptMapper, codeblockSupported }
-import getEditor															from "./editor/quickeditor";	export { getEditor }
-import getEditorSettings, { Isettings }										from "./editor/qeSettings";
-import Ieditor 																from "./editor/Iquickeditor";
+import { SparkscriptMapper, codeblockSupported }	from "./mapper";				export { SparkscriptMapper, codeblockSupported }
+import getEditor, { ActDefs }						from "./editor/quickeditor";	export { getEditor }
+import getEditorSettings, { Isettings }				from "./editor/qeSettings";
+import Ieditor 										from "./editor/Iquickeditor";
 
 /**
  * New template.
@@ -42,31 +42,11 @@ import Ieditor 																from "./editor/Iquickeditor";
  */
 function quickEditor(name: string|false, callback: (editor: Ieditor, settings: Isettings) => void): Template {
 	const template = new Template(name);
-	const actDefs: Record<string, ((...args: any[])=>void) | string> = {};
-
-	function doCustomAction(name: string, ...args: any[]) {
-		if(actDefs[name]) {
-			const action = actDefs[name];
-			if(typeof action === "string") {
-				const actionOwnerType = getActionOwner(action)?.identifier;
-				if(!actionOwnerType) throw new Error(`Action ${action} doesn't exist. If you're sure it must then the action dump may be outdated..`);
-				const parsedArgs: any = args.map((a: any) => {
-					if(typeof a === "string") return new Text(a);
-					if(typeof a === "number") return new Number(a);
-					else return a;
-				});
-				if(!codeblockSupported(actionOwnerType)) throw new Error(`Type "${actionOwnerType}" (from action ${action}) cannot be recongized as a DiamondFire block type, this maybe because it is not implemented yet.`)
-				const instance = mapper(actionOwnerType, action || "", parsedArgs);
-				template.push(instance as Block);
-			} else action(...args);
-		} else throw new Error(`Action ${name} is not defined.`);
-	}
-	Object.keys(actDefs).forEach((name: string) => {
-		editor.action[name] = function(...args: any[]) {doCustomAction(name, ...args);};
-	});
+	const actDefs: ActDefs = {};
 
 	// Quick editor.
-	const editor = getEditor(template, { actDefs, doCustomAction });
+	const editor = template.self;
+	getEditor.applyActions(editor, actDefs);
 	const settings = getEditorSettings(name)
 
 	callback(editor, settings);

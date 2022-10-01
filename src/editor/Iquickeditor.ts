@@ -15,6 +15,8 @@ import Potion			from "../values/Potion";
 import GameValue		from "../values/GameValue";
 import Vector 			from "../values/Vector";
 
+import { ActDefs } from "./quickeditor";
+
 type DefineAction = {
 	/**
 	 * @param name Name of this action
@@ -60,7 +62,7 @@ export default interface editor {
 	 * @param name Name of the action.
 	 * @param args Arguments to pass to the action.
 	 */
-	action: Record<string, ((...args: any[])=>void) | string>;
+	action: ActDefs;
 
 	/**
 	 * Create a Minecraft item value.
