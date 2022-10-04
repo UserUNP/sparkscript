@@ -1,4 +1,4 @@
-import Block, { RawDFBlock } from "../core/components/Block";
+import Block from "../core/components/Block";
 import Value from "../core/components/Value";
 
 export default class Func extends Block {
@@ -12,7 +12,7 @@ export default class Func extends Block {
 		super("func", name, args);
 	}
 
-	export(): RawDFBlock {
+	export() {
 		const result = super.export();
 		delete result.action;
 		result.data = this.name;

@@ -63,7 +63,7 @@ function getEditor(_template: Template|false, customAction: { actDefs: ActDefs, 
 		num: (num, slot?) => new Number(num, slot),
 
 		variable: (name, scope, slot?) => new Variable(name, scope, slot),
-		var: (name, scope="game", slot?) => new Variable(name, scope, slot),
+		var: (name, scope="unsaved", slot?) => new Variable(name, scope, slot),
 
 		location: (x, y, z, pitch=90, yaw=0, slot?) => new Location(x, y, z, pitch, yaw, slot),
 		loc: (x, y, z, pitch=90, yaw=0, slot?) => new Location(x, y, z, pitch, yaw, slot),
