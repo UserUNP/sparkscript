@@ -29,4 +29,4 @@ export class EntityEvent extends Block {
 export default {
 	Action: EntityAction,
 	Event: EntityEvent,
-};
+}

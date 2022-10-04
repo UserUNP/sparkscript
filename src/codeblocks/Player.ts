@@ -29,4 +29,4 @@ export class PlayerEvent extends Block {
 export default {
 	Action: PlayerAction,
 	Event: PlayerEvent,
-};
+}
