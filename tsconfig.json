@@ -1,23 +1,13 @@
 {
 	"compilerOptions": {
 		"alwaysStrict": true,
-		"target": "es5",
-		"module": "commonjs",
+		"target": "ES5",
+		"module": "CommonJS",
 		"sourceMap": true,
 		"declaration": true,
 		"outDir": "./dist",
 		"rootDir": "./src",
-		"lib": [
-			"es2015",
-			"dom"
-		],
-		"types": [
-			"node",
-			"jest"
-		],
-		"typeRoots": [
-			"node_modules/@types"
-		],
+		"lib": ["ES5"],
 		"strict": true,
 		"esModuleInterop": true,
 		"allowSyntheticDefaultImports": true,
@@ -29,10 +19,13 @@
 		"strictNullChecks": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
-		"resolveJsonModule": true, /* Enable importing .json files */
-		"allowJs": true, /* Allow JavaScript files to be a part of your program. Use the `checkJS` option to get errors from these files. */
+		"resolveJsonModule": true,
+		"allowJs": true,
 		"strictPropertyInitialization": true,
 		"newLine": "lf",
+	},
+	"buildOptions": {
+		"verbose": true,
 	},
 	"exclude": [
 		"node_modules",

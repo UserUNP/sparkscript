@@ -28,6 +28,13 @@ abstract class Value {
 	}
 
 	/**
+	 * Stringify the value.
+	 */
+	toString() {
+		return `<${this.type}>${this.data}`;
+	}
+
+	/**
 	 * Export the value to a JSON object.
 	 * @returns DiamondFire JSON-ified value.
 	 */
@@ -38,7 +45,7 @@ abstract class Value {
 				id: this.type,
 				data: this.data?.raw || {}
 			}
-		};
+		}
 	}
 
 }
@@ -46,5 +53,5 @@ abstract class Value {
 export default Value;
 
 import mapper from "../../mapper";
-import DFValueCodename from "../DFValueCodename";
+import DFValueCodename from "../types/DFValueCodename";
 import DataStorage, { RawDFValueDataRecord } from "./DataStorage";

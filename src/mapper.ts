@@ -2,8 +2,9 @@
 import Value from "./core/components/Value";
 import { RawDFValueDataRecord } from "./core/components/DataStorage";
 
-import DFBlockCodename from "./core/DFBlockCodename";
-import DFValueCodename from "./core/DFValueCodename";
+import DFBlockCodename from "./core/types/DFBlockCodename";
+import DFValueCodename from "./core/types/DFValueCodename";
+import DFBlockName from "./core/types/DFBlockName";
 
 import { PlayerAction, PlayerEvent } from "./codeblocks/Player";
 import { EntityEvent, EntityAction } from "./codeblocks/Entity";
@@ -45,13 +46,13 @@ const valueMap = {
 
 export function blockMapper<T extends DFBlockCodename>(type: T, actionOrData: string, args: Value[]): ReturnType<typeof blockMap[T]> {
 	const constructor = blockMap[type];
-	if(!constructor) throw new Error(`Type "${type}" cannot be recongized as a DiamondFire block type. Template may be corrupted or invalid.`)
+	if(!constructor) throw new Error(`Type "${type}" cannot be recongized as a DiamondFire block type. Template may be corrupted or invalid.`);
 	return constructor(actionOrData, args) as ReturnType<typeof blockMap[T]>;
 }
 
 export function valueMapper<T extends DFValueCodename>(type: T, value: RawDFValueDataRecord, slot?: number): ReturnType<typeof valueMap[T]> {
 	const constructor = valueMap[type];
-	if(!constructor) throw new Error(`Type "${type}" cannot be recongized as a DiamondFire value type. Template may be corrupted or invalid.`)
+	if(!constructor) throw new Error(`Type "${type}" cannot be recongized as a DiamondFire value type. Template may be corrupted or invalid.`);
 	return constructor(value, slot) as ReturnType<typeof valueMap[T]>;
 }
 
@@ -60,7 +61,11 @@ export function valueMapper<T extends DFValueCodename>(type: T, value: RawDFValu
  * Convert DiamondFire's raw value or codeblock type to the respective sparkscript typeof class.  
  * by @UserUNP
  */
-export type SparkscriptMapper<T extends DFBlockCodename | DFValueCodename> = T extends DFBlockCodename ? ReturnType<typeof blockMap[T]> : T extends DFValueCodename ? ReturnType<typeof valueMap[T]> : never;
+export type SparkscriptMapper
+	<T extends DFBlockCodename | DFValueCodename> =
+	T extends DFBlockCodename ? ReturnType<typeof blockMap[T]> :
+	T extends DFValueCodename ? ReturnType<typeof valueMap[T]> :
+	never;
 
 /**
  * Raw DiamondFire codeblock data -> Respective sparkscript type.
@@ -95,31 +100,41 @@ export default function mapper<T extends DFBlockCodename | DFValueCodename>(type
 	}
 }
 
-import dump from "./actiondump.json";
-
-export function codeblockSupported(type: string): type is DFBlockCodename {
-	return Object.keys(blockMap).includes(type)
+/**
+ * 
+ * @param type Codeblock codename to check.
+ * @returns `true` if `type` is supported in sparkscript, otherwise `false`.
+ */
+export function codeblockSupported(type: DFBlockCodename): type is DFBlockCodename {
+	return type in blockMap;
 }
 
+/**
+ * 
+ * @param type Value codename to check.
+ * @returns `true` if `type` is supported in sparkscript, otherwise `false`.
+ */
 export function valueSupported(type: string): type is DFValueCodename {
-	return Object.keys(valueMap).includes(type)
+	return type in valueMap;
 }
+
+import codeDump from "./core/codeDump";
 
 export function getCodeblockByType(type: DFBlockCodename) {
-	const codeblock = dump.codeblocks.find(c => c.identifier === type);
+	const codeblock = codeDump.getDump().codeblocks.find(c => c.identifier === type);
 	if(!codeblock) return null;
-	if(!Object.keys(blockMap).includes(type)) console.warn(`[sparkscript] WARNING: Codeblock type "${codeblock}" is not implemented into the mapper`)
+	if(!codeblockSupported(type)) console.warn(`[sparkscript] WARNING: Codeblock type "${codeblock}" is not implemented into the mapper`);
 	return codeblock;
 }
 
 export function getCodeblockByName(name: string) {
-	const codeblock = dump.codeblocks.find(c => c.name === name);
+	const codeblock = codeDump.getDump().codeblocks.find(c => c.name === name);
 	if(!codeblock) return null;
 	return codeblock;
 }
 
 export function getActionOwner(action: string) {
-	const actionName = dump.actions.find(a => a.name === action);
+	const actionName = codeDump.getDump().actions.find(a => a.name === action);
 	if(!actionName) return null;
 	return getCodeblockByName(actionName.codeblockName);
 }
@@ -127,17 +142,17 @@ export function getActionOwner(action: string) {
 export function getCodeblockActions(type: DFBlockCodename) {
 	const codeblock = getCodeblockByType(type);
 	if(!codeblock) return [];
-	return dump.actions.filter(a => a.codeblockName === codeblock.name);
+	return codeDump.getDump().actions.filter(a => a.codeblockName === codeblock.name);
 }
 
 export function getCodeblockAction(type: DFBlockCodename, name: string) {
 	const codeblock = getCodeblockByType(type);
 	if(!codeblock) return null;
-	return dump.actions.find(a => a.codeblockName === codeblock.name && a.name === name);
+	return codeDump.getDump().actions.find(a => a.codeblockName === codeblock.name && a.name === name) || null;
 }
 
-export function getCodeblockType(name: string) {
-	const codeblock = dump.codeblocks.find(c => c.name === name);
+export function getCodeblockType(name: DFBlockName) {
+	const codeblock = codeDump.getDump().codeblocks.find(c => c.name === name);
 	if(!codeblock) return null;
 	return codeblock.identifier;
 }

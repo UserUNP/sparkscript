@@ -1,5 +1,5 @@
 import Value from "../core/components/Value";
-import DFTarget from "../core/DFTarget";
+import DFTarget from "../core/types/DFTarget";
 
 export interface Ig_val {
 	type: string;

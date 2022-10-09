@@ -1,5 +1,5 @@
-import DFTarget			from	"../core/DFTarget";
-import DFVarScope		from	"../core/DFVarScope";
+import DFTarget			from	"../core/types/DFTarget";
+import DFVarScope		from	"../core/types/DFVarScope";
 
 import Template			from "../core/components/Template";
 import Value 			from "../core/components/Value";
@@ -14,8 +14,6 @@ import Location			from "../values/Location";
 import Potion			from "../values/Potion";
 import GameValue		from "../values/GameValue";
 import Vector 			from "../values/Vector";
-
-import { ActDefs } from "./quickeditor";
 
 type DefineAction = {
 	/**
@@ -62,7 +60,7 @@ export default interface editor {
 	 * @param name Name of the action.
 	 * @param args Arguments to pass to the action.
 	 */
-	action: ActDefs;
+	action: Record<string, ((...args: any[])=>void)>;
 
 	/**
 	 * Create a Minecraft item value.

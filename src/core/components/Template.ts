@@ -70,6 +70,7 @@ export default class Template {
 	 */
 	push(...blocks: Block[]) {
 		this._blocks.push(...blocks);
+		return this;
 	}
 
 	/**
@@ -79,6 +80,7 @@ export default class Template {
 	pop(index?: number) {
 		if (index) this._blocks.splice(index, 1);
 		else this._blocks.pop();
+		return this;
 	}
 
 	get(index?: number) {
@@ -90,7 +92,7 @@ export default class Template {
 	 * The codeblocks that make up this template.
 	 */
 	get blocks(): Block[] {
-		return this._blocks;
+		return [...this._blocks]
 	}
 
 	get length(): number {

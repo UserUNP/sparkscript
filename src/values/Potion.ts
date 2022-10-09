@@ -14,6 +14,6 @@ export default class Potion extends Value {
 	 * @param amplifier Strength of the potion.
 	 */
 	constructor(public potion: Ipot["pot"], public duration: Ipot["dur"], public amplifier: Ipot["amp"], slot?: number) {
-		super("pot", { pot: potion, dur: duration, amp: amplifier }, slot);
+		super("pot", { pot: potion, dur: duration, amp: amplifier } as Ipot, slot);
 	}
 }

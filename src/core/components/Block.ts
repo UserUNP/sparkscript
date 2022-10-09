@@ -39,5 +39,5 @@ abstract class Block {
 export default Block;
 
 import mapper from "../../mapper";
-import DFBlockCodename from "../DFBlockCodename";
+import DFBlockCodename from "../types/DFBlockCodename";
 import Value, { RawDFValue } from "./Value";

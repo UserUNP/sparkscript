@@ -36,7 +36,7 @@ export default class DataStorage {
 	 * @returns Chainable DataStorage object.
 	 */
 	set(key: keyof RawDFValueDataRecord, value: any): this {
-		this.raw = {...this.raw, [key]: value} as RawDFValueDataRecord;
+		this.raw = {...this.raw, [key]: value};
 		return this;
 	}
 
@@ -45,7 +45,7 @@ export default class DataStorage {
 	 * @param key Key to be retrieved.
 	 * @returns Value of the key.
 	 */
-	get(key: string) {
+	get(key: keyof RawDFValueDataRecord) {
 		return this.raw[key];
 	}
 
@@ -54,8 +54,8 @@ export default class DataStorage {
 	 * @param key Key to be checked.
 	 * @returns True if the key exists, false otherwise.
 	 */
-	has(key: string): boolean {
-		return this.keys.includes(key as string);
+	has(key: keyof RawDFValueDataRecord): boolean {
+		return key in this.keys;
 	}
 
 	/**
@@ -69,7 +69,7 @@ export default class DataStorage {
 	 * Remove a key from the DataStorage.
 	 * @param key Key to be removed.
 	 */
-	delete(key: string) {
+	delete(key: keyof RawDFValueDataRecord) {
 		delete this.raw[key];
 	}
 

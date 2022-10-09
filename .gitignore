@@ -8,3 +8,4 @@ coverage
 done-tests
 spark
 package-lock.json
+actiondump.json

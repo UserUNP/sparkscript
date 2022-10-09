@@ -50,7 +50,7 @@ function getEditor(_template: Template|false, customAction: { actDefs: ActDefs, 
 			actDefs[name] = cbOrAction;
 			getEditor.applyActions(editor, actDefs, doCustomAction)
 		},
-		action: {},
+		action: getEditor.defaultActDefs,
 
 		//* Values.
 		item: (id, name, amount, slot?) => new MinecraftItem(id, name, amount, slot),
@@ -136,11 +136,11 @@ getEditor.defaultCustomAction = (tempToModify: Template, actDefs: ActDefs, name:
 		} else return action(...args);
 	} else throw new Error(`Action ${name} is not defined.`);
 }
-getEditor.defaultActDefs = {} as ActDefs;
+getEditor.defaultActDefs = {} as Record<string, ((...args: any[])=>void)>;
 getEditor.applyActions = (editor: Ieditor, actDefs: ActDefs, doCustomAction?: (name: string, ...args: any[]) => any) => {
-	Object.keys(actDefs).forEach(name => {
-		editor.action[name] = (...args: any[]) => { doCustomAction ? doCustomAction(name, ...args) : getEditor.defaultCustomAction(editor.getTemplate(), actDefs, name); }
-	});
+	for(const name in actDefs) {
+		editor.action[name] = (...args: any[]) => { doCustomAction ? doCustomAction(name, ...args) : getEditor.defaultCustomAction(editor.getTemplate(), actDefs, name, ...args); }
+	};
 }
 
 /**

@@ -1,9 +1,9 @@
-import MCStyleCode from "../../MCStyleCode";
-import MCStyle from "../../MCStyle";
+import MCStyleCode from "../../types/MCStyleCode";
+import MCStyle from "../../types/MCStyle";
 import MinecraftColor from "./MinecraftColor";
 import SimpleMinecraftString from "./SimpleMinecraftString";
 import { SimpleRawMCString, IsegmentOptions } from "./SimpleMinecraftString";
-import MCColorCode from "../../MCColorCode";
+import MCColorCode from "../../types/MCColorCode";
 
 export type RawMCString = SimpleRawMCString[];
 

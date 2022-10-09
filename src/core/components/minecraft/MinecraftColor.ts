@@ -1,5 +1,5 @@
-import MCColor from "../../MCColor";
-import MCColorCode from "../../MCColorCode";
+import MCColor from "../../types/MCColor";
+import MCColorCode from "../../types/MCColorCode";
 
 export default class MinecraftColor {
 

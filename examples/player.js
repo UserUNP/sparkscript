@@ -10,14 +10,14 @@ const template = df("test template", (e, s) => {
   console.log("Made by: " + s.author);
   console.log("\n");
 
-  // enabling codeutilities
-  s.usingCodeutils = true;
-  // default codeutilities configuration:
-  // s.cuConf = {
-  // 	host: "localhost",
-  // 	port: 31372,
-  // 	protocol: "ws"
-  // };
+  // > enabling codeutilities
+  //s.usingCodeutils = true;
+  // > default codeutilities configuration:
+  //s.cuConf = {
+  //  host: "localhost",
+  //  port: 31372,
+  //  protocol: "ws"
+  //};
 
   // add player event block
   e.player.event("Join");
