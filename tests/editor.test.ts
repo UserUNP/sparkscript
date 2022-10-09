@@ -1,8 +1,12 @@
 import "../src/mapper";
 import { PlayerAction } from "../src/codeblocks/Player";
 import df from "../src/index";
+import dump from "../actiondump.json";
+import DFDumpScheme from "../src/core/types/DFDumpScheme"
 
 describe("editor", () => {
+
+  df.setActionDump(dump as DFDumpScheme);
 
   it("should create a new template", () => {
     const template = df("test", () => { });
