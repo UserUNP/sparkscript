@@ -7,8 +7,11 @@ export function createKeybindComponent<T extends boolean = true>(keybind: string
 	return { keybind: `key.${keybind}`} as keybindComponent<T>;
 }
 
-export function dummyDump() {
-	return ({}) as DFDumpScheme;
+export function dummyDump(): DFDumpScheme {
+	return {
+		codeblocks: [{identifier: "event", name: "PLAYER EVENT"}],
+		actions: [{codeblockName: "PLAYER EVENT", name: "Vote"}]
+	};
 }
 
 export default {
