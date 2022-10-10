@@ -23,6 +23,7 @@
 		"allowJs": true,
 		"strictPropertyInitialization": true,
 		"newLine": "lf",
+		"importHelpers": true
 	},
 	"buildOptions": {
 		"verbose": true,
