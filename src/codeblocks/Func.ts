@@ -1,22 +1,16 @@
-import Block from "../core/components/Block";
-import Value from "../core/components/Value";
+import DataBlock from "../core/components/DataBlock";
+import DFValueType from "../core/types/DFValueType";
 
-export default class Func extends Block {
-	
+export default class Func
+<T extends string = string>
+extends DataBlock<"func"> {
+
 	/**
-	 * Place a function
+	 * Place a function.
 	 * @param name Function name.
 	 * @param args Arguments, can be used as notes since they're not used in the function.
 	 */
-	constructor(public name: string, ...args: Value[]) {
+	constructor(name: T, ...args: DFValueType[]) {
 		super("func", name, args);
 	}
-
-	export() {
-		const result = super.export();
-		delete result.action;
-		result.data = this.name;
-		return result;
-	}
-	
 }

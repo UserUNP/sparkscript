@@ -1,33 +1,35 @@
-import Value from "./Value";
+import { ValueDataMapper } from "../../mapper";
+import DFValueCodename from "../types/DFValueCodename";
+import DFValueDataType from "../types/DFValueDataType";
 
-export type RawDFValueDataRecord = Record<string, any>;
+export type RawDFValueDataRecord<T extends DFValueDataType> = {
+	[P in keyof T]: T[P];
+};
 
-export default class DataStorage {
+/**
+ * ### Data storage for a value.
+ *
+ * @template T Value codename.
+ * @template DataType Value object data type.
+ */
+export default class DataStorage
+<T extends DFValueCodename, DataType extends ValueDataMapper<T> = ValueDataMapper<T>> {
 
 	/**
 	 * Create a new DataStorage from a JSON object.
 	 * @param raw Raw data to be converted to DataStorage.
 	 * @returns DataStorage object.
 	 */
-	static from(raw: RawDFValueDataRecord) {
-		const storage = new DataStorage();
+	static from<T extends DFValueCodename, DataType extends ValueDataMapper<T>>(raw: DataType) {
+		const storage = new DataStorage<T, DataType>();
 		for (const [k, v] of Object.entries(raw)) {
-			storage.set(k as keyof RawDFValueDataRecord, v);
+			if(!k) throw new Error(`Key ${JSON.stringify(k)} is an invalid type.`);
+			storage.set(k as keyof ValueDataMapper<T>, v);
 		}
 		return storage;
 	}
 
-	raw: RawDFValueDataRecord = {};
-	owner: Value | null = null;
-
-	/**
-	 * Assign owner to this DataStorage for later use.
-	 * @param owner Value object that owns this DataStorage.
-	 */
-	assignOwner(owner: Value) {
-		if(this.owner) throw new Error("Property owner cannot be reinitialized!");
-		this.owner = owner;
-	}
+	raw: DataType = {} as DataType;
 
 	/**
 	 * Set a value in the DataStorage.
@@ -35,8 +37,8 @@ export default class DataStorage {
 	 * @param value Value to be set.
 	 * @returns Chainable DataStorage object.
 	 */
-	set(key: keyof RawDFValueDataRecord, value: any): this {
-		this.raw = {...this.raw, [key]: value};
+	set(key: keyof DataType, value: any): this {
+		this.raw[key] = value;
 		return this;
 	}
 
@@ -45,8 +47,22 @@ export default class DataStorage {
 	 * @param key Key to be retrieved.
 	 * @returns Value of the key.
 	 */
-	get(key: keyof RawDFValueDataRecord) {
+	get(key: keyof DataType) {
 		return this.raw[key];
+	}
+
+	/**
+	 * Create a copy of the raw data.
+	 */
+	clone() {
+		return {...this.raw};
+	}
+
+	/**
+	 * Alias for `DataStorage.copy()`
+	 */
+	copy() {
+		return this.clone();
 	}
 
 	/**
@@ -54,7 +70,7 @@ export default class DataStorage {
 	 * @param key Key to be checked.
 	 * @returns True if the key exists, false otherwise.
 	 */
-	has(key: keyof RawDFValueDataRecord): boolean {
+	has(key: keyof DataType) {
 		return key in this.keys;
 	}
 
@@ -69,15 +85,8 @@ export default class DataStorage {
 	 * Remove a key from the DataStorage.
 	 * @param key Key to be removed.
 	 */
-	delete(key: keyof RawDFValueDataRecord) {
+	delete(key: keyof DataType) {
 		delete this.raw[key];
-	}
-
-	/**
-	 * Clear entire DataStorage.
-	 */
-	clear() {
-		this.raw = {};
 	}
 
 	get length() {

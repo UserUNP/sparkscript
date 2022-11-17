@@ -1,26 +1,26 @@
 {
 	"name": "sparkscript",
-	"version": "1.0.0-alpha.2",
+	"version": "1.0.0-alpha.3",
 	"description": "DiamondFire for Javascript.",
 	"main": "./dist/index.js",
+
 	"scripts": {
-		"build": "npx tsc && npx tscp",
-		"test": "npx jest tests/",
-		"cleanbuild": "npx rimraf ./dist && npx tsc && npx tscp",
-		"buildwatch": "npx rimraf ./dist && npx tscp && npx tsc -w",
-		"crlfix": "find . -type f -print0 | xargs -0 dos2unix"
+		"cleanbuild": "rimraf ./dist && tsc && tscp", "build": "tsc && tscp",
+		"buildwatch": "rimraf ./dist && tscp && tsc -w",
+		"crlfix": "find . -type f -print0 | xargs -0 dos2unix",
+		"test": "jest tests/"
 	},
+
 	"author": "UserUNP",
 	"license": "ISC",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/UserUNP/sparkscript.git"
-	},
+	"repository": {"type": "git", "url": "https://github.com/UserUNP/sparkscript.git"},
+	"bugs": {"url": "https://github.com/UserUNP/sparkscript/issues"},
 	"homepage": "https://github.com/UserUNP/sparkscript",
+
 	"dependencies": {
 		"nbt-ts": "^1.3.5",
-		"tslib": "^2.4.0",
-		"ws": "^8.5.0"
+		"tslib": "*",
+		"ws": "*"
 	},
 	"devDependencies": {
 		"@types/jest": "^27.4.1",
@@ -30,17 +30,16 @@
 		"jest": "^27.5.1",
 		"rimraf": "^3.0.2",
 		"ts-jest": "^27.1.4",
-		"typescript": "^4.6.3",
-		"typescript-cp": "^0.1.5"
+		"typescript": "*"
 	},
+
 	"files": [
-		"./dist",
-		"./src",
-		"./README.md",
-		"./LICENSE"
+		"./dist", "./src",
+		"./README.md", "./LICENSE"
 	],
 	"keywords": [
 		"diamondfire", "df",
-		"sparkscript", "spark"
+		"sparkscript", "spark",
+		"minecraft", "mc"
 	]
 }

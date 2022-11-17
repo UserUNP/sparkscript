@@ -1,41 +1,56 @@
-import Value from "../core/components/Value";
+import Value, { RawDFValue } from "../core/components/Value";
 import MinecraftString, { RawMCString } from "../core/components/minecraft/MinecraftString";
-const NBT = require("nbt-ts");
+import NBT = require("nbt-ts");
 
 type ValuesOf<T> = T[keyof T];
+export type SafeMetadata<ID extends `minecraft:${string}` = `minecraft:${string}`> = Imetadata<true, ID>;
+export type RawMetadata<ID extends `minecraft:${string}` = `minecraft:${string}`> = Imetadata<false, ID>;
 
-export interface Imetadata {
-	id: `minecraft:${string}`;
-	Count: typeof NBT.Byte;
+interface Imetadata
+<UseRaw extends boolean = false, ID extends `minecraft:${string}` = `minecraft:${string}`> {
+	id: ID;
+	Count: UseRaw extends true ? number : NBT.Byte;
 	tag: {
 		Tags: string[];
-		PublicBukkitValues: Record<`hypercube:${string}`, number | bigint | string>
+		PublicBukkitValues: Record<`hypercube:${string}`, number | bigint | string>;
 		display: {
-			Name: RawMCString,
-			Lore: RawMCString[]
+			Name: UseRaw extends true ? RawMCString<false, string[]> | MinecraftString<string> : string;
+			Lore: UseRaw extends true ? RawMCString<false, string[]>[] : string[];
 		}
 	}
 }
 
-export default class MinecraftItem extends Value {
+export interface Iitem<UseRaw extends boolean = false, ID extends `minecraft:${string}` = `minecraft:${string}`> {
+	item: Imetadata<UseRaw, ID> | string;
+}
+
+export default class MinecraftItem
+<T extends string = string, ID extends `minecraft:${string}` = `minecraft:${string}`>
+extends Value<"item", Iitem<boolean, ID>> {
 
 	static fromNBT(value: string, s?: number) {
-		const v = NBT.parse(value);
-		return new MinecraftItem(v.id, JSON.parse(v.tag.display.Name), v.Count, s)
+		const v = NBT.parse(value) as unknown as RawMetadata;
+		const item = new MinecraftItem(v.id, JSON.parse(typeof v.tag.display.Name === "string" ? v.tag.display.Name : NBT.stringify(v.tag.display.Name)), v.Count.value, s);
+		return item;
 	}
-	
+
 	/**
 	 * Create a Minecraft item as a DiamondFire value.
 	 * @param id Item ID name.
 	 * @param count Amount.
 	 * @param name Item name.
 	 */
-	constructor(public id: Imetadata["id"], public name: Imetadata["tag"]["display"]["Name"] | MinecraftString | string, public count: Imetadata["Count"] | number = 1, slot?: number) {
-		id = id.indexOf("minecraft:") == -1 ? `minecraft:${id}` : id
-		if(typeof name === "string") name = new MinecraftString(name);
+	constructor(
+		public readonly id: SafeMetadata<ID>["id"],
+		public name: SafeMetadata<ID>["tag"]["display"]["Name"] | string,
+		public count: SafeMetadata<ID>["Count"] = 1,
+		slot?: number
+	) {
+		id = id.indexOf("minecraft:") == -1 ? `minecraft:${id}` as ID : id
+		if(typeof name === "string") name = new MinecraftString(name as `§f${T}`);
 		super("item", { item: {
 			id,
-			Count: typeof count === "number" ? new NBT.Byte(count) : count,
+			Count: count,
 			tag: {
 				Tags: [],
 				PublicBukkitValues: {},
@@ -44,25 +59,28 @@ export default class MinecraftItem extends Value {
 					Lore: []
 				}
 			}
-		} as Imetadata } as {item: Imetadata}, slot);
+		} }, slot);
 	}
 
-	setTag(key: string, value: ValuesOf<Imetadata["tag"]["PublicBukkitValues"]>): MinecraftItem {
-		this.data.raw.item.tag.PublicBukkitValues[`hypercube:${key}`] =	
+	setTag(key: string, value: ValuesOf<SafeMetadata["tag"]["PublicBukkitValues"]>) {
+		(<SafeMetadata<ID>>this.data.raw.item).tag.PublicBukkitValues[`hypercube:${key}`] =
 			typeof value==="number" ? new NBT.Int(value).value : `${value}`;
 		return this;
 	}
 
 	addVanillaTag(tag: string) {
-		this.data.raw.item.tag.Tags.push(`${tag}`);
+		(this.data.raw.item as SafeMetadata<ID>).tag.Tags.push(`${tag}`);
 		return this;
 	}
 
 	export(containingBlockArguments: Value[]) {
-		const result = super.export(containingBlockArguments);
-		result.item.data.item.tag.display.Name = JSON.stringify(result.item.data.item.tag.display.Name);
-		result.item.data.item = NBT.stringify(result.item.data.item);
-		return result;
+		const result = { ...super.export(containingBlockArguments) };
+		result.item.data.item = result.item.data.item as RawMetadata<ID>;
+		if(typeof result.item.data.item === "string") throw new Error("You either a smart fella or a fart smella");
+
+		(result.item.data.item as RawMetadata<ID>).tag.display.Name = JSON.stringify(result.item.data.item.tag.display.Name);
+		result.item.data.item = NBT.stringify(result.item.data.item as unknown as NBT.TagObject);
+		return result as RawDFValue<"item", {item: string}>;
 	}
 
 }

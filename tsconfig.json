@@ -13,6 +13,8 @@
 		"allowSyntheticDefaultImports": true,
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
+		"pretty": true,
+		"diagnostics": true,
 		"noImplicitReturns": true,
 		"noImplicitThis": true,
 		"noImplicitAny": true,
@@ -21,6 +23,7 @@
 		"noUnusedParameters": true,
 		"resolveJsonModule": true,
 		"allowJs": true,
+		"checkJs": true,
 		"strictPropertyInitialization": true,
 		"newLine": "lf",
 		"importHelpers": true

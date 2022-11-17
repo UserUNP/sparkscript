@@ -1,76 +1,110 @@
-import Block, { RawDFBlock } from "./Block";
 import zlib from "node:zlib";
 import WebSocket from 'ws';
 import getEditor from "../../editor/quickeditor";
+import DFAnyExportableBlock from "../types/DFAnyExportableBlock";
+import DFAnySerializedBlock from "../types/DFAnySerializedBlock";
+import { sparkscriptWarn } from "../../utilities";
+import SerializableComponent from "./SerializableComponent";
+import ConditionalBlock from "./ConditionalBlock";
+import mapper from "../../mapper";
 
 export interface RawDFTemplate {
-	blocks: RawDFBlock[];
+	blocks: DFAnySerializedBlock[];
 	author?: string,
 	name?: string
 }
 
-export default class Template {
+/**
+ * ### Template.
+ *
+ */
+export default class Template
+extends SerializableComponent<{serialized: RawDFTemplate, compressed: string}, "template"> {
+
+	static from(raw: RawDFTemplate): Template {
+		const template = new Template(raw.name || false, raw.author);
+		const blocks = raw.blocks.map(b => {
+			if(b.id === "bracket") throw new Error(`Found a bracket block while parsing template "${template.name}" with no parent block. Either fix your code or this might be a bug.`);
+			return mapper.from(b);
+		});
+		for(const b of blocks) template.push(b);
+		return template;
+	}
+
 	/**
 	 * Never use this unless you want to explicitly set the codeblocks array.
 	 */
-	_blocks: Block[] = [];
+	_blocks: DFAnyExportableBlock[] = [];
 	cuSocket?: WebSocket;
 
 	/**
 	 * Self editor.
 	 */
 	public readonly self = getEditor.default(this);
-	
+
 	/**
 	 * Create a new template.
 	 * @param name Template name, defaults to "untitled".
 	 * @param author Template author, defaults to "anonymous".
 	 */
 	constructor(public name: string|false, public author?: string) {
+		super("template");
 		this.name = name || "untitled";
 		this.author = author || "anonymous";
 	}
 
-	export(): { compressed: string, serialized: RawDFTemplate, sendToCodeutils: Function } {
-		if(this.length == 0) console.trace("[sparkscript] WARNING: Exporting an empty template.")
+	export() {
+		if(this.length == 0) sparkscriptWarn("Exporting an empty template", true);
 
-		const result: RawDFTemplate = { blocks: [], name: `${this.name}`, author: this.author };
-		let compressed: string = "";
-		for (const block of this._blocks) result.blocks.push(block.export());
-		compressed = zlib.gzipSync(JSON.stringify(result)).toString("base64");
+		const serialized: RawDFTemplate = { blocks: [], name: `${this.name}`, author: `${this.author}` };
+		for (const block of this._blocks) {
+			const serializedBlockBuffer: DFAnySerializedBlock[] = [];
+			if(block instanceof ConditionalBlock) serializedBlockBuffer.push(...ConditionalBlock.conditionalBlockHandler(block.export()));
+			else serializedBlockBuffer.push(block.export());
+			serialized.blocks.push(...serializedBlockBuffer);
+		}
 
+		const compressed = zlib.gzipSync(JSON.stringify(serialized)).toString("base64");
 		return {
 			compressed,
-			serialized: result,
+			serialized,
 			sendToCodeutils: async () => {
-				if(this.cuSocket !== undefined) {
-					try {
-						this.cuSocket.on("open", () => {
-							this.cuSocket?.send(JSON.stringify({
-								type: "template",
-								source: this.author,
-								data: JSON.stringify(compressed)
-							}));
-							this.cuSocket?.addEventListener("message", (e) => {
-								const resp = JSON.parse(e.data.toString());
-								if(resp.status === "error") throw new Error(resp.error)
-								else return true;
-							});
-							this.cuSocket?.on("error", (e) => { throw e; });
+				if(!this.cuSocket) return sparkscriptWarn("Not connected to the Codeutilities WebSocket.");
+				try {
+					this.cuSocket.on("open", () => {
+						if(!this.cuSocket) throw new Error("Connection terminated.");
+						this.cuSocket.send(JSON.stringify({
+							type: "template", source: this.author,
+							data: JSON.stringify(compressed)
+						}));
+						this.cuSocket.addEventListener("message", (e) => {
+							const res = JSON.parse(e.data.toString());
+							if(res.status === "error") throw new Error(res.error)
+							else return true;
 						});
-					} catch(e) { throw e; }
-				} else throw new Error("Not connected to the Codeutilities WebSocket")
+						this.cuSocket.on("error", (e) => { throw e; });
+					});
+				} catch(e) { throw e; }
 			}
 		} as const;
 	}
 
 	/**
 	 * Add to.
-	 * @param blocks Codeblock(s) to add to the template.
+	 * @param blocks Block(s) to add to the template.
 	 */
-	push(...blocks: Block[]) {
+	push(...blocks: DFAnyExportableBlock[]) {
 		this._blocks.push(...blocks);
 		return this;
+	}
+
+	/**
+	 * Alias for `push`.
+	 * @param block Block to add.
+	 */
+	add<T extends DFAnyExportableBlock>(block: T) {
+		this._blocks.push(block);
+		return block;
 	}
 
 	/**
@@ -91,25 +125,28 @@ export default class Template {
 	/**
 	 * The codeblocks that make up this template.
 	 */
-	get blocks(): Block[] {
+	get blocks() {
 		return [...this._blocks]
 	}
 
-	get length(): number {
+	/**
+	 * Size of the template.
+	 */
+	get length() {
 		return this._blocks.length;
 	}
 
 	/**
 	 * Get the last codeblock in the template.
 	 */
-	get last(): Block {
+	get last() {
 		return this._blocks[this._blocks.length - 1];
 	}
 
 	/**
 	 * Get the first codeblock in the template.
 	 */
-	get first(): Block {
+	get first() {
 		return this._blocks[0];
 	}
 }

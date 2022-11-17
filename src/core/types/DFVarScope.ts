@@ -7,7 +7,7 @@
 type DFVarScope = 
 	| "local"
 	| "unsaved"
-	| "save"
+	| "saved"
 	;
 
 export default DFVarScope;

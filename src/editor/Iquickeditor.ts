@@ -1,9 +1,8 @@
-import DFTarget			from	"../core/types/DFTarget";
-import DFVarScope		from	"../core/types/DFVarScope";
+import DFTarget			from "../core/types/DFTarget";
+import DFSafeVarScope	from "../core/types/DFSafeVarScope";
+import DFValueType		from "../core/types/DFValueType";
 
 import Template			from "../core/components/Template";
-import Value 			from "../core/components/Value";
-import Block			from "../core/components/Block";
 import MinecraftString	from "../core/components/minecraft/MinecraftString";
 
 import MinecraftItem	from "../values/MinecraftItem";
@@ -14,6 +13,18 @@ import Location			from "../values/Location";
 import Potion			from "../values/Potion";
 import GameValue		from "../values/GameValue";
 import Vector 			from "../values/Vector";
+
+import { PlayerAction, PlayerCondition, PlayerEvent }	from "../codeblocks/Player";
+import { GameAction, GameCondition }					from "../codeblocks/Game";
+import { EntityAction, EntityCondition, EntityEvent }					from "../codeblocks/Entity";
+import SetVariable										from "../codeblocks/SetVariable";
+import VariableCondition								from "../codeblocks/VariableCondition";
+import SelectObject										from "../codeblocks/SelectObject";
+import Control											from "../codeblocks/Control";
+import Func												from "../codeblocks/Func";
+import CallFunction										from "../codeblocks/CallFunction";
+import Process											from "../codeblocks/Process";
+import StartProcess										from "../codeblocks/StartProcess";
 
 type DefineAction = {
 	/**
@@ -28,16 +39,16 @@ type DefineAction = {
 	(name: string, action: string): void;
 }
 
-type GetCodeblock = {
+type GetCodeblock<T extends Template> = {
 	/**
 	 * Get codeblock by index in order.
 	 * @param index Codeblock index, indexes start at 0.
 	 */
-	(index: number): Block;
+	<K extends number>(index: K): T["blocks"][K];
 	//TODO: get by name
 }
 
-export default interface editor {
+export default interface editor<T extends Template = Template> {
 	/**
 	 * Overwrite the template with the provided template.
 	 * @param template Template to use.
@@ -49,7 +60,7 @@ export default interface editor {
 	 */
 	getTemplate: () => Template;
 
-	get: GetCodeblock;
+	get: GetCodeblock<T>;
 
 	/**
 	 * Define an action.
@@ -68,11 +79,11 @@ export default interface editor {
 	 * @param id Item ID name.
 	 * @param name Item name.
 	 */
-	item: (id: `minecraft:${string}`, name: string | MinecraftString, count: number, slot?: number) => MinecraftItem;
+	item: <T extends string, ID extends `minecraft:${string}`>(id: ID, name: T | MinecraftString<T>, count: number, slot?: number) => MinecraftItem<T, ID>;
 	/**
 	 * Alias for `item(...)`.
 	 */
-	mc: (id: `minecraft:${string}`, name: string | MinecraftString, count: number, slot?: number) => MinecraftItem;
+	mc: <T extends string, ID extends `minecraft:${string}`>(id: ID, name: T | MinecraftString<T>, count: number, slot?: number) => MinecraftItem<T, ID>;
 
 	/**
 	 * Create a new text value.
@@ -81,7 +92,7 @@ export default interface editor {
 	 * @returns A new Text value.
 	 */
 	text: (text: string, slot?: number) => Text;
-	txt: (txt: string, slot?: number) => Text;
+	txt: (text: string, slot?: number) => Text;
 	/**
 	 * Create a new number value.
 	 * @param number Number to make a value from.
@@ -89,7 +100,7 @@ export default interface editor {
 	 * @returns A new Number value.
 	 */
 	number: (number: number, slot?: number) => Number;
-	num: (num: number, slot?: number) => Number;
+	num: (number: number, slot?: number) => Number;
 	/**
 	 * Create a new variable value.
 	 * @param variable Name of the variable.
@@ -97,8 +108,8 @@ export default interface editor {
 	 * @param slot Slot to put the value in.
 	 * @returns A new Variable value.
 	 */
-	variable: (name: string, scope: DFVarScope, slot?: number) => Variable;
-	var: (name: string, scope: DFVarScope, slot?: number) => Variable;
+	variable: (name: string, scope: DFSafeVarScope, slot?: number) => Variable;
+	var: (name: string, scope: DFSafeVarScope, slot?: number) => Variable;
 	/**
 	 * Create a new location value.
 	 * @param x X coordinate.
@@ -116,7 +127,7 @@ export default interface editor {
 	 * @param amplifier Strength of the potion.
  	 */
 	potion: (potion: string, duration: number, amplifier: number, slot?: number) => Potion;
-	pot: (pot: string, dur: number, amp: number, slot?: number) => Potion;
+	pot: (potion: string, duration: number, amplifier: number, slot?: number) => Potion;
 	/**
 	 * Create a new vector value.
 	 * @param x X coordinate.
@@ -132,16 +143,36 @@ export default interface editor {
 		 * @param value The value.
 		 * @param target The target of the value, "Default" is the default target.
 		 */
-		value: (value: string, target: DFTarget, slot?: number) => GameValue;
-		val: (val: string, target: DFTarget, slot?: number) => GameValue;
+		value: <T extends string>(value: T, target?: DFTarget, slot?: number) => GameValue;
+		val: <T extends string>(value: T, target?: DFTarget, slot?: number) => GameValue;
 		/**
-		 * Do a game action.
+		 * Used to do something related to the plot and everyone playing it.
 		 * @param action Action to perform.
 		 * @param args Arguments to pass.
 		 */
-		action: (action: string, ...args: any[]) => void;
-		act: (action: string, ...args: any[]) => void;
+		action: <T extends string>(action: T, ...args: DFValueType[]) => GameAction<T>;
+		/**
+		 * Alias for `action`.
+		 */
+		act: <T extends string>(action: T, ...args: DFValueType[]) => GameAction<T>;
+		/**
+		 *
+		 */
+		condition: <T extends string>(action: T, ...args: DFValueType[]) => GameCondition<T>;
+		/**
+		 * Alias for `condition`.
+		 */
+		if: <T extends string>(action: T, ...args: DFValueType[]) => GameCondition<T>;
 	}
+
+	/**
+	 * Resolves to `num(1)` equivelent.
+	 */
+	true: Number
+	/**
+	 * Resolves to `num(0)` equivelent.
+	 */
+	false: Number
 
 	player: {
 		/**
@@ -149,20 +180,32 @@ export default interface editor {
 		 * @param action Action to perform.
 		 * @param args Arguments to pass.
 		 */
-		action: (action: string, ...args: Value[]) => void;
+		action: <T extends string, Target extends DFTarget = DFTarget>(action: T, target?: Target, ...args: DFValueType[]) => PlayerAction<T, Target>;
 		/**
-		 * Alias for action.
+		 * Alias for `action`.
 		 */
-		act: (action: string, ...args: Value[]) => void;
+		act:  <T extends string, Target extends DFTarget = DFTarget>(action: T, target?: Target, ...args: DFValueType[]) => PlayerAction<T, Target>;
 		/**
 		 * When a player does something.
 		 * @param event Event to listen for.
 		 */
-		event: (event: string) => void;
+		event: <T extends string>(event: T) => PlayerEvent<T>;
 		/**
-		 * Alias for event.
+		 * Alias for `event`.
 		 */
-		evt: (event: string) => void;
+		evt: <T extends string>(event: T) => PlayerEvent<T>;
+		/**
+		 * If a player did something.
+		 * @param condition Action of condition.
+		 * @param target Target of the condition.
+		 * @param isInverted If the condition should NOT match the action.
+		 * @param args Arguments to pass.
+		 */
+		condition: <T extends string, Target extends DFTarget = DFTarget>(condition: T, target?: Target, ...args: DFValueType[]) => PlayerCondition<T, Target>;
+		/**
+		 * Alias for `condition`.
+		 */
+		if: <T extends string, Target extends DFTarget = DFTarget>(condition: T, target?: Target, ...args: DFValueType[]) => PlayerCondition<T, Target>;
 	};
 	entity: {
 		/**
@@ -170,28 +213,120 @@ export default interface editor {
 		 * @param action Action to perform.
 		 * @param args Arguments to pass.
 		 */
-		action: (action: string, ...args: Value[]) => void;
+		action: <T extends string, Target extends DFTarget = DFTarget>(action: T, target?: Target, ...args: DFValueType[]) => EntityAction<T, Target>;
 		/**
-		 * Alias for action
+		 * Alias for `action`.
 		 */
-		act: (action: string, ...args: Value[]) => void;
+		act: <T extends string, Target extends DFTarget = DFTarget>(action: T, target?: Target, ...args: DFValueType[]) => EntityAction<T, Target>;
 		/**
 		 * When an entity does something.
 		 * @param event Event to listen for.
 		 */
-		event: (event: string) => void;
+		event: <T extends string>(event: T) => EntityEvent<T>;
 		/**
-		 * Alias for event.
+		 * Alias for `event`.
 		 */
-		evt: (event: string) => void;
+		evt: <T extends string>(event: T) => EntityEvent<T>;
+		/**
+		 * If an entity did something.
+		 * @param condition Action of condition.
+		 * @param target Target of the condition.
+		 * @param isInverted If the condition should NOT match the action.
+		 * @param args Arguments to pass.
+		 */
+		 condition: <T extends string, Target extends DFTarget = DFTarget>(condition: T, target?: Target, ...args: DFValueType[]) => EntityCondition<T, Target>;
+		 /**
+		  * Alias for `condition`.
+		  */
+		 if: <T extends string, Target extends DFTarget = DFTarget>(condition: T, target?: Target, ...args: DFValueType[]) => EntityCondition<T, Target>;
 	};
 
-	function: (name: string, ...args: Value[]) => void;
-	func: (name: string, ...args: Value[]) => void;
+	/**
+	 * Place a function.
+	 * @param name Function name.
+	 * @param args Arguments, can be used as notes since they're not used in the function.
+	 */
+	function: <T extends string>(name: T, ...args: DFValueType[]) => Func<T>;
+	/**
+	 * Alias for `function`.
+	 */
+	func: <T extends string>(name: T, ...args: DFValueType[]) => Func<T>;
 
-	setvariable: (action: string, variable: Variable,...args: Value[]) => void;
-	setvar: (action: string, variable: Variable,...args: Value[]) => void;
+	/**
+	 * Call a specific function.
+	 * @param name Function name to call.
+	 */
+	callFunction: <T extends string>(name: T) => CallFunction<T>;
+	/**
+	 * Alias for `callFunction`.
+	 */
+	callFunc: <T extends string>(name: T) => CallFunction<T>;
 
-	select: (condition: string, ...args: Value[]) => void;
-	sel: (condition: string, ...args: Value[]) => void;
+	/**
+	 * Place a process.
+	 * @param name Function name.
+	 * @param args Arguments, can be used as notes since they're not used in the function.
+	 */
+	process: <T extends string>(name: T, ...args: DFValueType[]) => Process<T>;
+	/**
+	 * Alias for `process`.
+	 */
+	proc: <T extends string>(name: T, ...args: DFValueType[]) => Process<T>;
+
+	/**
+	 * Start a process thread.
+	 * @param name Function name.
+	 * @param args Arguments, can be used as notes since they're not used in the function.
+	 */
+	startProcess: <T extends string>(name: T, ...args: DFValueType[]) => StartProcess<T>;
+	/**
+	 * Alias for `startProcess`.
+	 */
+	startProc: <T extends string>(name: T, ...args: DFValueType[]) => StartProcess<T>;
+
+	/**
+	 * Set a variable using a specific action.
+	 * @param action Action to perform.
+	 * @param variable Variable to set.
+	 * @param args Arguments to pass.
+	 */
+	setVariable: <T extends string>(action: T, variable: Variable,...args: DFValueType[]) => SetVariable<T>;
+	/**
+	 * Alias for `setVariable`.
+	 */
+	setVar: <T extends string>(action: T, variable: Variable,...args: DFValueType[]) => SetVariable<T>;
+
+	/**
+	 * If a specific variable has or is equal to a property.
+	 * @param condition Condition to match for.
+	 * @param isInverted If the condition should NOT match the variable.
+	 * @param args Arguments to pass.
+	 */
+	ifVariable: <T extends string>(condition: T, ...args: DFValueType[]) => VariableCondition<T>;
+	/**
+	 * Alias for `ifVariable`.
+	 */
+	ifVar: <T extends string>(condition: T, ...args: DFValueType[]) => VariableCondition<T>;
+
+	/**
+	 * Select an object (Entities, Items, ..etc).
+	 * @param condition Condition to select by.
+	 * @param args Arguments to pass specified by the chosen condition.
+	 */
+	select: <T extends string>(condition: T, ...args: DFValueType[]) => SelectObject<T>;
+	/**
+	 * Alias for `select`.
+	 */
+	sel: <T extends string>(cond: T, ...args: DFValueType[]) => SelectObject<T>;
+
+	/**
+	 * Control yr'ou game.
+	 * @param action Action to perform.
+	 * @param args Arguments to pass.
+	 */
+	control: <T extends string>(action: T, ...args: DFValueType[]) => Control<T>;
+	/**
+	 * Alias for `control`.
+	 */
+	ctrl: <T extends string>(act: T, ...args: DFValueType[]) => Control<T>;
 }

@@ -1,20 +1,29 @@
-export interface RawDFValue {
+import SerializableComponent from "./SerializableComponent";
+import { ValueDataMapper } from "../../mapper";
+import { makeStringification } from "../../utilities";
+import DFValueCodename from "../types/DFValueCodename";
+import DataStorage from "./DataStorage";
+
+export interface RawDFValue
+<T extends DFValueCodename = DFValueCodename, DataType extends ValueDataMapper<T> = ValueDataMapper<T>> {
 	slot: number;
 	item: {
-		id: DFValueCodename;
-		data: RawDFValueDataRecord
+		id: T;
+		data: DataType
 	}
 }
 
-abstract class Value {
+/**
+ * ### Value.
+ *
+ * @template T Value codename.
+ * @template DataType Value object data type.
+ */
+export default class Value
+<T extends DFValueCodename = DFValueCodename, DataType extends ValueDataMapper<T> = ValueDataMapper<T>>
+extends SerializableComponent<RawDFValue<T, DataType>, `${T} value`> {
 
-	static from(raw: RawDFValue) {
-		const type = raw.item.id;
-		const instance = mapper(type, raw.item.data, raw.slot);
-		return instance;
-	}
-
-	data: DataStorage;
+	data: DataStorage<T, DataType>;
 
 	/**
 	 * Create a new value.
@@ -22,36 +31,25 @@ abstract class Value {
 	 * @param value The value property.
 	 * @param slot Specific slot number.
 	 */
-	constructor(public type: DFValueCodename, value: RawDFValueDataRecord, public slot?: number) {
-		this.data = DataStorage.from(value);
-		this.data.assignOwner(this);
+	constructor(public type: T, value: DataType, public slot?: number) {
+		super(`${type} value`)
+		this.data = DataStorage.from<T, DataType>(value);
 	}
 
 	/**
 	 * Stringify the value.
 	 */
-	toString() {
-		return `<${this.type}>${this.data}`;
+	toString(): string {
+		return makeStringification(this.type, JSON.stringify(this.data));
 	}
 
-	/**
-	 * Export the value to a JSON object.
-	 * @returns DiamondFire JSON-ified value.
-	 */
-	export(containingBlockArguments: Value[]): RawDFValue {
+	export(selfValues: Value[]) {
 		return {
-			slot: this.slot || containingBlockArguments.indexOf(this),
+			slot: this.slot || selfValues.indexOf(this as unknown as Value), //! find a solution
 			item: {
 				id: this.type,
-				data: this.data?.raw || {}
+				data: this.data.raw
 			}
 		}
 	}
-
 }
-
-export default Value;
-
-import mapper from "../../mapper";
-import DFValueCodename from "../types/DFValueCodename";
-import DataStorage, { RawDFValueDataRecord } from "./DataStorage";

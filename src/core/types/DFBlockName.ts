@@ -20,5 +20,6 @@ type DFBlockName =
 	| "SELECT OBJECT"
 	| "SET VARIABLE"
 	| "START PROCESS"
+	;
 
 export default DFBlockName;

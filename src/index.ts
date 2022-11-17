@@ -2,9 +2,9 @@ import zlib 		from "node:zlib";
 import WebSocket	from 'ws';
 
 // Components.
+import SerializableComponent			from "./core/components/SerializableComponent";				export { SerializableComponent };
 import Template, { RawDFTemplate }		from './core/components/Template';							export { Template };
-import LibraryTemplate					from './core/components/LibraryTemplate';					export { LibraryTemplate };
-import Block							from './core/components/Block';								export { Block };
+import ActionBlock						from './core/components/ActionBlock';						export { ActionBlock };
 import Value							from './core/components/Value';								export { Value };
 import DataStorage						from './core/components/DataStorage';						export { DataStorage };
 import MinecraftColor					from './core/components/minecraft/MinecraftColor';			export { MinecraftColor };
@@ -26,12 +26,11 @@ import player		from "./codeblocks/Player";			export { player };
 import entity		from "./codeblocks/Entity";			export { entity };
 import setvar		from "./codeblocks/SetVariable";	export { setvar };
 import SelectObject	from "./codeblocks/SelectObject";	export { SelectObject };
-import GameAction	from "./codeblocks/GameAction";		export { GameAction };
+import GameAction	from "./codeblocks/Game";		export { GameAction };
 import Func			from "./codeblocks/Func";			export { Func };
 
 // Quick editor & playground.
 import utils										from "./utilities";					export { utils };
-import { SparkscriptMapper, codeblockSupported }	from "./mapper";					export { SparkscriptMapper, codeblockSupported }
 import getEditor, { ActDefs }						from "./editor/quickeditor";		export { getEditor }
 import codeDump										from "./core/codeDump";				export { codeDump };
 import DFDumpScheme									from "./core/types/DFDumpScheme";	export { DFDumpScheme };
@@ -43,7 +42,7 @@ import Ieditor 										from "./editor/Iquickeditor";
  * @param name Name of the template, false for nothing.
  * @param callback Editor callback.
  */
-function quickEditor(name: string|false, callback: (editor: Ieditor, settings: Isettings) => void): Template {
+function quickEditor(name: string|false, callback: (editor: Ieditor<ReturnType<typeof quickEditor>>, settings: Isettings) => void): Template {
 	const template = new Template(name);
 	const actDefs: ActDefs = {};
 
@@ -69,12 +68,9 @@ function quickEditor(name: string|false, callback: (editor: Ieditor, settings: I
  * @param raw Raw template data.
  * @param callback Editor callback.
  */
-quickEditor.from = (raw: string, callback?: (editor: Ieditor, settings: Isettings) => void): Template => {
+quickEditor.from = (raw: string, callback?: (editor: Ieditor<ReturnType<typeof quickEditor>>, settings: Isettings) => void) => {
 	const data: RawDFTemplate = JSON.parse(zlib.gunzipSync(Buffer.from(raw, "base64")).toString()) as RawDFTemplate;
-	
-	const template = new Template(data.name || false, data.author);
-	for(const block of data.blocks) template.push(Block.from(block));
-	
+	const template = Template.from(data);
 	return quickEditor(template.name, (e, s) => {
 		e._from(template);
 		if(callback) callback(e, s);
@@ -85,16 +81,7 @@ quickEditor.setActionDump = (dump: DFDumpScheme) => codeDump.loadDump(dump);
 
 // Variable types.
 import DFVarType from "./core/types/DFVarType";
-quickEditor.NEVER	= DFVarType.	NEVER;
-quickEditor.ANY		= DFVarType.	  ANY;
-quickEditor.TXT		= DFVarType.	  TXT;
-quickEditor.NUM		= DFVarType.	  NUM;
-quickEditor.VAR		= DFVarType.	  VAR;
-quickEditor.ITEM	= DFVarType.	 ITEM;
-quickEditor.LIST	= DFVarType.	 LIST;
-quickEditor.POT		= DFVarType.	  POT;
-quickEditor.SND		= DFVarType.	  SND;
-quickEditor.DICT	= DFVarType.	 DICT;
+export { DFVarType as VarType }
 
 export default quickEditor;
 

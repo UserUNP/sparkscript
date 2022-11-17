@@ -9,15 +9,21 @@ import Potion			from "../values/Potion";
 import GameValue		from "../values/GameValue";
 import Vector 			from "../values/Vector";
 
-import { PlayerAction, PlayerEvent }	from "../codeblocks/Player";
-import { EntityAction, EntityEvent }	from "../codeblocks/Entity";
-import { SetVariable }					from "../codeblocks/SetVariable";
-import SelectObject						from "../codeblocks/SelectObject";
-import GameAction						from "../codeblocks/GameAction";
-import Func								from "../codeblocks/Func";
+import { PlayerAction, PlayerCondition, PlayerEvent }	from "../codeblocks/Player";
+import { EntityAction, EntityCondition, EntityEvent }					from "../codeblocks/Entity";
+import { GameAction, GameCondition }					from "../codeblocks/Game";
+import SetVariable										from "../codeblocks/SetVariable";
+import VariableCondition								from "../codeblocks/VariableCondition";
+import SelectObject										from "../codeblocks/SelectObject";
+import Control											from "../codeblocks/Control";
+import Func												from "../codeblocks/Func";
+import CallFunction										from "../codeblocks/CallFunction";
+import Process											from "../codeblocks/Process";
+import StartProcess										from "../codeblocks/StartProcess";
 
 import Ieditor	from "./Iquickeditor";
 import mapper, { getActionOwner, codeblockSupported } from "../mapper";
+import { sparkscriptWarn } from "../utilities";
 
 export type ActDefs = Record<string, ((...args: any[])=>void) | string>;
 
@@ -27,21 +33,21 @@ export type ActDefs = Record<string, ((...args: any[])=>void) | string>;
  * @param customAction Action definitons and/or doCustomAction function
  * @returns The quick editor.
  */
-function getEditor(_template: Template|false, customAction: { actDefs: ActDefs, doCustomAction?: (name: string, ...args: any[]) => any }): Ieditor {
-	let template: Template;
-	if(!_template) template = new Template(false);
+function getEditor<T extends Template = Template>(_template: T|false, customAction: { actDefs: ActDefs, doCustomAction?: (name: string, ...args: any[]) => any }): Ieditor<T> {
+	let template: T;
+	if(!_template) template = new Template(false) as T;
 	else template = _template;
 
 	const actDefs = customAction.actDefs;
 	const doCustomAction = customAction.doCustomAction;
-	const editor: Ieditor = {
+	const editor: Ieditor<typeof template> = {
 		_from: (other) => {
 			template._blocks = other.blocks;
 		},
 
 		getTemplate: () => template,
 
-		get: (index: number) => {
+		get: (index) => {
 			return template.blocks[index] ?? null;
 		},
 
@@ -57,62 +63,89 @@ function getEditor(_template: Template|false, customAction: { actDefs: ActDefs, 
 		mc: (id, name, amount, slot?) => new MinecraftItem(id, name, amount, slot),
 
 		text: (text, slot?) => new Text(text, slot),
-		txt: (txt, slot?) => new Text(txt, slot),
+		txt: (text, slot?) => new Text(text, slot),
 
 		number: (number, slot?) => new Number(number, slot),
-		num: (num, slot?) => new Number(num, slot),
+		num: (number, slot?) => new Number(number, slot),
 
 		variable: (name, scope, slot?) => new Variable(name, scope, slot),
-		var: (name, scope="unsaved", slot?) => new Variable(name, scope, slot),
+		var: (name, scope, slot?) => new Variable(name, scope, slot),
 
-		location: (x, y, z, pitch=90, yaw=0, slot?) => new Location(x, y, z, pitch, yaw, slot),
-		loc: (x, y, z, pitch=90, yaw=0, slot?) => new Location(x, y, z, pitch, yaw, slot),
+		location: (x, y, z, pitch, yaw, slot?) => new Location(x, y, z, pitch, yaw, slot),
+		loc: (x, y, z, pitch, yaw, slot?) => new Location(x, y, z, pitch, yaw, slot),
 
-		potion: (potion, duration, amplifier=0, slot?) => new Potion(potion, duration, amplifier, slot),
-		pot: (pot, dur, amp=0, slot?) => new Potion(pot, dur, amp, slot),
+		potion: (potion, duration, amplifier, slot?) => new Potion(potion, duration, amplifier, slot),
+		pot: (potion, duration, amplifier, slot?) => new Potion(potion, duration, amplifier, slot),
 
 		vector: (x, y, z, slot?) => new Vector(x, y, z, slot),
 		vec: (x, y, z, slot?) => new Vector(x, y, z, slot),
 
+		true: new Number(1),
+		false: new Number(0),
+
 		game: {
-			//* Game values.
+			//* Game value.
 			value: (value, target, slot?) => new GameValue(value, target, slot),
 			val: (val, target, slot?) => new GameValue(val, target, slot),
 			//* Game action.
-			action: (action, ...args) => template.push(new GameAction(action, ...args)),
-			act: (action, ...args) => template.push(new GameAction(action, ...args)),
+			action: (action, ...args) => template.add(new GameAction(action, ...args)),
+			act: (action, ...args) => template.add(new GameAction(action, ...args)),
+
+			condition: (condition, ...args) => template.add(new GameCondition(condition, ...args)._setEditorCustomActions(actDefs)),
+			if: (condition, ...args) => template.add(new GameCondition(condition, ...args)._setEditorCustomActions(actDefs)),
 		},
 
 		//* Codeblocks.
 		player: {
-			action: (action, ...args) => template.push(new PlayerAction(action, ...args)),
-			act: (action, ...args) => template.push(new PlayerAction(action, ...args)),
-			
-			event: (event) => template.push(new PlayerEvent(event)),
-			evt: (event) => template.push(new PlayerEvent(event)),
+			action: (action, target, ...args) => template.add(new PlayerAction(action, target, ...args)),
+			act: (action, target, ...args) => template.add(new PlayerAction(action, target, ...args)),
+
+			event: (event) => template.add(new PlayerEvent(event)),
+			evt: (event) => template.add(new PlayerEvent(event)),
+
+			condition: (condition, target, ...args) => template.add(new PlayerCondition(condition, target, ...args)._setEditorCustomActions(actDefs)),
+			if: (condition, target, ...args) => template.add(new PlayerCondition(condition, target, ...args)._setEditorCustomActions(actDefs)),
 		},
 		entity: {
-			action: (action, ...args) => template.push(new EntityAction(action, ...args)),
-			act: (action, ...args) => template.push(new EntityAction(action, ...args)),
+			action: (action, target, ...args) => template.add(new EntityAction(action, target, ...args)),
+			act: (action, target, ...args) => template.add(new EntityAction(action, target, ...args)),
 
-			event: (event) => template.push(new EntityEvent(event)),
-			evt: (event) => template.push(new EntityEvent(event)),
+			event: (event) => template.add(new EntityEvent(event)),
+			evt: (event) => template.add(new EntityEvent(event)),
+
+			condition: (condition, target, ...args) => template.add(new EntityCondition(condition, target, ...args)._setEditorCustomActions(actDefs)),
+			if: (condition, target, ...args) => template.add(new EntityCondition(condition, target, ...args)._setEditorCustomActions(actDefs)),
 		},
 
-		function: (name, ...args) => template.push(new Func(name, ...args)),
-		func: (name, ...args) => template.push(new Func(name, ...args)),
+		function: (name, ...args) => template.add(new Func(name, ...args)),
+		func: (name, ...args) => template.add(new Func(name, ...args)),
 
-		setvariable: (action, variable,...args) => template.push(new SetVariable(action, variable, ...args)),
-		setvar: (action, variable,...args) => template.push(new SetVariable(action, variable, ...args)),
+		callFunction: (name) => template.add(new CallFunction(name)),
+		callFunc: (name) => template.add(new CallFunction(name)),
 
-		select: (condition, ...args) => template.push(new SelectObject(condition, ...args)),
-		sel: (condition, ...args) => template.push(new SelectObject(condition, ...args)),
-	};
+		process: (name, ...args) => template.add(new Process(name, ...args)),
+		proc: (name, ...args) => template.add(new Process(name, ...args)),
+
+		startProcess: (name) => template.add(new StartProcess(name)),
+		startProc: (name) => template.add(new StartProcess(name)),
+
+		setVariable: (action, variable, ...args) => template.add(new SetVariable(action, variable, ...args)),
+		setVar: (action, variable, ...args) => template.add(new SetVariable(action, variable, ...args)),
+
+		ifVariable: (condition, ...args) => template.add(new VariableCondition(condition, ...args)._setEditorCustomActions(actDefs)),
+		ifVar: (condition, ...args) => template.add(new VariableCondition(condition, ...args)._setEditorCustomActions(actDefs)),
+
+		select: (condition, ...args) => template.add(new SelectObject(condition, ...args)),
+		sel: (condition, ...args) => template.add(new SelectObject(condition, ...args)),
+
+		control: (action, ...args) => template.add(new Control(action, ...args)),
+		ctrl: (action, ...args) => template.add(new Control(action, ...args)),
+	} as const;
 	return editor;
 }
 
 /**
- * Default custom function executor.
+ * Default custom action executor.
  * @param tempToModify Template to act on.
  * @param actDefs Action definitions.
  * @param name Name of action.
@@ -125,29 +158,37 @@ getEditor.defaultCustomAction = (tempToModify: Template, actDefs: ActDefs, name:
 		if(typeof action === "string") {
 			const actionOwnerType = getActionOwner(action)?.identifier;
 			if(!actionOwnerType) throw new Error(`Action ${action} doesn't exist. If you're sure it must then the action dump may be outdated..`);
-			const parsedArgs = args.map((a: any) => {
+			const parsedArgs = args.map((a) => {
 				if(typeof a === "string") return new Text(a);
 				if(typeof a === "number") return new Number(a);
-				else return a;
+				else throw new Error(`Can only convert primitive strings and numbers to DiamondFire values. Got ${typeof a} instead`);
 			});
-			if(!codeblockSupported(actionOwnerType)) throw new Error(`Type "${actionOwnerType}" (from action ${action}) cannot be recongized as a DiamondFire block type, this maybe because it is not implemented yet.`)
-			const instance = mapper(actionOwnerType, action || "", parsedArgs);
+			if(!codeblockSupported(actionOwnerType)) throw new Error(`Type "${actionOwnerType}" (from action ${action}) cannot be recongized as a DiamondFire block type; this might be a bug.`)
+			if(actionOwnerType.includes("if")) sparkscriptWarn("Can only create action blocks");
+			const instance = mapper(actionOwnerType, {
+				action, args: { items: [] },
+				id: "block", target: "Selection",
+				block: actionOwnerType,
+				inverted: ""
+			});
+			instance.args = parsedArgs;
 			tempToModify.push(instance);
 		} else return action(...args);
 	} else throw new Error(`Action ${name} is not defined.`);
 }
 getEditor.defaultActDefs = {} as Record<string, ((...args: any[])=>void)>;
-getEditor.applyActions = (editor: Ieditor, actDefs: ActDefs, doCustomAction?: (name: string, ...args: any[]) => any) => {
+getEditor.applyActions = <T extends Template>(editor: Ieditor<T>, actDefs: ActDefs, doCustomAction?: (name: string, ...args: any[]) => any) => {
 	for(const name in actDefs) {
-		editor.action[name] = (...args: any[]) => { doCustomAction ? doCustomAction(name, ...args) : getEditor.defaultCustomAction(editor.getTemplate(), actDefs, name, ...args); }
+		editor.action[name] = (...args: any[]) => {
+			doCustomAction ? doCustomAction(name, ...args) :
+			getEditor.defaultCustomAction(editor.getTemplate(), actDefs, name, ...args);
+		}
 	};
 }
 
 /**
  * Quickly generate an editor, with default specifications.
  */
-getEditor.default = (t?: Template): Ieditor => {
-	return getEditor(t||false, {actDefs:{}})
-}
+getEditor.default = <T extends Template>(t?: T | string): Ieditor<T> => getEditor(typeof t !== "string" ? (t||false) : new Template(`${t}`) as T, {actDefs:{}});
 
 export default getEditor;

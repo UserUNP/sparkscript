@@ -19,13 +19,13 @@ describe("editor", () => {
       e.player.action("Kick");
     });
     expect(template.blocks).toStrictEqual([
-      new PlayerAction("Kick")
+      new PlayerAction("Kick", "Default")
     ]);
   });
 
   it("can make values", () => {
     const template = df("test", (e) => {
-      e.player.action("SendMessage", e.text("Hello world!"));
+      e.player.action("SendMessage", "Default", e.text("Hello world!"));
     });
     expect(template).toBeTruthy();
   });
@@ -40,5 +40,4 @@ describe("editor", () => {
     });
     expect(template).toBeTruthy();
   });
-
 });

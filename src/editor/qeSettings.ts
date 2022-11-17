@@ -29,7 +29,7 @@ export interface Isettings {
 }
 
 export default function getEditorSettings(name: Isettings["name"]): Isettings {
-	return { 
+	return {
 		strict: true,
 		usingCodeutils: false,
 		cuConf: {

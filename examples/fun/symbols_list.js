@@ -1,18 +1,22 @@
-const df = require("../").default;
+const df = require("../../dist").default;
 
 const t = df("symbols", (e) => {
   e.player.event("Join");
-  e.setvariable("CreateList", e.variable("symbols"));
+  e.setVariable("CreateList", e.variable("symbols"));
   var curr = 0;
   const blockamount = 50;
+
+  e.defAction("addSyms", (symbols) => {
+    e.setVariable("AppendList", e.var("symbolsTable"), ...symbols);
+  });
 
   for (let i = 0; i < blockamount; i++) {
     const symbols = [];
     for (var j = curr; j < curr + 26; j++) {
-      symbols.push(String.fromCharCode(j));
+      symbols.push(e.txt(String.fromCharCode(j)));
     }
     curr = j;
-    e.setvariable("AppendList", e.var("symbolsTable"), ...symbols.map(sym => e.text(sym)));
+    e.action.addSyms(symbols);
   }
 });
 

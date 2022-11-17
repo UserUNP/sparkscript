@@ -1,30 +1,29 @@
 import Value from "../core/components/Value";
+import DFSafeVarScope from "../core/types/DFSafeVarScope";
 import DFVarScope from "../core/types/DFVarScope";
-
-const varScopeMap = {
-	'local':'local',
-	'unsaved':'unsaved',
-	'game':'unsaved',
-	'saved':'saved',
-	'save':'saved'
-}
+import { varScopeMap } from "../mapper";
 
 export interface Ivar {
 	name: string;
 	scope: DFVarScope;
 }
 
-export default class Variable extends Value {
+export default class Variable
+extends Value<"var", Ivar> {
 	/**
 	 * Create a variable value.
 	 * @param name Name of the variable.
 	 * @param scope Variable scope.
 	 */
-	constructor(public name: Ivar["name"], public scope: Ivar["scope"]="unsaved", slot?: number) {
-		super("var", { name, scope: varScopeMap[scope] } as Ivar, slot);
+	constructor(
+		public name: string,
+		public scope: DFSafeVarScope = "game",
+		slot?: number
+	) {
+		super("var", { name, scope: varScopeMap[scope] }, slot);
 	}
 
-	toString(): `%var(${typeof this.name})` {
+	toString(): `%var(${string})` {
 		return `%var(${this.name})`;
 	}
 }

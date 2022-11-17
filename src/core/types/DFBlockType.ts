@@ -1,9 +1,14 @@
-import { PlayerAction, PlayerEvent } from "../../codeblocks/Player";
-import { EntityEvent, EntityAction } from "../../codeblocks/Entity";
-import { SetVariable } from "../../codeblocks/SetVariable";
+import { PlayerAction, PlayerCondition, PlayerEvent } from "../../codeblocks/Player";
+import { EntityEvent, EntityAction, EntityCondition } from "../../codeblocks/Entity";
+import { GameAction, GameCondition } from "../../codeblocks/Game";
+import SetVariable from "../../codeblocks/SetVariable";
 import SelectObject from "../../codeblocks/SelectObject";
-import GameAction from "../../codeblocks/GameAction";
 import Func from "../../codeblocks/Func";
+import Control from "../../codeblocks/Control";
+import Process from "../../codeblocks/Process";
+import StartProcess from "../../codeblocks/StartProcess";
+import CallFunction from "../../codeblocks/CallFunction";
+import VariableCondition from "../../codeblocks/VariableCondition";
 
 /**
  * Sparkscript codeblock type.
@@ -11,12 +16,20 @@ import Func from "../../codeblocks/Func";
 type DFBlockType =
 	| PlayerEvent
 	| PlayerAction
+	| PlayerCondition
 	| EntityEvent
 	| EntityAction
+	| EntityCondition
 	| SetVariable
+	| VariableCondition
 	| SelectObject
-	| GameAction	
+	| GameAction
+	| GameCondition
 	| Func
+	| CallFunction
+	| Control
+	| Process
+	| StartProcess
 	;
 
 export default DFBlockType;

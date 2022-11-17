@@ -8,3 +8,5 @@ coverage
 done-tests
 spark
 package-lock.json
+wordle_list_templ.txt
+wordle_list_serialized_templ.json

@@ -23,7 +23,7 @@ const template = df("test template", (e, s) => {
   e.player.event("Join");
 
   // e.player.action(actionName, argument1, argument2, ...)
-  e.player.action("SendMessage", e.text("Hello world!"), e.text("get real"));
+  e.player.action("SendMessage", "Default", e.text("Hello world!"), e.text("get real"));
 })
 
 // export the template, returns an object with "compressed" and "serialized"

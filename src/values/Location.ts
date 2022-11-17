@@ -1,14 +1,18 @@
 import Value from "../core/components/Value";
 
 export interface Iloc {
-	x: number;
-	y: number;
-	z: number;
-	pitch: number;
-	yaw: number;
+	loc: {
+		x: number;
+		y: number;
+		z: number;
+		pitch: number;
+		yaw: number;
+	}
 }
 
-export default class Location extends Value {
+export default class Location
+extends Value<"loc", Iloc> {
+
 	/**
 	 * Create a new location value.
 	 * @param x X coordinate.
@@ -17,7 +21,11 @@ export default class Location extends Value {
 	 * @param pitch Pitch, defaults to 0.
 	 * @param yaw Yaw, defaults to 0.
 	 */
-	constructor(public x: Iloc["x"], public y: Iloc["y"], public z: Iloc["z"], public pitch: Iloc["pitch"] = 90, public yaw: Iloc["yaw"] = 0, slot?: number) {
-		super("loc", { loc: { x, y, z, pitch, yaw } as Iloc } as {loc: Iloc}, slot);
+	constructor(
+		public x: number, public y: number, public z: number,
+		public pitch: number = 90, public yaw: number = 0,
+		slot?: number
+	) {
+		super("loc", { loc: { x, y, z, pitch, yaw } }, slot);
 	}
 }

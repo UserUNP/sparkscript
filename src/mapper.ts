@@ -1,64 +1,110 @@
-
-import Value from "./core/components/Value";
+import { RawDFActionBlock } from "./core/components/ActionBlock";
+import { RawDFConditionalBlock } from "./core/components/ConditionalBlock";
+import { RawDFDataBlock } from "./core/components/DataBlock";
 import { RawDFValueDataRecord } from "./core/components/DataStorage";
+import { RawDFSubActionBlock } from "./core/components/SubActionBlock";
+import { RawDFValue } from "./core/components/Value";
 
+import DFCodeSerializedBlock from "./core/types/DFCodeSerializedBlock";
 import DFBlockCodename from "./core/types/DFBlockCodename";
-import DFValueCodename from "./core/types/DFValueCodename";
 import DFBlockName from "./core/types/DFBlockName";
+import DFSafeVarScope from "./core/types/DFSafeVarScope";
+import DFValueCodename from "./core/types/DFValueCodename";
+import DFValueDataType from "./core/types/DFValueDataType";
+import DFValueType from "./core/types/DFValueType";
 
-import { PlayerAction, PlayerEvent } from "./codeblocks/Player";
-import { EntityEvent, EntityAction } from "./codeblocks/Entity";
-import { SetVariable } from "./codeblocks/SetVariable";
-import SelectObject from "./codeblocks/SelectObject";
-import GameAction from "./codeblocks/GameAction";
+import { EntityAction, EntityEvent } from "./codeblocks/Entity";
 import Func from "./codeblocks/Func";
+import CallFunction from "./codeblocks/CallFunction";
+import Process from "./codeblocks/Process";
+import StartProcess from "./codeblocks/StartProcess";
+import { GameAction/*, GameCondition */} from "./codeblocks/Game";
+import { PlayerAction, PlayerEvent/*, PlayerCondition */} from "./codeblocks/Player";
+import SelectObject from "./codeblocks/SelectObject";
+import Control from "./codeblocks/Control";
+import SetVariable from "./codeblocks/SetVariable";
+// import VariableCondition from "./codeblocks/VariableCondition";
 
-import Text from "./values/Text";
-import Number from "./values/Number";
-import Variable from "./values/Variable";
-import Location from "./values/Location";
-import Potion from "./values/Potion";
-import GameValue from "./values/GameValue";
-import MinecraftItem from "./values/MinecraftItem";
-import Vector from "./values/Vector";
+import GameValue, { Ig_val } from "./values/GameValue";
+import Location, { Iloc } from "./values/Location";
+import MinecraftItem, { Iitem } from "./values/MinecraftItem";
+import Number, { Inum } from "./values/Number";
+import Potion, { Ipot } from "./values/Potion";
+import Sound, { Isnd } from "./values/Sound";
+import Text, { Itxt } from "./values/Text";
+import Variable, { Ivar } from "./values/Variable";
+import Vector, { Ivec } from "./values/Vector";
 
-const blockMap = {
-	"event": (e: string,_: Value[]) => new PlayerEvent(e),
-	"player_action": (act: string, args: Value[]) => new PlayerAction(act, ...args),
-	"entity_event": (e: string,_: Value[]) => new EntityEvent(e),
-	"entity_action": (act: string, args: Value[]) => new EntityAction(act, ...args),
-	"set_var": (act: string, args: Value[]) => new SetVariable(act, ...args),
-	"select_obj": (cond: string, args: Value[]) => new SelectObject(cond, ...args),
-	"game_action": (act: string, args: Value[]) => new GameAction(act, ...args),	
-	"func": (name: string, args: Value[]) => new Func(name, ...args),
+export const blockMap = {
+	"bracket": ({}: any, _: DFValueType[]) => {throw new Error("Cannot parse a bracket block.")},
+
+	"event": ({action}: RawDFActionBlock<"event">, _: DFValueType[]) => new PlayerEvent(action),
+	"player_action": ({action, target}: RawDFActionBlock<"player_action">, args: DFValueType[]) => new PlayerAction(action, target, ...args),
+	"if_player": ({}: RawDFConditionalBlock<"if_player">, args: DFValueType[]) => {args;throw new Error("(unimplemented)")},
+
+	"entity_event": ({action}: RawDFActionBlock<"entity_event">, _: DFValueType[]) => new EntityEvent(action),
+	"entity_action": ({action, target}: RawDFActionBlock<"entity_action">, args: DFValueType[]) => new EntityAction(action, target, ...args),
+	"if_entity": ({}: RawDFConditionalBlock<"if_player">, args: DFValueType[]) => {args;throw new Error("(unimplemented)")},
+
+	"game_action": ({action}: RawDFActionBlock<"game_action">, args: DFValueType[]) => new GameAction(action, ...args),
+	"if_game": ({}: RawDFConditionalBlock<"if_game">, args: DFValueType[]) => {args;throw new Error("(unimplemented)")},
+
+	"select_obj": ({action}: RawDFSubActionBlock<"select_obj">, args: DFValueType[]) => new SelectObject(action, ...args),
+	"control": ({action}: RawDFActionBlock<"control">, args: DFValueType[]) => new Control(action, ...args),
+
+	"set_var": ({action}: RawDFActionBlock<"set_var">, args: DFValueType[]) => new SetVariable(action, ...args),
+	"if_var": ({}: RawDFConditionalBlock<"if_player">, args: DFValueType[]) => {args;throw new Error("(unimplemented)")},
+
+	"func": ({data}: RawDFDataBlock<"func">, args: DFValueType[]) => new Func(data, ...args),
+	"call_func": ({data}: RawDFDataBlock<"call_func">, _: DFValueType[]) => new CallFunction(data),
+
+	"process": ({data}: RawDFDataBlock<"func">, args: DFValueType[]) => new Process(data, ...args),
+	"start_process": ({data}: RawDFDataBlock<"func">, args: DFValueType[]) => new StartProcess(data, ...args),
 } as const;
 
-const valueMap = {
-	"txt": (v: RawDFValueDataRecord, s?: number) => new Text(v.name, s),
-	"num": (v: RawDFValueDataRecord, s?: number) => new Number(v.name, s),
-	"var": (v: RawDFValueDataRecord, s?: number) => new Variable(v.name, v.scope, s),
-	"loc": (v: RawDFValueDataRecord, s?: number) => new Location(v.loc.x, v.loc.y, v.loc.z, v.loc.pitch, v.loc.yaw, s),
-	"pot": (v: RawDFValueDataRecord, s?: number) => new Potion(v.pot, v.dur, v.amp, s),
-	"g_val": (v: RawDFValueDataRecord, s?: number) => new GameValue(v.type, v.target, s),
-	"item": (v: RawDFValueDataRecord, s?: number) => MinecraftItem.fromNBT(v.item, s),
-	"vec": (v: RawDFValueDataRecord, s?: number) => new Vector(v.x, v.y, v.z, s),
+import NBT = require("nbt-ts");
+type TValueMapArguments<T extends DFValueDataType> = {v: RawDFValueDataRecord<T>, s?: number};
+export const valueMap = {
+	"bl_tag": ({v,s}: TValueMapArguments<Ibl_tag>) => {v;s;throw new Error("(unimplemented)")},
+	"txt": ({v,s}: TValueMapArguments<Itxt>) => new Text(v.name, s),
+	"num": ({v,s}: TValueMapArguments<Inum>) => Number.parse(v.name, s),
+	"var": ({v,s}: TValueMapArguments<Ivar>) => new Variable(v.name, varScopeMap[v.scope || "unsaved"] as DFSafeVarScope, s),
+	"loc": ({v,s}: TValueMapArguments<Iloc>) => new Location(v.loc.x, v.loc.y, v.loc.z, v.loc.pitch, v.loc.yaw, s),
+	"pot": ({v,s}: TValueMapArguments<Ipot>) => new Potion(v.pot, v.dur, v.amp, s),
+	"g_val": ({v,s}: TValueMapArguments<Ig_val>) => new GameValue(v.type, v.target, s),
+	"item": ({v,s}: TValueMapArguments<Iitem>) => MinecraftItem.fromNBT(typeof v.item === "string" ? v.item : NBT.stringify(v.item as unknown as NBT.TagObject), s),
+	"vec": ({v,s}: TValueMapArguments<Ivec>) => new Vector(v.x, v.y, v.z, s),
+	"snd": ({v,s}: TValueMapArguments<Isnd>) => new Sound(v.sound, v.vol, v.pitch, s),
 } as const;
 
-export function blockMapper<T extends DFBlockCodename>(type: T, actionOrData: string, args: Value[]): ReturnType<typeof blockMap[T]> {
+export const varScopeMap = {
+	"local": "local",
+	"game": "unsaved",
+	"save": "saved",
+	"unsaved": "unsaved",
+	"saved": "saved",
+} as const;
+
+export function blockMapper<T extends DFBlockCodename>(type: T, serializedData: Parameters<typeof blockMap[T]>["0"] | DFCodeSerializedBlock): SparkscriptMapper<T> {
+	if(!("args" in serializedData) || !("block" in serializedData)) throw new Error("Cannot map serialized block data because it is invalid.");
+	const args = serializedData.args.items.map((i: RawDFValue) => valueMapper(i.item.id, i))
 	const constructor = blockMap[type];
-	if(!constructor) throw new Error(`Type "${type}" cannot be recongized as a DiamondFire block type. Template may be corrupted or invalid.`);
-	return constructor(actionOrData, args) as ReturnType<typeof blockMap[T]>;
+	if(!constructor) throw new Error(`Type "${type}" cannot be recongized as a DiamondFire block type. Template may be corrupted or just invalid.`);
+	return constructor(serializedData, args as DFValueType[]) as SparkscriptMapper<T>;
 }
-
-export function valueMapper<T extends DFValueCodename>(type: T, value: RawDFValueDataRecord, slot?: number): ReturnType<typeof valueMap[T]> {
+export function valueMapper<T extends DFValueCodename>(type: T, serializedData: RawDFValue<T, ValueDataMapper<T>>): SparkscriptMapper<T> {
+	if(!("slot" in serializedData) || !("item" in serializedData)) throw new Error("Cannot map serialized value data because it is invalid.");
 	const constructor = valueMap[type];
-	if(!constructor) throw new Error(`Type "${type}" cannot be recongized as a DiamondFire value type. Template may be corrupted or invalid.`);
-	return constructor(value, slot) as ReturnType<typeof valueMap[T]>;
+	if(!constructor) throw new Error(`Type "${type}" cannot be recongized as a DiamondFire value type. Template may be corrupted or just invalid.`);
+	return constructor({
+		v: serializedData.item.data as RawDFValueDataRecord<any>,
+		s: serializedData.slot
+	}) as SparkscriptMapper<T>
 }
 
 /**
- * ## Official sparkscript type mapper
- * Convert DiamondFire's raw value or codeblock type to the respective sparkscript typeof class.  
+ * ## Sparkscript type mapper
+ * Convert DiamondFire's raw value or codeblock type (`T`) to the respective sparkscript typeof class.
  * by @UserUNP
  */
 export type SparkscriptMapper
@@ -66,42 +112,67 @@ export type SparkscriptMapper
 	T extends DFBlockCodename ? ReturnType<typeof blockMap[T]> :
 	T extends DFValueCodename ? ReturnType<typeof valueMap[T]> :
 	never;
+/**
+ * Get `T`'s value data specification types from value the given `T` value codename.
+ */
+export type ValueDataMapper<T extends DFValueCodename> = Parameters<typeof valueMap[T]>[0]["v"];
+/**
+ * Map any codename or friendly variable name `T` scope to the correct variable scope codename.
+ */
+export type VarScopeMapper<T extends keyof typeof varScopeMap> = typeof varScopeMap[T]
 
+type DefaultMapperFunction = {
+	<T extends DFBlockCodename>(type: T, serializedData: Parameters<typeof blockMap[T]>["0"] | DFCodeSerializedBlock): SparkscriptMapper<T>;
+	<T extends DFValueCodename>(type: T, serializedData: RawDFValue<T, ValueDataMapper<T>>): SparkscriptMapper<T>;
+	from: <T extends DFCodeSerializedBlock | RawDFValue>(raw: T) => FromFunction<T>;
+};
 /**
- * Raw DiamondFire codeblock data -> Respective sparkscript type.
- * @param type Block codename.
- * @param action Block's action or data.
- * @param args Arguments to put into the codeblock.
+ * ## Sparkscript global mapper.
+ * Convert DiamondFire's raw value or codeblock data to the respective sparkscript's class instance.
+ * by @UserUNP
+ *
+ * @param type Codename type to be mapped.
+ * @param serializedData Respective data for the type.
+ * @returns Converted sparkscript object instance.
  */
- export function mapper<T extends DFBlockCodename>(type: T, action: string, args: Value[]): ReturnType<typeof blockMap[T]>;
- /**
-  * Raw DiamondFire value data -> Respective sparkscript type.
-  * @param type Value codename.
-  * @param value Value's data.
-  * @param slot Value's slot in order. Indexes start at 0.
-  */
- export function mapper<T extends DFValueCodename>(type: T, value: RawDFValueDataRecord, slot?: number): ReturnType<typeof valueMap[T]>;
-/**
- * Raw DiamondFire data -> Respective sparkscript type.
- * @param type Block/Value codename.
- * @param actOrVal Block/Value action or data.
- * @param argsOrSlot Codeblock's arguments or Value's slot.
- */
-export default function mapper<T extends DFBlockCodename | DFValueCodename>(type: T, actOrVal: string|RawDFValueDataRecord, argsOrSlot: (number|undefined)|Value[]): SparkscriptMapper<T> {
-	// check if its for a block
-	if(typeof actOrVal === "string") {
-		const action = actOrVal;
-		const args = argsOrSlot as Value[];
-		return blockMapper(type as DFBlockCodename, action, args) as SparkscriptMapper<T>;
-	} else {
-		const value = actOrVal;
-		const slot = argsOrSlot as number;
-		return valueMapper(type as DFValueCodename, value, slot) as SparkscriptMapper<T>;
-	}
+const mapper: DefaultMapperFunction = <T extends DFBlockCodename | DFValueCodename>(
+	type: T,
+	serializedData: (T extends DFBlockCodename ? Parameters<typeof blockMap[T]>["0"] | DFCodeSerializedBlock : T extends DFValueCodename ? RawDFValue<T, ValueDataMapper<T>> : never)
+) => {
+	if(typeof serializedData !== "object") throw new Error(`Cannot map a variable with type ${typeof serializedData}.`);
+	if(isOfTypeRawValue(serializedData)) return valueMapper<(T extends DFBlockCodename ? never : T)>(
+		type as (T extends DFBlockCodename ? never : T),
+		serializedData
+	);
+	else return blockMapper<(T extends DFValueCodename ? never : T)>(
+		type as (T extends DFValueCodename ? never : T),
+		serializedData
+	);
 }
 
 /**
- * 
+ * SparkscriptMapper equivelent for the mapper.from function.
+ */
+type FromFunction<T extends DFCodeSerializedBlock | RawDFValue> = SparkscriptMapper<
+	T extends DFCodeSerializedBlock ? T["block"] :
+	T extends RawDFValue ? T["item"]["id"] :
+	never
+>
+/**
+ * Transform serialized data into readable sparkscript data.
+ * @description Most type intellisense is lost due to abstraction.
+ * @param raw Raw action codeblock data.
+ * @returns New instance of the respective sparkscript class.
+ */
+mapper.from = <T extends DFCodeSerializedBlock | RawDFValue>(raw: T): FromFunction<T> => {
+	if(isOfTypeRawValue(raw)) return mapper(raw.item.id, raw) as FromFunction<T>;
+	else return mapper(raw.block, raw) as FromFunction<T>;
+}
+
+export default mapper;
+
+/**
+ * Check if a codeblock is supported.
  * @param type Codeblock codename to check.
  * @returns `true` if `type` is supported in sparkscript, otherwise `false`.
  */
@@ -110,7 +181,7 @@ export function codeblockSupported(type: DFBlockCodename): type is DFBlockCodena
 }
 
 /**
- * 
+ * Check if a value type is supported.
  * @param type Value codename to check.
  * @returns `true` if `type` is supported in sparkscript, otherwise `false`.
  */
@@ -118,12 +189,16 @@ export function valueSupported(type: string): type is DFValueCodename {
 	return type in valueMap;
 }
 
+// ---------------------------------------------------------------------------------
+
 import codeDump from "./core/codeDump";
+import { isOfTypeRawValue, sparkscriptWarn } from "./utilities";
+import { Ibl_tag } from "./core/components/BLTag";
 
 export function getCodeblockByType(type: DFBlockCodename) {
 	const codeblock = codeDump.getDump().codeblocks.find(c => c.identifier === type);
 	if(!codeblock) return null;
-	if(!codeblockSupported(type)) console.warn(`[sparkscript] WARNING: Codeblock type "${codeblock}" is not implemented into the mapper`);
+	if(!codeblockSupported(type)) sparkscriptWarn(`Codeblock type "${codeblock}" is not implemented yet. You might experience issues such a sudden error.`);
 	return codeblock;
 }
 
