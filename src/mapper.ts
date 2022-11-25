@@ -86,14 +86,14 @@ export const varScopeMap = {
 } as const;
 
 export function blockMapper<T extends DFBlockCodename>(type: T, serializedData: Parameters<typeof blockMap[T]>["0"] | DFCodeSerializedBlock): SparkscriptMapper<T> {
-	if(!("args" in serializedData) || !("block" in serializedData)) throw new Error("Cannot map serialized block data because it is invalid.");
+	if(typeof serializedData !== "object" || !("args" in serializedData) || !("block" in serializedData)) throw new Error("Cannot map serialized block data because it is invalid.");
 	const args = serializedData.args.items.map((i: RawDFValue) => valueMapper(i.item.id, i))
 	const constructor = blockMap[type];
 	if(!constructor) throw new Error(`Type "${type}" cannot be recongized as a DiamondFire block type. Template may be corrupted or just invalid.`);
 	return constructor(serializedData, args as DFValueType[]) as SparkscriptMapper<T>;
 }
 export function valueMapper<T extends DFValueCodename>(type: T, serializedData: RawDFValue<T, ValueDataMapper<T>>): SparkscriptMapper<T> {
-	if(!("slot" in serializedData) || !("item" in serializedData)) throw new Error("Cannot map serialized value data because it is invalid.");
+	if(typeof serializedData !== "object" || !("slot" in serializedData) || !("item" in serializedData)) throw new Error("Cannot map serialized value data because it is invalid.");
 	const constructor = valueMap[type];
 	if(!constructor) throw new Error(`Type "${type}" cannot be recongized as a DiamondFire value type. Template may be corrupted or just invalid.`);
 	return constructor({

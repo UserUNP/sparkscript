@@ -13,7 +13,7 @@ export function getDump() {
 	return dump;
 };
 
-export function loadDump(maybeDump: DFDumpScheme) {
+export function loadDump(maybeDump: object) {
 	validateDump(maybeDump);
 	dump = maybeDump
 };

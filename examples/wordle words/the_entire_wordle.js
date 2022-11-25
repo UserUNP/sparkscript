@@ -1,4 +1,4 @@
-const df = require("../").default;
+const df = require("../../").default;
 const fs = require("node:fs");
 
 const raw = fs.readFileSync("raw_wordle_list.txt"); // Add your own words if you want to.

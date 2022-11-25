@@ -1,9 +1,5 @@
 export interface Isettings {
 	/**
-	 * If disabled, Type & action checking will be skipped.
-	 */
-	strict: boolean;
-	/**
 	 * Set to ```true``` if you need to use codeutilities.
 	 */
 	usingCodeutils: boolean;
@@ -30,7 +26,6 @@ export interface Isettings {
 
 export default function getEditorSettings(name: Isettings["name"]): Isettings {
 	return {
-		strict: true,
 		usingCodeutils: false,
 		cuConf: {
 			port: 31371,

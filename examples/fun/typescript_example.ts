@@ -1,7 +1,9 @@
-import { getEditor } from "../../src/index";
+import { getEditor, codeDump } from "../../src/index";
+import actionDump from "../../actiondump.json";
+
+codeDump.loadDump(actionDump);
 
 const editor = getEditor.default();
-editor.defAction("send", "SendMessage");
 editor.defAction("give", "GiveItems");
 
 const kits = {
@@ -9,21 +11,27 @@ const kits = {
     editor.mc("minecraft:cod", "§c§lKiller Fish from §nsandiago§c!!", 1),
     editor.mc("minecraft:steak", "fish au chocolate", 32)
   ],
-  noble: [],
-  advanced: [],
+  noble: [
+	// fill this out yourself lol.
+  ],
+  advanced: [
+	// fill this out yourself lol.
+  ],
 } as const;
 
 for(const kit in kits) {
-  const items = kits[kit];
+  const items = kits[kit as keyof typeof kits];
   editor.function("loadkit "+kit);
   editor.action.give(...items);
 }
 
+console.log(editor.getTemplate().blocks);
+
 editor.player.event("Join");
 editor.ifVariable("=", editor.var("%default kit", "save"), editor.num(0)).then(editor => {
-  editor.action.send("Welcome %default!");
+  editor.player.action("SendMessage", "Default", editor.txt("Welcome %default!"));
   editor.setVar("=", editor.var("%default kit", "save"), editor.txt("basic"));
-}).else(editor => {
-  editor.action.send("Welcome back %default!");
 });
 editor.callFunction("loadKit "+editor.var("%default kit", "save")); // gets coerced into %var(%default kit)
+
+console.log(editor.getTemplate().export().compressed);

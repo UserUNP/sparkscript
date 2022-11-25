@@ -1,4 +1,7 @@
-import Template			from "../core/components/Template";
+import Template	from "../core/components/Template";
+import Value	from "../core/components/Value";
+
+import DFValueType	from "../core/types/DFValueType";
 
 import MinecraftItem	from "../values/MinecraftItem";
 import Text			 	from '../values/Text';
@@ -10,7 +13,7 @@ import GameValue		from "../values/GameValue";
 import Vector 			from "../values/Vector";
 
 import { PlayerAction, PlayerCondition, PlayerEvent }	from "../codeblocks/Player";
-import { EntityAction, EntityCondition, EntityEvent }					from "../codeblocks/Entity";
+import { EntityAction, EntityCondition, EntityEvent }	from "../codeblocks/Entity";
 import { GameAction, GameCondition }					from "../codeblocks/Game";
 import SetVariable										from "../codeblocks/SetVariable";
 import VariableCondition								from "../codeblocks/VariableCondition";
@@ -161,6 +164,8 @@ getEditor.defaultCustomAction = (tempToModify: Template, actDefs: ActDefs, name:
 			const parsedArgs = args.map((a) => {
 				if(typeof a === "string") return new Text(a);
 				if(typeof a === "number") return new Number(a);
+				if(typeof a === "symbol") return new Text(a.toString());
+				if(a instanceof Value) return a;
 				else throw new Error(`Can only convert primitive strings and numbers to DiamondFire values. Got ${typeof a} instead`);
 			});
 			if(!codeblockSupported(actionOwnerType)) throw new Error(`Type "${actionOwnerType}" (from action ${action}) cannot be recongized as a DiamondFire block type; this might be a bug.`)
@@ -171,7 +176,7 @@ getEditor.defaultCustomAction = (tempToModify: Template, actDefs: ActDefs, name:
 				block: actionOwnerType,
 				inverted: ""
 			});
-			instance.args = parsedArgs;
+			instance.args = parsedArgs as DFValueType[];
 			tempToModify.push(instance);
 		} else return action(...args);
 	} else throw new Error(`Action ${name} is not defined.`);

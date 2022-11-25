@@ -1,4 +1,4 @@
-const df = require("../../dist").default;
+const df = require("../../").default;
 
 df.setActionDump(require("../../actiondump.json"));
 
