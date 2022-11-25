@@ -1,7 +1,8 @@
 ## Simple to use DiamondFire library for Javascript.  
-__Check out [DiamondFire](https://mcdiamondfire.com), its pretty cool.__
-
-[![gh-actions](https://github.com/UserUNP/sparkscript/actions/workflows/sparkscript.yml/badge.svg)](https://github.com/UserUNP/sparkscript/actions/workflows/sparkscript.yml)
+__Check out [DiamondFire](https://mcdiamondfire.com), its pretty cool.__  
+__Manual template manipulation guide by Owen https://mcdiamondfire.com/threads/code-template-manipulation.51/__  
+  
+[![gh-actions](https://github.com/UserUNP/sparkscript/actions/workflows/build.yml/badge.svg)](https://github.com/UserUNP/sparkscript/actions/workflows/sparkscript.yml)
 [![gh-actions](https://github.com/UserUNP/sparkscript/actions/workflows/codeql.yml/badge.svg)](https://github.com/UserUNP/sparkscript/actions/workflows/codeql.yml)  
 [![npm-sparkscript](https://nodei.co/npm/sparkscript.png)](https://npmjs.org/package/sparkscript)  
 ***Warning***: *No stable version yet.. everything might flop and/or change*  
@@ -34,8 +35,8 @@ console.log(code.compressed);
   
   
 Key features:  
-\> Read from template data with `require( ).default.from( )`.  
-\> ~~Read & compile from Spark file, buffer or string.~~ **_not anytime soon._**  
+\> Read from template data with `require( ).default.from( )`. (wont work until bl_tag is implemented)  
+\> ~~Read & compile from Spark file, buffer or string.~~ **_till spkc v2 gets an official release._**  
 \> Easy to use template editor.  
 
 # Build from source
@@ -50,5 +51,7 @@ npm install
 npm run build
 ```
 
-IF you need to use a different version of the actiondump.json file,
-then you'll have to replace it by yourself, for now.
+## Actiondump
+You might need to specify the actiondump using the `setActionDump` function that's in default export.  
+Or use the `codeDump` file that exports all actiondump related functions into a default object, simply import the file:  
+`const codeDump = require("sparkscript/core/codeDump");` or `import codeDump from "sparkscript/core/codeDump";`
