@@ -20,7 +20,7 @@ const template = df("Test template", (e, s) =>{
 
       debugger; // use this to atleast understand how stuff work in sparkscript.
 
-      e.player.action("PlaySound", e.txt("funny sound effect here"));
+      e.player.action("PlaySound", e.sound("Amethyst Block Chime"));
       e.action.send("Welcome back, "+target+"!");
 
     })
