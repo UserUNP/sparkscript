@@ -1,12 +1,8 @@
 import "../src/mapper";
 import { PlayerAction } from "../src/codeblocks/Player";
 import df from "../src/index";
-import dump from "../actiondump.json";
-import DFDumpScheme from "../src/core/types/DFDumpScheme"
 
 describe("editor", () => {
-
-  df.setActionDump(dump as DFDumpScheme);
 
   it("should create a new template", () => {
     const template = df("test", () => { });
@@ -25,7 +21,7 @@ describe("editor", () => {
 
   it("can make values", () => {
     const template = df("test", (e) => {
-      e.player.action("SendMessage", "Default", e.text("Hello world!"));
+      e.player.action("SendMessage", e.text("Hello world!"));
     });
     expect(template).toBeTruthy();
   });

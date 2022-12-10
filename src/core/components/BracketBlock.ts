@@ -12,13 +12,13 @@ extends DFBaseBlockStructure<"bracket"> {
 
 /**
  * ### Bracket block.
- * 
+ *
  * @template T Bracket type.
  * @ŧemplate S Bracket Direction.
  */
 export default class BracketBlock
 <T extends DFBracketBlockType = DFBracketBlockType, S extends DFBracketBlockDirection = DFBracketBlockDirection>
-extends SerializableComponent<RawDFBracketBlock<T, S>, `${S}-${T} bracket`> {
+extends SerializableComponent<RawDFBracketBlock<T, S>> {
 
 	/**
 	 * Transform raw data into readable sparkscript data.

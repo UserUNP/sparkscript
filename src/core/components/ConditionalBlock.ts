@@ -9,10 +9,11 @@ import BracketBlock from "./BracketBlock";
 import DFBracketBlockType from "../types/DFBracketBlockType";
 import SerializableComponent from "./SerializableComponent";
 import Value from "./Value";
-import DFAnyExportableBlock from "../types/DFAnyExportableBlock";
+import DFCodeExportableBlock from "../types/DFCodeExportableBlock";
 import Template from "./Template";
 import Ieditor from "../../editor/Iquickeditor";
-import { makeStringification } from "../../utilities";
+import { makeStringifier } from "../../utilities";
+import { ActionNamesInBlock } from "../../mapper";
 
 export interface RawDFConditionalBlock
 <T extends DFBlockCodename = DFBlockCodename>
@@ -29,10 +30,10 @@ extends RawDFActionBlock<T> {
  */
 export default abstract class ConditionalBlock
 <T extends DFBlockCodename, Target extends DFTarget = DFTarget>
-extends SerializableComponent<RawDFConditionalBlock<T>, "conditional block"> {
+extends SerializableComponent<RawDFConditionalBlock<T>> {
 
 	static conditionalBlockHandler(raw: RawDFConditionalBlock) {
-		if(!raw.__sparkscriptBracketPairType || !raw.__sparkscriptInternalBlocks) throw new Error("Cannot find important properties for conditional block to be exported.");
+		if(!raw.__sparkscriptBracketPairType || !raw.__sparkscriptInternalBlocks) throw new Error(`Trying to export an unknown codeblock that is not a conditional block. Type ${raw.block} is not a conditional block.`);
 		const opening = new BracketBlock("open", raw.__sparkscriptBracketPairType).export();
 		const closing = new BracketBlock("close", raw.__sparkscriptBracketPairType).export();
 		const content = raw.__sparkscriptInternalBlocks;
@@ -55,7 +56,7 @@ extends SerializableComponent<RawDFConditionalBlock<T>, "conditional block"> {
 	 */
 	constructor(
 		public readonly type: T,
-		public action: string,
+		public action: ActionNamesInBlock<T>,
 		public args: DFValueType[],
 		public isInverted: boolean = false,
 		public target: Target = "Default" as Target,
@@ -71,7 +72,7 @@ extends SerializableComponent<RawDFConditionalBlock<T>, "conditional block"> {
 	 * Add to inside blocks.
 	 * @param blocks Codeblock(s) to add to the template.
 	 */
-	 push(...blocks: DFAnyExportableBlock[]) {
+	 push(...blocks: DFCodeExportableBlock[]) {
 		this._selfEditor.getTemplate().push(...blocks);
 		return this;
 	}
@@ -118,7 +119,7 @@ extends SerializableComponent<RawDFConditionalBlock<T>, "conditional block"> {
 	}
 
 	toString(): string {
-		return makeStringification.component(this, this.type, {
+		return makeStringifier.component(this, this.type, {
 			action: this.action,
 			target: this.target,
 			inverted: !!this.isInverted,
@@ -138,5 +139,25 @@ extends SerializableComponent<RawDFConditionalBlock<T>, "conditional block"> {
 			__sparkscriptInternalBlocks: this._selfEditor.getTemplate()._blocks.map(b => b.export()),
 			__sparkscriptBracketPairType: "norm"
 		}
+	}
+
+	setAction(action: ActionNamesInBlock<T>) {
+		this.action = action;
+		return this;
+	}
+
+	setArgs(...args: DFValueType[]) {
+		this.args = args;
+		return this;
+	}
+
+	setTarget(target: Target) {
+		this.target = target;
+		return this;
+	}
+
+	setInverted(isInverted: boolean) {
+		this.isInverted = isInverted;
+		return this;
 	}
 }

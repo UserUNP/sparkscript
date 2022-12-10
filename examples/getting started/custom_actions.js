@@ -1,7 +1,5 @@
 const df = require("../../").default;
 
-df.setActionDump(require("../../actiondump.json"));
-
 const template = df("Test template", (e, s) =>{
 
   e.defAction("greet", (target) => {
@@ -22,7 +20,7 @@ const template = df("Test template", (e, s) =>{
 
       debugger; // use this to atleast understand how stuff work in sparkscript.
 
-      e.player.action("PlaySound", "Selection", e.txt("funny sound effect here"));
+      e.player.action("PlaySound", e.txt("funny sound effect here"));
       e.action.send("Welcome back, "+target+"!");
 
     })

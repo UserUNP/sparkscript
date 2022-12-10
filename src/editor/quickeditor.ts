@@ -1,7 +1,9 @@
 import Template	from "../core/components/Template";
 import Value	from "../core/components/Value";
 
-import DFValueType	from "../core/types/DFValueType";
+import DFValueType				from "../core/types/DFValueType";
+import DFDumpScheme				from "../core/types/DFDumpScheme";
+import DFCodeExportableBlock	from "../core/types/DFCodeExportableBlock";
 
 import MinecraftItem	from "../values/MinecraftItem";
 import Text			 	from '../values/Text';
@@ -28,7 +30,7 @@ import Ieditor	from "./Iquickeditor";
 import mapper, { getActionOwner, codeblockSupported } from "../mapper";
 import { sparkscriptWarn } from "../utilities";
 
-export type ActDefs = Record<string, ((...args: any[])=>void) | string>;
+export type ActDefs = Record<string, ((...args: any[])=>void) | keyof DFDumpScheme["actions"]>;
 
 /**
  * Generate a quick editor.
@@ -93,31 +95,31 @@ function getEditor<T extends Template = Template>(_template: T|false, customActi
 			//* Game action.
 			action: (action, ...args) => template.add(new GameAction(action, ...args)),
 			act: (action, ...args) => template.add(new GameAction(action, ...args)),
-
+			//* Game condition.
 			condition: (condition, ...args) => template.add(new GameCondition(condition, ...args)._setEditorCustomActions(actDefs)),
 			if: (condition, ...args) => template.add(new GameCondition(condition, ...args)._setEditorCustomActions(actDefs)),
 		},
 
 		//* Codeblocks.
 		player: {
-			action: (action, target, ...args) => template.add(new PlayerAction(action, target, ...args)),
-			act: (action, target, ...args) => template.add(new PlayerAction(action, target, ...args)),
+			action: (action, ...args) => template.add(new PlayerAction(action, "Default", ...args)),
+			act: (action, ...args) => template.add(new PlayerAction(action, "Default", ...args)),
 
 			event: (event) => template.add(new PlayerEvent(event)),
 			evt: (event) => template.add(new PlayerEvent(event)),
 
-			condition: (condition, target, ...args) => template.add(new PlayerCondition(condition, target, ...args)._setEditorCustomActions(actDefs)),
-			if: (condition, target, ...args) => template.add(new PlayerCondition(condition, target, ...args)._setEditorCustomActions(actDefs)),
+			condition: (condition, ...args) => template.add(new PlayerCondition(condition, "Default", ...args)._setEditorCustomActions(actDefs)),
+			if: (condition, ...args) => template.add(new PlayerCondition(condition, "Default", ...args)._setEditorCustomActions(actDefs)),
 		},
 		entity: {
-			action: (action, target, ...args) => template.add(new EntityAction(action, target, ...args)),
-			act: (action, target, ...args) => template.add(new EntityAction(action, target, ...args)),
+			action: (action, ...args) => template.add(new EntityAction(action, "Default", ...args)),
+			act: (action, ...args) => template.add(new EntityAction(action, "Default", ...args)),
 
 			event: (event) => template.add(new EntityEvent(event)),
 			evt: (event) => template.add(new EntityEvent(event)),
 
-			condition: (condition, target, ...args) => template.add(new EntityCondition(condition, target, ...args)._setEditorCustomActions(actDefs)),
-			if: (condition, target, ...args) => template.add(new EntityCondition(condition, target, ...args)._setEditorCustomActions(actDefs)),
+			condition: (condition, ...args) => template.add(new EntityCondition(condition, "Default", ...args)._setEditorCustomActions(actDefs)),
+			if: (condition, ...args) => template.add(new EntityCondition(condition, "Default", ...args)._setEditorCustomActions(actDefs)),
 		},
 
 		function: (name, ...args) => template.add(new Func(name, ...args)),
@@ -159,8 +161,8 @@ getEditor.defaultCustomAction = (tempToModify: Template, actDefs: ActDefs, name:
 	if(actDefs[name]) {
 		const action = actDefs[name];
 		if(typeof action === "string") {
-			const actionOwnerType = getActionOwner(action)?.identifier;
-			if(!actionOwnerType) throw new Error(`Action ${action} doesn't exist. If you're sure it must then the action dump may be outdated..`);
+			const actionOwnerType = getActionOwner(action)["0"];
+			if(!actionOwnerType) throw new Error(`Action ${action} doesn't exist. The action dump may be outdated..`);
 			const parsedArgs = args.map((a) => {
 				if(typeof a === "string") return new Text(a);
 				if(typeof a === "number") return new Number(a);
@@ -170,6 +172,7 @@ getEditor.defaultCustomAction = (tempToModify: Template, actDefs: ActDefs, name:
 			});
 			if(!codeblockSupported(actionOwnerType)) throw new Error(`Type "${actionOwnerType}" (from action ${action}) cannot be recongized as a DiamondFire block type; this might be a bug.`)
 			if(actionOwnerType.includes("if")) sparkscriptWarn("Can only create action blocks");
+
 			const instance = mapper(actionOwnerType, {
 				action, args: { items: [] },
 				id: "block", target: "Selection",
@@ -177,7 +180,7 @@ getEditor.defaultCustomAction = (tempToModify: Template, actDefs: ActDefs, name:
 				inverted: ""
 			});
 			instance.args = parsedArgs as DFValueType[];
-			tempToModify.push(instance);
+			tempToModify.push(instance as DFCodeExportableBlock);
 		} else return action(...args);
 	} else throw new Error(`Action ${name} is not defined.`);
 }

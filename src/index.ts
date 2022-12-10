@@ -2,14 +2,14 @@ import zlib 		from "node:zlib";
 import WebSocket	from 'ws';
 
 // Components.
-import SerializableComponent			from "./core/components/SerializableComponent";				export { SerializableComponent };
-import Template, { RawDFTemplate }		from './core/components/Template';							export { Template };
-import ActionBlock						from './core/components/ActionBlock';						export { ActionBlock };
-import Value							from './core/components/Value';								export { Value };
-import DataStorage						from './core/components/DataStorage';						export { DataStorage };
-import MinecraftColor					from './core/components/minecraft/MinecraftColor';			export { MinecraftColor };
-import SimpleMinecraftString			from './core/components/minecraft/SimpleMinecraftString';	export { SimpleMinecraftString};
-import MinecraftString					from './core/components/minecraft/MinecraftString';			export { MinecraftString };
+import SerializableComponent		from "./core/components/SerializableComponent";				export { SerializableComponent };
+import Template, { RawDFTemplate }	from './core/components/Template';							export { Template };
+import ActionBlock					from './core/components/ActionBlock';						export { ActionBlock };
+import Value						from './core/components/Value';								export { Value };
+import DataStorage					from './core/components/DataStorage';						export { DataStorage };
+import MinecraftColor				from './core/components/minecraft/MinecraftColor';			export { MinecraftColor };
+import SimpleMinecraftString		from './core/components/minecraft/SimpleMinecraftString';	export { SimpleMinecraftString};
+import MinecraftString				from './core/components/minecraft/MinecraftString';			export { MinecraftString };
 
 // Values.
 import MinecraftItem	from "./values/MinecraftItem";	export { MinecraftItem };
@@ -26,16 +26,16 @@ import player		from "./codeblocks/Player";			export { player };
 import entity		from "./codeblocks/Entity";			export { entity };
 import setvar		from "./codeblocks/SetVariable";	export { setvar };
 import SelectObject	from "./codeblocks/SelectObject";	export { SelectObject };
-import GameAction	from "./codeblocks/Game";		export { GameAction };
+import GameAction	from "./codeblocks/Game";			export { GameAction };
 import Func			from "./codeblocks/Func";			export { Func };
 
 // Quick editor & playground.
-import utils										from "./utilities";					export { utils };
-import getEditor, { ActDefs }						from "./editor/quickeditor";		export { getEditor }
-import codeDump										from "./core/codeDump";				export { codeDump };
-import DFDumpScheme									from "./core/types/DFDumpScheme";	export { DFDumpScheme };
-import getEditorSettings, { Isettings }				from "./editor/qeSettings";
-import Ieditor 										from "./editor/Iquickeditor";
+import utils							from "./utilities";					export { utils };
+import getEditor						from "./editor/quickeditor";		export { getEditor }
+import codeDump							from "./core/codeDump";				export { codeDump };
+import DFDumpScheme						from "./core/types/DFDumpScheme";	export { DFDumpScheme };
+import getEditorSettings, { Isettings }	from "./editor/qeSettings";
+import Ieditor 							from "./editor/Iquickeditor";
 
 /**
  * Quick editor.
@@ -44,11 +44,10 @@ import Ieditor 										from "./editor/Iquickeditor";
  */
 function quickEditor(name: string|false, callback: (editor: Ieditor<ReturnType<typeof quickEditor>>, settings: Isettings) => void): Template {
 	const template = new Template(name);
-	const actDefs: ActDefs = {};
 
-	// Quick editor.
+	// Get the editor.
 	const editor = template.self;
-	getEditor.applyActions(editor, actDefs);
+	getEditor.applyActions(editor, getEditor.defaultActDefs);
 	const settings = getEditorSettings(name)
 
 	callback(editor, settings);

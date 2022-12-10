@@ -13,6 +13,8 @@ if(fs.existsSync("wordle_list_templ.txt")) fs.rmSync("wordle_list_templ.txt");
 const template = df("The entire wordle.", (e, s) => {
   s.author = "UserUNP";
 
+  e.func("initWordle");
+
   e.defAction("addWords", (words) => {
     e.setVar("AppendList", e.var("wordleList"), ...words);
   });

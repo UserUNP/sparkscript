@@ -1,5 +1,4 @@
-import DFBlockCodename from "../types/DFBlockCodename";
-import Value from "./Value";
+import Value from "../core/components/Value";
 
 export interface BLTagOption {
 	name: string;
@@ -14,6 +13,8 @@ export interface BLTagOption {
 	aliases?: string[]
 }
 
+export type BLTagTrueOption = BLTagBooleanOption<true>;
+export type BLTagFalseOption = BLTagBooleanOption<false>;
 export interface BLTagBooleanOption
 <T extends boolean = boolean>
 extends BLTagOption {
@@ -24,19 +25,18 @@ extends BLTagOption {
 }
 
 export interface Ibl_tag
-<TagOptions extends BLTagOption[] = BLTagOption[]> {
-	name: string;
+<TagName extends string = string, TagOptions extends BLTagOption[] = BLTagOption[]> {
+	name: TagName;
 	options: TagOptions;
 	defaultOption: TagOptions[number]["name"];
 	slot: number;
-
 }
 
 export default class BLTag
-<T extends DFBlockCodename, TagOptions extends BLTagOption[] = BLTagOption[]>
-extends Value<"bl_tag", Ibl_tag<TagOptions>> {
+<TagName extends string = string, TagOptions extends BLTagOption[] = BLTagOption[]>
+extends Value<"bl_tag", Ibl_tag<TagName, TagOptions>> {
 
-	constructor(public blkCodename: T, value: Ibl_tag<TagOptions>, slotFromLastIndex: number = 0) {
+	constructor(value: Ibl_tag<TagName, TagOptions>, slotFromLastIndex: number = 0) {
 		super("bl_tag", value, 26-slotFromLastIndex);
 	}
 }

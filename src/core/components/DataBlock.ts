@@ -1,4 +1,4 @@
-import { makeStringification } from "../../utilities";
+import { makeStringifier } from "../../utilities";
 import DFBaseBlockStructure from "../types/DFBaseBlockStructure";
 import DFBlockCodename from "../types/DFBlockCodename";
 import DFValueType from "../types/DFValueType";
@@ -20,7 +20,7 @@ extends DFBaseBlockStructure<"block"> {
  */
 export default abstract class DataBlock
 <T extends DFBlockCodename>
-extends SerializableComponent<RawDFDataBlock<T>, `${T} block`> {
+extends SerializableComponent<RawDFDataBlock<T>> {
 
 	/**
 	 * Create a new codeblock.
@@ -35,7 +35,7 @@ extends SerializableComponent<RawDFDataBlock<T>, `${T} block`> {
 	}
 
 	toString(): string {
-		return makeStringification.component(this, this.type, {
+		return makeStringifier.component(this, this.type, {
 			data: this.data,
 			args: this.args.map(a => a.toString())
 		});

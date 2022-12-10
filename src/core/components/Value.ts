@@ -1,6 +1,6 @@
 import SerializableComponent from "./SerializableComponent";
 import { ValueDataMapper } from "../../mapper";
-import { makeStringification } from "../../utilities";
+import { makeStringifier } from "../../utilities";
 import DFValueCodename from "../types/DFValueCodename";
 import DataStorage from "./DataStorage";
 
@@ -21,7 +21,7 @@ export interface RawDFValue
  */
 export default class Value
 <T extends DFValueCodename = DFValueCodename, DataType extends ValueDataMapper<T> = ValueDataMapper<T>>
-extends SerializableComponent<RawDFValue<T, DataType>, `${T} value`> {
+extends SerializableComponent<RawDFValue<T, DataType>> {
 
 	data: DataStorage<T, DataType>;
 
@@ -40,7 +40,7 @@ extends SerializableComponent<RawDFValue<T, DataType>, `${T} value`> {
 	 * Stringify the value.
 	 */
 	toString(): string {
-		return makeStringification(this.type, JSON.stringify(this.data));
+		return makeStringifier(this.type, JSON.stringify(this.data));
 	}
 
 	export(selfValues: Value[]) {

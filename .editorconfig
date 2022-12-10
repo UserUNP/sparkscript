@@ -11,11 +11,11 @@ charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-[examples/*]
+[examples/**/*.{js,ts}]
 indent_style = space
 indent_size = 2
 
-[tests/*]
+[tests/**/*.{js,ts}]
 indent_style = space
 indent_size = 2
 

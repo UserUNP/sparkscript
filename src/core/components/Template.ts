@@ -1,7 +1,7 @@
 import zlib from "node:zlib";
 import WebSocket from 'ws';
 import getEditor from "../../editor/quickeditor";
-import DFAnyExportableBlock from "../types/DFAnyExportableBlock";
+import DFCodeExportableBlock from "../types/DFCodeExportableBlock";
 import DFAnySerializedBlock from "../types/DFAnySerializedBlock";
 import { sparkscriptWarn } from "../../utilities";
 import SerializableComponent from "./SerializableComponent";
@@ -19,22 +19,22 @@ export interface RawDFTemplate {
  *
  */
 export default class Template
-extends SerializableComponent<{serialized: RawDFTemplate, compressed: string}, "template"> {
+extends SerializableComponent<{serialized: RawDFTemplate, compressed: string}> {
 
 	static from(raw: RawDFTemplate): Template {
 		const template = new Template(raw.name || false, raw.author);
 		const blocks = raw.blocks.map(b => {
 			if(b.id === "bracket") throw new Error(`Found a bracket block while parsing template "${template.name}" with no parent block. Either fix your code or this might be a bug.`);
 			return mapper.from(b);
-		});
-		for(const b of blocks) template.push(b);
+		}) as DFCodeExportableBlock[];
+		template.push(...blocks);
 		return template;
 	}
 
 	/**
 	 * Never use this unless you want to explicitly set the codeblocks array.
 	 */
-	_blocks: DFAnyExportableBlock[] = [];
+	_blocks: DFCodeExportableBlock[] = [];
 	cuSocket?: WebSocket;
 
 	/**
@@ -93,7 +93,7 @@ extends SerializableComponent<{serialized: RawDFTemplate, compressed: string}, "
 	 * Add to.
 	 * @param blocks Block(s) to add to the template.
 	 */
-	push(...blocks: DFAnyExportableBlock[]) {
+	push(...blocks: DFCodeExportableBlock[]) {
 		this._blocks.push(...blocks);
 		return this;
 	}
@@ -101,8 +101,9 @@ extends SerializableComponent<{serialized: RawDFTemplate, compressed: string}, "
 	/**
 	 * Alias for `push`.
 	 * @param block Block to add.
+	 * @returns The block that was pushed.
 	 */
-	add<T extends DFAnyExportableBlock>(block: T) {
+	add<T extends DFCodeExportableBlock>(block: T) {
 		this._blocks.push(block);
 		return block;
 	}

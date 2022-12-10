@@ -1,4 +1,5 @@
-import { makeStringification } from "../../utilities";
+import { ActionNamesInBlock } from "../../mapper";
+import { makeStringifier } from "../../utilities";
 import DFBaseBlockStructure from "../types/DFBaseBlockStructure";
 import DFBlockCodename from "../types/DFBlockCodename";
 import DFTarget from "../types/DFTarget";
@@ -11,7 +12,7 @@ export interface RawDFActionBlock
 extends DFBaseBlockStructure<"block"> {
 	block: T;
 	args: { items: RawDFValue[] };
-	action: string;
+	action: ActionNamesInBlock<T>;
 	target: DFTarget;
 	inverted: "NOT" | "";
 };
@@ -24,7 +25,7 @@ extends DFBaseBlockStructure<"block"> {
  */
 export default abstract class ActionBlock
 <T extends DFBlockCodename, Target extends DFTarget = DFTarget>
-extends SerializableComponent<RawDFActionBlock<T>, "action block"> {
+extends SerializableComponent<RawDFActionBlock<T>> {
 
 	/**
 	 * Create a new action codeblock.
@@ -36,7 +37,7 @@ extends SerializableComponent<RawDFActionBlock<T>, "action block"> {
 	 */
 	constructor(
 		public readonly type: T,
-		public action: string,
+		public action: ActionNamesInBlock<T>,
 		public args: DFValueType[],
 		public isInverted: boolean = false,
 		public target: Target = "Default" as Target
@@ -45,7 +46,7 @@ extends SerializableComponent<RawDFActionBlock<T>, "action block"> {
 	}
 
 	/**
-	 * Invert into a 'NOT' action.
+	 * Invert into a 'NOT' action (mostly for conditional blocks).
 	 * @returns True if inverted, otherwise false.
 	 */
 	invert() {
@@ -53,7 +54,7 @@ extends SerializableComponent<RawDFActionBlock<T>, "action block"> {
 	}
 
 	toString(): string {
-		return makeStringification.component(this, this.type, {
+		return makeStringifier.component(this, this.type, {
 			action: this.action,
 			target: this.target,
 			inverted: !!this.isInverted,
@@ -70,5 +71,25 @@ extends SerializableComponent<RawDFActionBlock<T>, "action block"> {
 			target: this.target,
 			inverted: this.isInverted ? "NOT": ""
 		}
+	}
+
+	setAction(action: ActionNamesInBlock<T>) {
+		this.action = action;
+		return this;
+	}
+
+	setArgs(...args: DFValueType[]) {
+		this.args = args;
+		return this;
+	}
+
+	setTarget(target: Target) {
+		this.target = target;
+		return this;
+	}
+
+	setInverted(isInverted: boolean) {
+		this.isInverted = isInverted;
+		return this;
 	}
 }

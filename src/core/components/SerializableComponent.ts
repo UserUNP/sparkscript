@@ -1,4 +1,4 @@
-import { makeStringification } from "../../utilities";
+import { makeStringifier } from "../../utilities";
 import Value from "./Value";
 
 export type Signature<ComponentName extends string = "serializable"> = `<@>{ [${ComponentName}] }`;
@@ -9,15 +9,15 @@ export type Signature<ComponentName extends string = "serializable"> = `<@>{ [${
  * @template T Serialized object type.
  * @template ComponentName Name of the component.
  */
-export default abstract class SerializableComponent<T extends object, ComponentName extends string = "serializable"> {
+export default abstract class SerializableComponent<T extends object> {
 
 	/**
 	 * @param _componentName The component's name
 	 */
-	constructor(public readonly _componentName: ComponentName = "serializable" as ComponentName) {}
+	constructor(public readonly _componentName: string = "serializable") {}
 
 	toString(): string {
-		return makeStringification.serializable(`{ [${this._componentName}] }`);
+		return makeStringifier.serializable(`{ [${this._componentName}] }`);
 	}
 
 	/**

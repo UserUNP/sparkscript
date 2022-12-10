@@ -1,8 +1,8 @@
 import ConditionalBlock from "../core/components/ConditionalBlock";
 import DFValueType from "../core/types/DFValueType";
+import { ActionNamesInBlock } from "../mapper";
 
 export default class VariableCondition
-<T extends string = string>
 extends ConditionalBlock<"if_var", "Default"> {
 
 	/**
@@ -10,7 +10,7 @@ extends ConditionalBlock<"if_var", "Default"> {
 	 * @param condition Condition to match for.
 	 * @param args Arguments to pass.
 	 */
-	constructor(condition: T, ...args: DFValueType[]) {
+	constructor(condition: ActionNamesInBlock<"if_var">, ...args: DFValueType[]) {
 		super("if_var", condition, args, false);
 	}
 }

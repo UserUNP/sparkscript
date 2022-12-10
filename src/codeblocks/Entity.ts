@@ -2,37 +2,35 @@ import ActionBlock from "../core/components/ActionBlock";
 import ConditionalBlock from "../core/components/ConditionalBlock";
 import DFTarget from "../core/types/DFTarget";
 import DFValueType from "../core/types/DFValueType";
+import { ActionNamesInBlock } from "../mapper";
 
 export class EntityAction
-<T extends string = string, Target extends DFTarget = "Default">
-extends ActionBlock<"entity_action", Target> {
+extends ActionBlock<"entity_action"> {
 
 	/**
 	 * Used to do something related to an entity or multiple entities.
 	 * @param action Action to perform.
 	 * @param args Arguments to pass.
 	 */
-	 constructor(action: T, target?: Target, ...args: DFValueType[]) {
+	 constructor(action: ActionNamesInBlock<"entity_action">, target?: DFTarget, ...args: DFValueType[]) {
 		super("entity_action", action, args, false, target);
 	}
 }
 
 export class EntityEvent
-<T extends string = string>
 extends ActionBlock<"entity_event"> {
 
 	/**
 	 * When an entity does something.
 	 * @param event Event to listen for.
 	 */
-	constructor(event: T) {
+	constructor(event: ActionNamesInBlock<"entity_event">) {
 		super("entity_event", event, []);
 	}
 }
 
 export class EntityCondition
-<T extends string = string, Target extends DFTarget = "Default">
-extends ConditionalBlock<"if_entity", Target> {
+extends ConditionalBlock<"if_entity"> {
 
 	/**
 	 * If an entity did something.
@@ -40,7 +38,7 @@ extends ConditionalBlock<"if_entity", Target> {
 	 * @param target Target of the condition.
 	 * @param args Arguments to pass.
 	 */
-	constructor(condition: T, target?: Target, ...args: DFValueType[]) {
+	constructor(condition: ActionNamesInBlock<"if_entity">, target?: DFTarget, ...args: DFValueType[]) {
 		super("if_entity", condition, args, false, target);
 	}
 }

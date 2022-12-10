@@ -1,9 +1,9 @@
 import ActionBlock from "../core/components/ActionBlock";
 import ConditionalBlock from "../core/components/ConditionalBlock";
 import DFValueType from "../core/types/DFValueType";
+import { ActionNamesInBlock } from "../mapper";
 
 export class GameAction
-<T extends string = string>
 extends ActionBlock<"game_action"> {
 
 	/**
@@ -11,19 +11,18 @@ extends ActionBlock<"game_action"> {
 	 * @param action Action to perform.
 	 * @param args Arguments to pass.
 	 */
-	 constructor(action: T, ...args: DFValueType[]) {
+	 constructor(action: ActionNamesInBlock<"game_action">, ...args: DFValueType[]) {
 		super("game_action", action, args, false);
 	}
 }
 
 export class GameCondition
-<T extends string = string>
 extends ConditionalBlock<"if_game"> {
 
 	/**
 	 *
 	 */
-	constructor(action: T, ...args: DFValueType[]) {
+	constructor(action: ActionNamesInBlock<"if_game">, ...args: DFValueType[]) {
 		super("if_game", action, args, false);
 	}
 }

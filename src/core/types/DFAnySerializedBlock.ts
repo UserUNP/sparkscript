@@ -7,7 +7,6 @@ import { RawDFSubActionBlock } from "../components/SubActionBlock";
 /**
  * Any raw DiamondFire block.
  */
-
 type DFAnySerializedBlock =
 	| RawDFActionBlock
 	| RawDFDataBlock

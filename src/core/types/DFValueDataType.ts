@@ -7,7 +7,7 @@ import { Isnd } from "../../values/Sound";
 import { Itxt } from "../../values/Text";
 import { Ivar } from "../../values/Variable";
 import { Ivec } from "../../values/Vector";
-import { Ibl_tag } from "../components/BLTag";
+import { Ibl_tag } from "../../values/BLTag";
 
 /**
  * Type of a value's data.
@@ -16,7 +16,6 @@ type DFValueDataType =
 	| Ibl_tag
 	| Itxt
 	| Inum
-	| Iloc
 	| Iloc
 	| Ivar
 	| Ipot

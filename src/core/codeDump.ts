@@ -1,25 +1,33 @@
 import DFDumpScheme from "./types/DFDumpScheme";
+import actiondump from "./ssActiondump"; // "sparkscript actiondump".
 
-let dump: DFDumpScheme | null = null;
+let laodedDump: DFDumpScheme | null = null;
 
 export function validateDump<T extends DFDumpScheme>(test: unknown | T): asserts test is T  {
-	if(!test || typeof test !== "object") throw new Error("I made your code fail. Screw you in particular; get good.");
-	if(!("codeblocks" in test)) throw new Error("Invalid action dump. a 'codeblocks' property with accurate fields are required. For more info read the documentation.");
-	if(!("actions" in test)) throw new Error("Invalid action dump. an 'actions' property with accurate fields are required. For more info read the documentation.");
+	if(!test || typeof test !== "object") throw new Error(`Expected a type of object, got ${typeof test} instead. Make sure you're passing the actiondump object and not the file path.`);
+	if(!("codeblocks" in test)) throw new Error("Invalid action dump. A 'codeblocks' property with accurate fields are required. For more info read the documentation.");
+	if(!test.codeblocks || typeof test.codeblocks !== "object" || Array.isArray(test.codeblocks)) throw new Error(`Invalid action dump. "codeblocks" is either not an object or an array. For more info read the documentation.`)
 }
 
-export function getDump() {
-	if(!dump) throw new Error("Action dump not initialized yet! You have to specify an action dump json object. For more info read the documentation.");
-	return dump;
+/**
+ * Get the currently loaded actiondump.
+ * @returns The actiondump.
+ */
+export function getDump(): DFDumpScheme {
+	if(!laodedDump) return actiondump;
+	return laodedDump;
 };
 
-export function loadDump(maybeDump: object) {
+/**
+ * Load the actiondump.
+ * @param maybeDump The actiondump object.
+ */
+export function loadDump(maybeDump: unknown) {
 	validateDump(maybeDump);
-	dump = maybeDump
+	laodedDump = maybeDump
 };
 
 export default {
-	validateDump,
 	loadDump,
 	getDump,
-}
+};

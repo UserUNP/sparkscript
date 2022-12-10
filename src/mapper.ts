@@ -12,6 +12,7 @@ import DFSafeVarScope from "./core/types/DFSafeVarScope";
 import DFValueCodename from "./core/types/DFValueCodename";
 import DFValueDataType from "./core/types/DFValueDataType";
 import DFValueType from "./core/types/DFValueType";
+import DFDumpScheme from "./core/types/DFDumpScheme";
 
 import { EntityAction, EntityEvent } from "./codeblocks/Entity";
 import Func from "./codeblocks/Func";
@@ -25,6 +26,7 @@ import Control from "./codeblocks/Control";
 import SetVariable from "./codeblocks/SetVariable";
 // import VariableCondition from "./codeblocks/VariableCondition";
 
+import { Ibl_tag } from "./values/BLTag";
 import GameValue, { Ig_val } from "./values/GameValue";
 import Location, { Iloc } from "./values/Location";
 import MinecraftItem, { Iitem } from "./values/MinecraftItem";
@@ -37,6 +39,7 @@ import Vector, { Ivec } from "./values/Vector";
 
 export const blockMap = {
 	"bracket": ({}: any, _: DFValueType[]) => {throw new Error("Cannot parse a bracket block.")},
+	"else": ({}: any, _: DFValueType[]) => {throw new Error("(unimplemented)")},
 
 	"event": ({action}: RawDFActionBlock<"event">, _: DFValueType[]) => new PlayerEvent(action),
 	"player_action": ({action, target}: RawDFActionBlock<"player_action">, args: DFValueType[]) => new PlayerAction(action, target, ...args),
@@ -51,6 +54,7 @@ export const blockMap = {
 
 	"select_obj": ({action}: RawDFSubActionBlock<"select_obj">, args: DFValueType[]) => new SelectObject(action, ...args),
 	"control": ({action}: RawDFActionBlock<"control">, args: DFValueType[]) => new Control(action, ...args),
+	"repeat": ({}: RawDFSubActionBlock<"repeat">, args: DFValueType[]) => {args;throw new Error("(unimplemented)")},
 
 	"set_var": ({action}: RawDFActionBlock<"set_var">, args: DFValueType[]) => new SetVariable(action, ...args),
 	"if_var": ({}: RawDFConditionalBlock<"if_player">, args: DFValueType[]) => {args;throw new Error("(unimplemented)")},
@@ -119,7 +123,11 @@ export type ValueDataMapper<T extends DFValueCodename> = Parameters<typeof value
 /**
  * Map any codename or friendly variable name `T` scope to the correct variable scope codename.
  */
-export type VarScopeMapper<T extends keyof typeof varScopeMap> = typeof varScopeMap[T]
+export type VarScopeMapper<T extends keyof typeof varScopeMap> = typeof varScopeMap[T];
+/**
+ * Extract string union of action names from an action block.
+ */
+export type ActionNamesInBlock<T extends DFBlockCodename> = ValueOf<ReturnType<typeof getCodeblockActions<T>>>;
 
 type DefaultMapperFunction = {
 	<T extends DFBlockCodename>(type: T, serializedData: Parameters<typeof blockMap[T]>["0"] | DFCodeSerializedBlock): SparkscriptMapper<T>;
@@ -192,42 +200,27 @@ export function valueSupported(type: string): type is DFValueCodename {
 // ---------------------------------------------------------------------------------
 
 import codeDump from "./core/codeDump";
-import { isOfTypeRawValue, sparkscriptWarn } from "./utilities";
-import { Ibl_tag } from "./core/components/BLTag";
+import { isOfTypeRawValue, sparkscriptWarn, ValueOf } from "./utilities";
 
-export function getCodeblockByType(type: DFBlockCodename) {
-	const codeblock = codeDump.getDump().codeblocks.find(c => c.identifier === type);
+export function getCodeblockByType<T extends DFBlockCodename>(type: T) {
+	const codeblock = codeDump.getDump().codeblocks[type];
 	if(!codeblock) return null;
-	if(!codeblockSupported(type)) sparkscriptWarn(`Codeblock type "${codeblock}" is not implemented yet. You might experience issues such a sudden error.`);
+	if(!codeblockSupported(type)) sparkscriptWarn(`Codeblock type "${codeblock}" is not implemented yet. You might experience issues, such a sudden error.`);
 	return codeblock;
 }
 
-export function getCodeblockByName(name: string) {
-	const codeblock = codeDump.getDump().codeblocks.find(c => c.name === name);
-	if(!codeblock) return null;
-	return codeblock;
+export function getCodeblockByName<T extends DFBlockName>(name: T) {
+	return codeDump.getDump().codeblocks[codeDump.getDump().codeblockNames[name]];
 }
 
-export function getActionOwner(action: string) {
-	const actionName = codeDump.getDump().actions.find(a => a.name === action);
-	if(!actionName) return null;
-	return getCodeblockByName(actionName.codeblockName);
+export function getActionOwner<T extends keyof DFDumpScheme["actions"]>(action: T) {
+	return (codeDump.getDump().actions[action].codeblockType || null) as DFDumpScheme["actions"][T]["codeblockType"];
 }
 
-export function getCodeblockActions(type: DFBlockCodename) {
-	const codeblock = getCodeblockByType(type);
-	if(!codeblock) return [];
-	return codeDump.getDump().actions.filter(a => a.codeblockName === codeblock.name);
+export function getCodeblockActions<T extends DFBlockCodename>(type: T): DFDumpScheme["codeblocks"][T]["actions"] {
+	return codeDump.getDump().codeblocks[type].actions;
 }
 
-export function getCodeblockAction(type: DFBlockCodename, name: string) {
-	const codeblock = getCodeblockByType(type);
-	if(!codeblock) return null;
-	return codeDump.getDump().actions.find(a => a.codeblockName === codeblock.name && a.name === name) || null;
-}
-
-export function getCodeblockType(name: DFBlockName) {
-	const codeblock = codeDump.getDump().codeblocks.find(c => c.name === name);
-	if(!codeblock) return null;
-	return codeblock.identifier;
+export function getCodeblockType<T extends DFBlockName>(name: T) {
+	return codeDump.getDump().codeblockNames[name];
 }

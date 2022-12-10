@@ -1,7 +1,4 @@
-import { getEditor, codeDump } from "../../src/index";
-import actionDump from "../../actiondump.json";
-
-codeDump.loadDump(actionDump);
+import { getEditor } from "../../";
 
 const editor = getEditor.default();
 editor.defAction("give", "GiveItems");
@@ -12,12 +9,18 @@ const kits = {
     editor.mc("minecraft:steak", "fish au chocolate", 32)
   ],
   noble: [
-	// fill this out yourself lol.
+	// fill this out yourself.
   ],
   advanced: [
-	// fill this out yourself lol.
+	// fill this out yourself.
   ],
 } as const;
+
+const kitVar = editor.var("%default kit", "save");
+//* kitVar.toString() -> "%var(%default kit)"
+//* you can control data stored in values
+//* ex: kitVar.set("name", "%killer kit")
+//* or: kitVar.raw.name = "%killer kit"
 
 for(const kit in kits) {
   const items = kits[kit as keyof typeof kits];
@@ -28,10 +31,10 @@ for(const kit in kits) {
 console.log(editor.getTemplate().blocks);
 
 editor.player.event("Join");
-editor.ifVariable("=", editor.var("%default kit", "save"), editor.num(0)).then(editor => {
+editor.ifVariable("=", kitVar, editor.false).then(editor => {
   editor.player.action("SendMessage", "Default", editor.txt("Welcome %default!"));
-  editor.setVar("=", editor.var("%default kit", "save"), editor.txt("basic"));
+  editor.setVar("=", kitVar, editor.txt("basic"));
 });
-editor.callFunction("loadKit "+editor.var("%default kit", "save")); // gets coerced into %var(%default kit)
+editor.callFunction("loadKit "+kitVar); // gets coerced into %var(%default kit)
 
 console.log(editor.getTemplate().export().compressed);

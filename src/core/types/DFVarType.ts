@@ -2,16 +2,18 @@
  * All types that a variable can be.
  */
 enum DFVarType {
-	NEVER, //* use if you already know a var can't be set to anything, just like typescript's never type
-	ANY,
-	TXT,
-	NUM,
-	VAR,
-	ITEM,
-	LIST,
-	POT,
-	SND,
-	DICT,
+	NEVER = "<never>", //* Use if you don't want the var to be set.
+	ANY = "<any>",
+	TXT = "<txt>",
+	NUM = "<num>",
+	VAR = "<var>",
+	ITEM = "<item>",
+	LIST = "<list>",
+	POT = "<potion>",
+	SND = "<sound>",
+	PART = "<particle>",
+	DICT = "<dict>",
+	COLOR = "<color>"
 }
 
 export default DFVarType;

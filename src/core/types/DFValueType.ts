@@ -13,8 +13,8 @@ import Vector from "../../values/Vector";
 type DFValueType =
 	| Text
 	| Number
-	| Variable
 	| Location
+	| Variable
 	| Potion
 	| GameValue
 	| MinecraftItem

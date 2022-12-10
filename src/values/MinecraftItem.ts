@@ -1,8 +1,8 @@
 import Value, { RawDFValue } from "../core/components/Value";
 import MinecraftString, { RawMCString } from "../core/components/minecraft/MinecraftString";
+import { ValueOf } from "../utilities";
 import NBT = require("nbt-ts");
 
-type ValuesOf<T> = T[keyof T];
 export type SafeMetadata<ID extends `minecraft:${string}` = `minecraft:${string}`> = Imetadata<true, ID>;
 export type RawMetadata<ID extends `minecraft:${string}` = `minecraft:${string}`> = Imetadata<false, ID>;
 
@@ -62,7 +62,7 @@ extends Value<"item", Iitem<boolean, ID>> {
 		} }, slot);
 	}
 
-	setTag(key: string, value: ValuesOf<SafeMetadata["tag"]["PublicBukkitValues"]>) {
+	setTag(key: string, value: ValueOf<SafeMetadata["tag"]["PublicBukkitValues"]>) {
 		(<SafeMetadata<ID>>this.data.raw.item).tag.PublicBukkitValues[`hypercube:${key}`] =
 			typeof value==="number" ? new NBT.Int(value).value : `${value}`;
 		return this;

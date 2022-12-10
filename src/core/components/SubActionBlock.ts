@@ -1,4 +1,5 @@
-import { makeStringification } from "../../utilities";
+import { ActionNamesInBlock } from "../../mapper";
+import { makeStringifier } from "../../utilities";
 import DFBaseBlockStructure from "../types/DFBaseBlockStructure";
 import DFBlockCodename from "../types/DFBlockCodename";
 import DFValueType from "../types/DFValueType";
@@ -10,7 +11,7 @@ export interface RawDFSubActionBlock
 extends DFBaseBlockStructure<"block"> {
 	block: T;
 	args: { items: RawDFValue[] };
-	action: string;
+	action: ActionNamesInBlock<T>;
 	subAction: string;
 	inverted: "NOT" | "";
 };
@@ -22,7 +23,7 @@ extends DFBaseBlockStructure<"block"> {
  */
 export default abstract class SubActionBlock
 <T extends DFBlockCodename>
-extends SerializableComponent<RawDFSubActionBlock<T>, "subaction block"> {
+extends SerializableComponent<RawDFSubActionBlock<T>> {
 
 	/**
 	 * Create a new codeblock.
@@ -33,7 +34,7 @@ extends SerializableComponent<RawDFSubActionBlock<T>, "subaction block"> {
 	 */
 	constructor(
 		public readonly type: T,
-		public action: string,
+		public action: ActionNamesInBlock<T>,
 		public subAction: string,
 		public args: DFValueType[],
 		public isInverted: boolean = false
@@ -42,7 +43,7 @@ extends SerializableComponent<RawDFSubActionBlock<T>, "subaction block"> {
 	}
 
 	toString(): string {
-		return makeStringification.component(this, this.type, {
+		return makeStringifier.component(this, this.type, {
 			action: this.action,
 			subAction: this.subAction,
 			inverted: this.isInverted,
@@ -63,5 +64,25 @@ extends SerializableComponent<RawDFSubActionBlock<T>, "subaction block"> {
 			subAction: this.subAction,
 			inverted: this.isInverted ? "NOT" : ""
 		}
+	}
+
+	setAction(action: ActionNamesInBlock<T>) {
+		this.action = action;
+		return this;
+	}
+
+	setArgs(...args: DFValueType[]) {
+		this.args = args;
+		return this;
+	}
+
+	setSubAction(subAction: string) {
+		this.subAction = subAction;
+		return this;
+	}
+
+	setInverted(isInverted: boolean) {
+		this.isInverted = isInverted;
+		return this;
 	}
 }
