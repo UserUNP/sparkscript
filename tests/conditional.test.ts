@@ -1,10 +1,10 @@
 import ConditionalBlock from "../src/core/components/ConditionalBlock";
 
 class TesterCond
-extends ConditionalBlock<"entity_action", "AllPlayers"> {
+extends ConditionalBlock<"control", "AllPlayers"> {
 
   constructor() {
-    super("entity_action", "tester", [], true, "AllPlayers");
+    super("control", "Skip", [], true, "AllPlayers");
   }
 }
 
