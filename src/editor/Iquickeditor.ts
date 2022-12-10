@@ -3,6 +3,9 @@ import DFTarget			from "../core/types/DFTarget";
 import DFSafeVarScope	from "../core/types/DFSafeVarScope";
 import DFValueType		from "../core/types/DFValueType";
 
+import MCPotion			from "../core/types/MCPotion";
+import MCSound			from "../core/types/MCSound";
+
 import Template			from "../core/components/Template";
 import MinecraftString	from "../core/components/minecraft/MinecraftString";
 
@@ -12,6 +15,7 @@ import Number			from '../values/Number';
 import Variable			from '../values/Variable';
 import Location			from "../values/Location";
 import Potion			from "../values/Potion";
+import Sound			from "../values/Sound";
 import GameValue		from "../values/GameValue";
 import Vector 			from "../values/Vector";
 
@@ -129,8 +133,16 @@ export default interface editor<T extends Template = Template> {
 	 * @param duration The duration of the potion.
 	 * @param amplifier Strength of the potion.
  	 */
-	potion: (potion: string, duration: number, amplifier: number, slot?: number) => Potion;
-	pot: (potion: string, duration: number, amplifier: number, slot?: number) => Potion;
+	potion: (potion: MCPotion, duration: number, amplifier: number, slot?: number) => Potion;
+	pot: (potion: MCPotion, duration: number, amplifier: number, slot?: number) => Potion;
+	/**
+	 * Create a new sound value.
+	 * @param potion The potion name.
+	 * @param volume The volume of the sound.
+	 * @param pitch The pitch of the sound.
+	 */
+	sound: (sound: MCSound, volume: number, pitch: number, slot?: number) => Sound;
+	snd: (sound: MCSound, volume: number, pitch: number, slot?: number) => Sound;
 	/**
 	 * Create a new vector value.
 	 * @param x X coordinate.

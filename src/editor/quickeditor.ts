@@ -11,6 +11,7 @@ import Number			from '../values/Number';
 import Variable			from '../values/Variable';
 import Location			from "../values/Location";
 import Potion			from "../values/Potion";
+import Sound			from "../values/Sound";
 import GameValue		from "../values/GameValue";
 import Vector 			from "../values/Vector";
 
@@ -81,6 +82,9 @@ function getEditor<T extends Template = Template>(_template: T|false, customActi
 
 		potion: (potion, duration, amplifier, slot?) => new Potion(potion, duration, amplifier, slot),
 		pot: (potion, duration, amplifier, slot?) => new Potion(potion, duration, amplifier, slot),
+
+		sound: (sound, volume, pitch, slot?) => new Sound(sound, volume, pitch, slot),
+		snd: (sound, volume, pitch, slot?) => new Sound(sound, volume, pitch, slot),
 
 		vector: (x, y, z, slot?) => new Vector(x, y, z, slot),
 		vec: (x, y, z, slot?) => new Vector(x, y, z, slot),

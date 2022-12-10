@@ -1,7 +1,8 @@
 import Value from "../core/components/Value";
+import MCPotion from "../core/types/MCPotion";
 
 export interface Ipot {
-	pot: string;
+	pot: MCPotion;
 	dur: number;
 	amp: number;
 }
@@ -15,7 +16,7 @@ extends Value<"pot", Ipot> {
 	 * @param amplifier Strength of the potion.
 	 */
 	constructor(
-		public potion: string,
+		public potion: MCPotion,
 		public duration: number,
 		public amplifier: number,
 		slot?: number

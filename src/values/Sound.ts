@@ -1,7 +1,8 @@
 import Value from "../core/components/Value";
+import MCSound from "../core/types/MCSound";
 
 export interface Isnd {
-	sound: string;
+	sound: MCSound;
 	vol: number;
 	pitch: number;
 }
@@ -9,13 +10,13 @@ export interface Isnd {
 export default class Sound
 extends Value<"snd", Isnd> {
 	/**
-	 * Create a new potion value.
+	 * Create a new sound value.
 	 * @param potion The potion name.
-	 * @param duration The duration of the potion in ticks.
-	 * @param amplifier Strength of the potion.
+	 * @param volume The volume of the sound.
+	 * @param pitch The pitch of the sound.
 	 */
 	constructor(
-		public sound: string,
+		public sound: MCSound,
 		public volume: number = 2,
 		public pitch: number = 1,
 		slot?: number
