@@ -1,4 +1,4 @@
-import editor from "../../editor/Iquickeditor";
+import Ieditor from "../../editor/Iquickeditor";
 import getEditor, { ActDefs } from "../../editor/quickeditor";
 import DFAnySerializedBlock from "../types/DFAnySerializedBlock";
 import DFBlockCodename from "../types/DFBlockCodename";
@@ -11,7 +11,6 @@ import SerializableComponent from "./SerializableComponent";
 import Value from "./Value";
 import DFCodeExportableBlock from "../types/DFCodeExportableBlock";
 import Template from "./Template";
-import Ieditor from "../../editor/Iquickeditor";
 import { makeStringifier } from "../../utilities";
 import { ActionNamesInBlock } from "../../mapper";
 
@@ -44,7 +43,7 @@ extends SerializableComponent<RawDFConditionalBlock<T>> {
 
 	openingBracket: BracketBlock<"norm", "open"> = new BracketBlock("open", "norm");
 	closingBracket: BracketBlock<"norm", "close"> = new BracketBlock("close", "norm");
-	_selfEditor: editor;
+	_selfEditor: Ieditor;
 
 	/**
 	 * Create a new conditional codeblock.

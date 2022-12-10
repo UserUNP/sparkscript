@@ -1,6 +1,4 @@
-import "../src/mapper";
-import { PlayerAction } from "../src/codeblocks/Player";
-import df from "../src/index";
+import df, { player } from "../src/index";
 
 describe("editor", () => {
 
@@ -15,7 +13,7 @@ describe("editor", () => {
       e.player.action("Kick");
     });
     expect(template.blocks).toStrictEqual([
-      new PlayerAction("Kick", "Default")
+      new player.Action("Kick", "Default")
     ]);
   });
 

@@ -5,6 +5,9 @@ import WebSocket	from 'ws';
 import SerializableComponent		from "./core/components/SerializableComponent";				export { SerializableComponent };
 import Template, { RawDFTemplate }	from './core/components/Template';							export { Template };
 import ActionBlock					from './core/components/ActionBlock';						export { ActionBlock };
+import DataBlock					from "./core/components/DataBlock";							export { DataBlock };
+import ConditionalBlock				from "./core/components/ConditionalBlock";					export { ConditionalBlock };
+import SubActionBlock				from "./core/components/SubActionBlock";					export { SubActionBlock };
 import Value						from './core/components/Value';								export { Value };
 import DataStorage					from './core/components/DataStorage';						export { DataStorage };
 import MinecraftColor				from './core/components/minecraft/MinecraftColor';			export { MinecraftColor };
@@ -31,9 +34,9 @@ import Func			from "./codeblocks/Func";			export { Func };
 
 // Quick editor & playground.
 import utils							from "./utilities";					export { utils };
-import getEditor						from "./editor/quickeditor";		export { getEditor }
 import codeDump							from "./core/codeDump";				export { codeDump };
 import DFDumpScheme						from "./core/types/DFDumpScheme";	export { DFDumpScheme };
+import getEditor						from "./editor/quickeditor";		export { getEditor }
 import getEditorSettings, { Isettings }	from "./editor/qeSettings";
 import Ieditor 							from "./editor/Iquickeditor";
 

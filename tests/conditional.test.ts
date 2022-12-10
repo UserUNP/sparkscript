@@ -1,4 +1,4 @@
-import ConditionalBlock from "../src/core/components/ConditionalBlock";
+import { ConditionalBlock } from "../src/index";
 
 class TesterCond
 extends ConditionalBlock<"control", "AllPlayers"> {
@@ -13,7 +13,7 @@ describe("conditional block", () => {
   const tester = new TesterCond;
 
   it("is an action but doesn't inherit the action class", () => {
-    if(!(tester.action && tester.target && tester.isInverted && tester.toString() === "<@>{ [ConditionalBlock] }")) throw new Error("literally 1986.");
+    if(!(tester.action && tester.target && tester.isInverted && tester instanceof ConditionalBlock)) throw new Error("literally 1984.");
   });
 
   it("has bracket pairs", () => {
