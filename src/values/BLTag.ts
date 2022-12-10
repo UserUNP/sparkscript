@@ -4,13 +4,7 @@ export interface BLTagOption {
 	name: string;
 	icon: {
 		material: string;
-		name?: string;
-		deprecatedNote?: string[]
-		description?: string[];
-		additionalInfo?: string[];
-		advanced?: boolean;
 	},
-	aliases?: string[]
 }
 
 export type BLTagTrueOption = BLTagBooleanOption<true>;
