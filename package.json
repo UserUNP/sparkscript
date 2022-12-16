@@ -27,7 +27,7 @@
 		"ws": "*"
 	},
 	"devDependencies": {
-		"@types/jest": "^27.4.1",
+		"@types/jest": "^29.2.4",
 		"@types/node": "^18.11.10",
 		"@types/pako": "^2.0.0",
 		"@types/ws": "^8.5.3",
