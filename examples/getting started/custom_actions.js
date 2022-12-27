@@ -24,7 +24,7 @@ const template = df("Test template", (e, s) =>{
       e.action.send("Welcome back, "+target+"!");
 
     })
-
+    e.player.act("SendMessage", e.txt(target+" Joined the game.")).setTarget("AllPlayers");
   });
 
   e.player.event("Join");

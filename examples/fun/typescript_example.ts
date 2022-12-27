@@ -32,7 +32,7 @@ console.log(editor.getTemplate().blocks);
 
 editor.player.event("Join");
 editor.ifVariable("=", kitVar, editor.false).then(editor => {
-  editor.player.action("SendMessage", "Default", editor.txt("Welcome %default!"));
+  editor.player.action("SendMessage", editor.txt("Welcome %default!"));
   editor.setVar("=", kitVar, editor.txt("basic"));
 });
 editor.callFunction("loadKit "+kitVar); // gets coerced into %var(%default kit)

@@ -15,6 +15,7 @@ import SimpleMinecraftString		from './core/components/minecraft/SimpleMinecraftS
 import MinecraftString				from './core/components/minecraft/MinecraftString';			export { MinecraftString };
 
 // Values.
+import BLTag			from "./values/BLTag";			export { BLTag };
 import MinecraftItem	from "./values/MinecraftItem";	export { MinecraftItem };
 import Text				from './values/Text';			export { Text };
 import Number			from './values/Number';			export { Number };
@@ -80,10 +81,6 @@ quickEditor.from = (raw: string, callback?: (editor: Ieditor<ReturnType<typeof q
 }
 
 quickEditor.setActionDump = (dump: DFDumpScheme) => codeDump.loadDump(dump);
-
-// Variable types.
-import DFVarType from "./core/types/DFVarType";
-export { DFVarType as VarType }
 
 export default quickEditor;
 

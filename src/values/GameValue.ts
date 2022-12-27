@@ -1,8 +1,9 @@
 import Value from "../core/components/Value";
+import DFGameValueName from "../core/types/DFGameValueName";
 import DFTarget from "../core/types/DFTarget";
 
-export interface Ig_val { //TODO: g_val "type" types
-	type: string;
+export interface Ig_val {
+	type: DFGameValueName;
 	target: DFTarget;
 }
 
@@ -14,7 +15,7 @@ extends Value<"g_val", Ig_val> {
 	 * @param target The target of the value, "Default" is the default target.
 	 */
 	constructor(
-		public value: string,
+		public value: DFGameValueName,
 		public target: DFTarget = "Default",
 		slot?: number
 	) {

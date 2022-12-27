@@ -1,36 +1,46 @@
+import { getDump } from "../core/codeDump";
 import Value from "../core/components/Value";
+import DFDumpScheme from "../core/types/DFDumpScheme";
+import { OptionsInTag } from "../mapper";
 
-export interface BLTagOption {
-	name: string;
-	icon: {
-		material: string;
-	},
-}
-
-export type BLTagTrueOption = BLTagBooleanOption<true>;
-export type BLTagFalseOption = BLTagBooleanOption<false>;
-export interface BLTagBooleanOption
-<T extends boolean = boolean>
-extends BLTagOption {
-	name: T extends true ? "True" : T extends false ? "False" : never;
-	icon: {
-		material: T extends true ? "LIME_DYE" : T extends false ? 'RED_DYE' : never;
-	}
-}
+// export interface BLTagOption<T extends DFBlockCodename> {
+// 	block: T;
+// 	action: DFBlockActions<T>;
+// 	tag: ;
+// 	option: string;
+// }
 
 export interface Ibl_tag
-<TagName extends string = string, TagOptions extends BLTagOption[] = BLTagOption[]> {
-	name: TagName;
-	options: TagOptions;
-	defaultOption: TagOptions[number]["name"];
-	slot: number;
+<Action extends keyof DFDumpScheme["actionsWithTags"] = keyof DFDumpScheme["actionsWithTags"], Tag extends DFDumpScheme["actionsWithTags"][Action][number] = DFDumpScheme["actionsWithTags"][Action][number]> {
+	block: DFDumpScheme["actions"][Action]["codeblockType"][number];
+	action: Action;
+	tag: Tag;
+	option: OptionsInTag<Action, Tag>;
 }
 
 export default class BLTag
-<TagName extends string = string, TagOptions extends BLTagOption[] = BLTagOption[]>
-extends Value<"bl_tag", Ibl_tag<TagName, TagOptions>> {
+<Action extends keyof DFDumpScheme["actionsWithTags"], Tag extends DFDumpScheme["actionsWithTags"][Action][number]>
+extends Value<"bl_tag", Ibl_tag<Action, Tag>> {
 
-	constructor(value: Ibl_tag<TagName, TagOptions>, slotFromLastIndex: number = 0) {
-		super("bl_tag", value, 26-slotFromLastIndex);
+	defaultSlot = getDump().actionTags[this.tag].slot;
+	defaultOption = getDump().actionTags[this.tag].defaultOption;
+
+	constructor(public block: DFDumpScheme["actions"][Action]["codeblockType"][number], public action: Action, public tag: Tag, public option?: OptionsInTag<Action, Tag>, slot: number = getDump().actionTags[tag].slot) {
+		super("bl_tag", {
+			block, action,
+			tag, option: option || getDump().actionTags[tag].defaultOption
+		}, slot);
+	}
+
+	set(option: OptionsInTag<Action, Tag>) {
+		this.data.set("option", option);
+		return this;
+	}
+
+	/**
+	 * Alias for `set`.
+	 */
+	setOption(option: OptionsInTag<Action, Tag>) {
+		return this.set(option);
 	}
 }

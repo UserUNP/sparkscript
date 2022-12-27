@@ -1,6 +1,6 @@
-import { ActionNamesInBlock } from "../../mapper";
 import { makeStringifier } from "../../utilities";
 import DFBaseBlockStructure from "../types/DFBaseBlockStructure";
+import DFBlockAction from "../types/DFBlockAction";
 import DFBlockCodename from "../types/DFBlockCodename";
 import DFTarget from "../types/DFTarget";
 import DFValueType from "../types/DFValueType";
@@ -12,7 +12,7 @@ export interface RawDFActionBlock
 extends DFBaseBlockStructure<"block"> {
 	block: T;
 	args: { items: RawDFValue[] };
-	action: ActionNamesInBlock<T>;
+	action: DFBlockAction<T>;
 	target: DFTarget;
 	inverted: "NOT" | "";
 };
@@ -37,20 +37,12 @@ extends SerializableComponent<RawDFActionBlock<T>> {
 	 */
 	constructor(
 		public readonly type: T,
-		public action: ActionNamesInBlock<T>,
+		public action: DFBlockAction<T>,
 		public args: DFValueType[],
 		public isInverted: boolean = false,
 		public target: Target = "Default" as Target
 	) {
 		super("action block");
-	}
-
-	/**
-	 * Invert into a 'NOT' action (mostly for conditional blocks).
-	 * @returns True if inverted, otherwise false.
-	 */
-	invert() {
-		return this.isInverted = !this.isInverted;
 	}
 
 	toString(): string {
@@ -73,7 +65,15 @@ extends SerializableComponent<RawDFActionBlock<T>> {
 		}
 	}
 
-	setAction(action: ActionNamesInBlock<T>) {
+	/**
+	 * Invert into a 'NOT' action (mostly for conditional blocks).
+	 * @returns True if inverted, otherwise false.
+	 */
+	invert() {
+		return this.isInverted = !this.isInverted;
+	}
+
+	setAction(action: DFBlockAction<T>) {
 		this.action = action;
 		return this;
 	}

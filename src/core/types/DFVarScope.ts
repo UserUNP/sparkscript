@@ -1,8 +1,8 @@
 /**
  * DiamondFire variable scope.
- * "local" - Local variable.
- * "Unsaved" - Game variable.
- * "Save" - Saved variable.
+ * - "local" - Local variable.
+ * - "unsaved" - Game variable.
+ * - "save" - Saved variable.
  */
 type DFVarScope =
 	| "unsaved"

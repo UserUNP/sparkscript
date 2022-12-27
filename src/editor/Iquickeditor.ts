@@ -2,6 +2,8 @@ import DFDumpScheme		from "../core/types/DFDumpScheme";
 import DFTarget			from "../core/types/DFTarget";
 import DFSafeVarScope	from "../core/types/DFSafeVarScope";
 import DFValueType		from "../core/types/DFValueType";
+import DFGameValueName	from "../core/types/DFGameValueName";
+import DFBlockAction	from "../core/types/DFBlockAction";
 
 import MCPotion			from "../core/types/MCPotion";
 import MCSound			from "../core/types/MCSound";
@@ -31,9 +33,7 @@ import CallFunction										from "../codeblocks/CallFunction";
 import Process											from "../codeblocks/Process";
 import StartProcess										from "../codeblocks/StartProcess";
 
-import { ActionNamesInBlock } from "../mapper";
-
-type DefineAction = {
+type DefineActionFunction = {
 	/**
 	 * @param name Name of this action
 	 * @param callback Callback for when this action is executed.
@@ -44,15 +44,6 @@ type DefineAction = {
 	 * @param action Action to perform when this action is executed.
 	 */
 	(name: string, action: keyof DFDumpScheme["actions"]): void;
-}
-
-type GetCodeblock<T extends Template> = {
-	/**
-	 * Get codeblock by index in order.
-	 * @param index Codeblock index, indexes start at 0.
-	 */
-	<K extends number>(index: K): T["blocks"][K];
-	//TODO: get by name
 }
 
 export default interface editor<T extends Template = Template> {
@@ -67,14 +58,21 @@ export default interface editor<T extends Template = Template> {
 	 */
 	getTemplate: () => Template;
 
-	get: GetCodeblock<T>;
+	get: {
+		/**
+		 * Get codeblock by index in order.
+		 * @param index Codeblock index, indexes start at 0.
+		 */
+		<K extends number>(index: K): T["blocks"][K];
+		//TODO: get by name
+	}
 
 	/**
-	 * Define an action.
+	 * Define a custom action.
 	 */
-	defAction: DefineAction;
+	defAction: DefineActionFunction;
 	/**
-	 * Perform a *pre-defined* action.
+	 * Perform a \***pre-defined**\* action.
 	 * @param name Name of the action.
 	 * @param args Arguments to pass to the action.
 	 */
@@ -158,26 +156,26 @@ export default interface editor<T extends Template = Template> {
 		 * @param value The value.
 		 * @param target The target of the value, "Default" is the default target.
 		 */
-		value: <T extends string>(value: T, target?: DFTarget, slot?: number) => GameValue;
-		val: <T extends string>(value: T, target?: DFTarget, slot?: number) => GameValue;
+		value: (value: DFGameValueName, target?: DFTarget, slot?: number) => GameValue;
+		val: (value: DFGameValueName, target?: DFTarget, slot?: number) => GameValue;
 		/**
 		 * Used to do something related to the plot and everyone playing it.
 		 * @param action Action to perform.
 		 * @param args Arguments to pass.
 		 */
-		action: (action: ActionNamesInBlock<"game_action">, ...args: DFValueType[]) => GameAction;
+		action: (action: DFBlockAction<"game_action">, ...args: DFValueType[]) => GameAction;
 		/**
 		 * Alias for `action`.
 		 */
-		act: (action: ActionNamesInBlock<"game_action">, ...args: DFValueType[]) => GameAction;
+		act: (action: DFBlockAction<"game_action">, ...args: DFValueType[]) => GameAction;
 		/**
 		 *
 		 */
-		condition: (action: ActionNamesInBlock<"if_game">, ...args: DFValueType[]) => GameCondition;
+		condition: (action: DFBlockAction<"if_game">, ...args: DFValueType[]) => GameCondition;
 		/**
 		 * Alias for `condition`.
 		 */
-		if: (action: ActionNamesInBlock<"if_game">, ...args: DFValueType[]) => GameCondition;
+		if: (action: DFBlockAction<"if_game">, ...args: DFValueType[]) => GameCondition;
 	}
 
 	/**
@@ -195,20 +193,20 @@ export default interface editor<T extends Template = Template> {
 		 * @param action Action to perform.
 		 * @param args Arguments to pass.
 		 */
-		action: (action: ActionNamesInBlock<"player_action">, ...args: DFValueType[]) => PlayerAction;
+		action: (action: DFBlockAction<"player_action">, ...args: DFValueType[]) => PlayerAction;
 		/**
 		 * Alias for `action`.
 		 */
-		act: (action: ActionNamesInBlock<"player_action">, ...args: DFValueType[]) => PlayerAction;
+		act: (action: DFBlockAction<"player_action">, ...args: DFValueType[]) => PlayerAction;
 		/**
 		 * When a player does something.
 		 * @param event Event to listen for.
 		 */
-		event: (event: ActionNamesInBlock<"event">) => PlayerEvent;
+		event: (event: DFBlockAction<"event">) => PlayerEvent;
 		/**
 		 * Alias for `event`.
 		 */
-		evt: (event: ActionNamesInBlock<"event">) => PlayerEvent;
+		evt: (event: DFBlockAction<"event">) => PlayerEvent;
 		/**
 		 * If a player did something.
 		 * @param condition Action of condition.
@@ -216,11 +214,11 @@ export default interface editor<T extends Template = Template> {
 		 * @param isInverted If the condition should NOT match the action.
 		 * @param args Arguments to pass.
 		 */
-		condition: (condition: ActionNamesInBlock<"if_player">, ...args: DFValueType[]) => PlayerCondition;
+		condition: (condition: DFBlockAction<"if_player">, ...args: DFValueType[]) => PlayerCondition;
 		/**
 		 * Alias for `condition`.
 		 */
-		if: (condition: ActionNamesInBlock<"if_player">, ...args: DFValueType[]) => PlayerCondition;
+		if: (condition: DFBlockAction<"if_player">, ...args: DFValueType[]) => PlayerCondition;
 	};
 	entity: {
 		/**
@@ -228,20 +226,20 @@ export default interface editor<T extends Template = Template> {
 		 * @param action Action to perform.
 		 * @param args Arguments to pass.
 		 */
-		action: (action: ActionNamesInBlock<"entity_action">, ...args: DFValueType[]) => EntityAction;
+		action: (action: DFBlockAction<"entity_action">, ...args: DFValueType[]) => EntityAction;
 		/**
 		 * Alias for `action`.
 		 */
-		act: (action: ActionNamesInBlock<"entity_action">, ...args: DFValueType[]) => EntityAction;
+		act: (action: DFBlockAction<"entity_action">, ...args: DFValueType[]) => EntityAction;
 		/**
 		 * When an entity does something.
 		 * @param event Event to listen for.
 		 */
-		event: (event: ActionNamesInBlock<"entity_event">) => EntityEvent;
+		event: (event: DFBlockAction<"entity_event">) => EntityEvent;
 		/**
 		 * Alias for `event`.
 		 */
-		evt: (event: ActionNamesInBlock<"entity_event">) => EntityEvent;
+		evt: (event: DFBlockAction<"entity_event">) => EntityEvent;
 		/**
 		 * If an entity did something.
 		 * @param condition Action of condition.
@@ -249,11 +247,11 @@ export default interface editor<T extends Template = Template> {
 		 * @param isInverted If the condition should NOT match the action.
 		 * @param args Arguments to pass.
 		 */
-		 condition: (condition: ActionNamesInBlock<"if_entity">, ...args: DFValueType[]) => EntityCondition;
+		 condition: (condition: DFBlockAction<"if_entity">, ...args: DFValueType[]) => EntityCondition;
 		 /**
 		  * Alias for `condition`.
 		  */
-		 if: (condition: ActionNamesInBlock<"if_entity">, ...args: DFValueType[]) => EntityCondition;
+		 if: (condition: DFBlockAction<"if_entity">, ...args: DFValueType[]) => EntityCondition;
 	};
 
 	/**
@@ -305,11 +303,11 @@ export default interface editor<T extends Template = Template> {
 	 * @param variable Variable to set.
 	 * @param args Arguments to pass.
 	 */
-	setVariable: (action: ActionNamesInBlock<"set_var">, variable: Variable,...args: DFValueType[]) => SetVariable;
+	setVariable: (action: DFBlockAction<"set_var">, variable: Variable,...args: DFValueType[]) => SetVariable;
 	/**
 	 * Alias for `setVariable`.
 	 */
-	setVar: (action: ActionNamesInBlock<"set_var">, variable: Variable,...args: DFValueType[]) => SetVariable;
+	setVar: (action: DFBlockAction<"set_var">, variable: Variable,...args: DFValueType[]) => SetVariable;
 
 	/**
 	 * If a specific variable has or is equal to a property.
@@ -317,31 +315,31 @@ export default interface editor<T extends Template = Template> {
 	 * @param isInverted If the condition should NOT match the variable.
 	 * @param args Arguments to pass.
 	 */
-	ifVariable: (condition: ActionNamesInBlock<"if_var">, ...args: DFValueType[]) => VariableCondition;
+	ifVariable: (condition: DFBlockAction<"if_var">, ...args: DFValueType[]) => VariableCondition;
 	/**
 	 * Alias for `ifVariable`.
 	 */
-	ifVar: (condition: ActionNamesInBlock<"if_var">, ...args: DFValueType[]) => VariableCondition;
+	ifVar: (condition: DFBlockAction<"if_var">, ...args: DFValueType[]) => VariableCondition;
 
 	/**
 	 * Select an object (Entities, Items, ..etc).
 	 * @param condition Condition to select by.
 	 * @param args Arguments to pass specified by the chosen condition.
 	 */
-	select: (condition: ActionNamesInBlock<"select_obj">, ...args: DFValueType[]) => SelectObject;
+	select: (condition: DFBlockAction<"select_obj">, ...args: DFValueType[]) => SelectObject;
 	/**
 	 * Alias for `select`.
 	 */
-	sel: (cond: ActionNamesInBlock<"select_obj">, ...args: DFValueType[]) => SelectObject;
+	sel: (cond: DFBlockAction<"select_obj">, ...args: DFValueType[]) => SelectObject;
 
 	/**
 	 * Control yr'ou game.
 	 * @param action Action to perform.
 	 * @param args Arguments to pass.
 	 */
-	control: (action: ActionNamesInBlock<"control">, ...args: DFValueType[]) => Control;
+	control: (action: DFBlockAction<"control">, ...args: DFValueType[]) => Control;
 	/**
 	 * Alias for `control`.
 	 */
-	ctrl: (act: ActionNamesInBlock<"control">, ...args: DFValueType[]) => Control;
+	ctrl: (act: DFBlockAction<"control">, ...args: DFValueType[]) => Control;
 }

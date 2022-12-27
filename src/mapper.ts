@@ -13,6 +13,7 @@ import DFValueCodename from "./core/types/DFValueCodename";
 import DFValueDataType from "./core/types/DFValueDataType";
 import DFValueType from "./core/types/DFValueType";
 import DFDumpScheme from "./core/types/DFDumpScheme";
+import DFBlockAction from "./core/types/DFBlockAction";
 
 import { EntityAction, EntityEvent } from "./codeblocks/Entity";
 import Func from "./codeblocks/Func";
@@ -26,7 +27,7 @@ import Control from "./codeblocks/Control";
 import SetVariable from "./codeblocks/SetVariable";
 // import VariableCondition from "./codeblocks/VariableCondition";
 
-import { Ibl_tag } from "./values/BLTag";
+import BLTag, { Ibl_tag } from "./values/BLTag";
 import GameValue, { Ig_val } from "./values/GameValue";
 import Location, { Iloc } from "./values/Location";
 import MinecraftItem, { Iitem } from "./values/MinecraftItem";
@@ -69,7 +70,7 @@ export const blockMap = {
 import NBT = require("nbt-ts");
 type TValueMapArguments<T extends DFValueDataType> = {v: RawDFValueDataRecord<T>, s?: number};
 export const valueMap = {
-	"bl_tag": ({v,s}: TValueMapArguments<Ibl_tag>) => {v;s;throw new Error("(unimplemented)")},
+	"bl_tag": ({v,s}: TValueMapArguments<Ibl_tag>) => new BLTag(v.block, v.action, v.tag, v.option, s),
 	"txt": ({v,s}: TValueMapArguments<Itxt>) => new Text(v.name, s),
 	"num": ({v,s}: TValueMapArguments<Inum>) => Number.parse(v.name, s),
 	"var": ({v,s}: TValueMapArguments<Ivar>) => new Variable(v.name, varScopeMap[v.scope || "unsaved"] as DFSafeVarScope, s),
@@ -126,8 +127,17 @@ export type ValueDataMapper<T extends DFValueCodename> = Parameters<typeof value
 export type VarScopeMapper<T extends keyof typeof varScopeMap> = typeof varScopeMap[T];
 /**
  * Extract string union of action names from an action block.
+ * @deprecated Use `DFBlockActions` from `types/` folder instead.
  */
-export type ActionNamesInBlock<T extends DFBlockCodename> = ValueOf<ReturnType<typeof getCodeblockActions<T>>>;
+export type ActionNamesInBlock<T extends DFBlockCodename> = DFBlockAction<T>;
+/**
+ * Extract a specific tag's data from an action.
+ */
+export type TagDataInAction<Action extends keyof DFDumpScheme["actionsWithTags"], Tag extends DFDumpScheme["actionsWithTags"][Action][number]> = DFDumpScheme["actionTags"][Tag];
+/**
+ * Extract available options for a tag from an action.
+ */
+export type OptionsInTag<Action extends keyof DFDumpScheme["actionsWithTags"], Tag extends DFDumpScheme["actionsWithTags"][Action][number]> = TagDataInAction<Action, Tag>["options"][number];
 
 type DefaultMapperFunction = {
 	<T extends DFBlockCodename>(type: T, serializedData: Parameters<typeof blockMap[T]>["0"] | DFCodeSerializedBlock): SparkscriptMapper<T>;
@@ -200,7 +210,7 @@ export function valueSupported(type: string): type is DFValueCodename {
 // ---------------------------------------------------------------------------------
 
 import codeDump from "./core/codeDump";
-import { isOfTypeRawValue, sparkscriptWarn, ValueOf } from "./utilities";
+import { isOfTypeRawValue, sparkscriptWarn } from "./utilities";
 
 export function getCodeblockByType<T extends DFBlockCodename>(type: T) {
 	const codeblock = codeDump.getDump().codeblocks[type];
