@@ -1,6 +1,6 @@
 {
 	"name": "sparkscript",
-	"version": "1.0.0-alpha.3",
+	"version": "1.0.0-alpha.4",
 	"description": "DiamondFire for Javascript.",
 	"main": "./dist/index.js",
 	"scripts": {
@@ -37,12 +37,17 @@
 		"typescript": "^4.9.1-beta"
 	},
 	"files": [
-		"./dist", "./src",
-		"./README.md", "./LICENSE"
+		"./dist",
+		"./src",
+		"./README.md",
+		"./LICENSE"
 	],
 	"keywords": [
-		"diamondfire", "df",
-		"sparkscript", "spark",
-		"minecraft", "mc"
+		"diamondfire",
+		"df",
+		"sparkscript",
+		"spark",
+		"minecraft",
+		"mc"
 	]
 }
