@@ -1,10 +1,10 @@
 import ActionBlock from "../core/components/ActionBlock";
 import DFValueType from "../core/types/DFValueType";
-import { ActionNamesInBlock } from "../mapper";
+import DFBlockAction from "../core/types/DFBlockAction";
 import Variable from "../values/Variable";
 
-export default class SetVariable
-extends ActionBlock<"set_var"> {
+export default class SetVariable<Action extends DFBlockAction<"set_var">>
+extends ActionBlock<"set_var", Action> {
 
 	variable: Variable;
 
@@ -14,9 +14,9 @@ extends ActionBlock<"set_var"> {
 	 * @param variable Variable to set.
 	 * @param args Arguments to pass.
 	 */
-	constructor(action: ActionNamesInBlock<"set_var">, variable: Variable, ...args: DFValueType[])
-	constructor(action: ActionNamesInBlock<"set_var">, ...args: DFValueType[])
-	constructor(action: ActionNamesInBlock<"set_var">, ...args: [Variable, ...DFValueType[]]) {
+	constructor(action: Action, variable: Variable, ...args: DFValueType[])
+	constructor(action: Action, ...args: DFValueType[])
+	constructor(action: Action, ...args: [Variable, ...DFValueType[]]) {
 		if(!("scope" in args[0]) || !("name" in args[0])) throw new Error("First given argument in a SetVariable block should be a variable.");
 		super("set_var", action, args as DFValueType[]);
 		this.variable = args[0];

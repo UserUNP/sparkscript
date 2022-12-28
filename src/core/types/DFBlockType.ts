@@ -14,20 +14,20 @@ import VariableCondition from "../../codeblocks/VariableCondition";
  * Sparkscript codeblock type.
  */
 type DFBlockType =
-	| PlayerEvent
-	| PlayerAction
+	| PlayerEvent<any>
+	| PlayerAction<any>
 	| PlayerCondition
-	| EntityEvent
-	| EntityAction
+	| EntityEvent<any>
+	| EntityAction<any>
 	| EntityCondition
-	| SetVariable
+	| SetVariable<any>
 	| VariableCondition
 	| SelectObject
-	| GameAction
+	| GameAction<any>
 	| GameCondition
 	| Func
 	| CallFunction
-	| Control
+	| Control<any>
 	| Process
 	| StartProcess
 	;

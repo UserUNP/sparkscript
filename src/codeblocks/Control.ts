@@ -1,16 +1,16 @@
 import ActionBlock from "../core/components/ActionBlock";
+import DFBlockAction from "../core/types/DFBlockAction";
 import DFValueType from "../core/types/DFValueType";
-import { ActionNamesInBlock } from "../mapper";
 
-export default class Control
-extends ActionBlock<"control"> {
+export default class Control<Action extends DFBlockAction<"control">>
+extends ActionBlock<"control", Action> {
 
 	/**
 	 * Control.
 	 * @param action Action to perform.
 	 * @param args Arguments to pass.
 	 */
-	constructor(action: ActionNamesInBlock<"control">, ...args: DFValueType[]) {
+	constructor(action: Action, ...args: DFValueType[]) {
 		super("control", action, args, false);
 	}
 }

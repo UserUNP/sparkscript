@@ -12,7 +12,7 @@ import Value from "./Value";
 import DFCodeExportableBlock from "../types/DFCodeExportableBlock";
 import Template from "./Template";
 import { makeStringifier } from "../../utilities";
-import { ActionNamesInBlock } from "../../mapper";
+import DFBlockAction from "../types/DFBlockAction";
 
 export interface RawDFConditionalBlock
 <T extends DFBlockCodename = DFBlockCodename>
@@ -55,7 +55,7 @@ extends SerializableComponent<RawDFConditionalBlock<T>> {
 	 */
 	constructor(
 		public readonly type: T,
-		public action: ActionNamesInBlock<T>,
+		public action: DFBlockAction<T>,
 		public args: DFValueType[],
 		public isInverted: boolean = false,
 		public target: Target = "Default" as Target,
@@ -140,7 +140,7 @@ extends SerializableComponent<RawDFConditionalBlock<T>> {
 		}
 	}
 
-	setAction(action: ActionNamesInBlock<T>) {
+	setAction(action: DFBlockAction<T>) {
 		this.action = action;
 		return this;
 	}

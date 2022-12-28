@@ -32,6 +32,10 @@ extends Value<"bl_tag", Ibl_tag<Action, Tag>> {
 		}, slot);
 	}
 
+	toString(): `#[${Tag}]: ${typeof this.option}` {
+		return `#[${this.tag}]: ${this.option}`;
+	}
+
 	set(option: OptionsInTag<Action, Tag>) {
 		this.data.set("option", option);
 		return this;

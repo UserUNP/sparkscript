@@ -1,21 +1,25 @@
 import { makeStringifier } from "../../utilities";
+import BLTag from "../../values/BLTag";
 import DFBaseBlockStructure from "../types/DFBaseBlockStructure";
 import DFBlockAction from "../types/DFBlockAction";
 import DFBlockCodename from "../types/DFBlockCodename";
+import DFDumpScheme from "../types/DFDumpScheme";
 import DFTarget from "../types/DFTarget";
 import DFValueType from "../types/DFValueType";
 import SerializableComponent from "./SerializableComponent";
 import Value, { RawDFValue } from "./Value";
 
 export interface RawDFActionBlock
-<T extends DFBlockCodename = DFBlockCodename>
+<T extends DFBlockCodename = DFBlockCodename, Action extends DFBlockAction<T> = DFBlockAction<T>>
 extends DFBaseBlockStructure<"block"> {
 	block: T;
 	args: { items: RawDFValue[] };
-	action: DFBlockAction<T>;
+	action: Action;
 	target: DFTarget;
 	inverted: "NOT" | "";
 };
+
+type TagArray<T extends DFBlockCodename, Action extends DFBlockAction<T>> = Action extends keyof DFDumpScheme["actionsWithTags"] ? BLTag<Action, DFDumpScheme["actionsWithTags"][Action][number]>[] : [];
 
 /**
  * ### Action block.
@@ -24,8 +28,15 @@ extends DFBaseBlockStructure<"block"> {
  * @template Target Selection to target.
  */
 export default abstract class ActionBlock
-<T extends DFBlockCodename, Target extends DFTarget = DFTarget>
+<T extends DFBlockCodename, Action extends DFBlockAction<T>, Target extends DFTarget = DFTarget>
 extends SerializableComponent<RawDFActionBlock<T>> {
+
+	/**
+	 * The tags of the action on this action block.
+	 * @deprecated
+	 * @note i am unsure how tf to make an initializer for this..
+	 */
+	tags: TagArray<T, Action> = [] as TagArray<T, Action>;
 
 	/**
 	 * Create a new action codeblock.
@@ -37,7 +48,7 @@ extends SerializableComponent<RawDFActionBlock<T>> {
 	 */
 	constructor(
 		public readonly type: T,
-		public action: DFBlockAction<T>,
+		public action: Action,
 		public args: DFValueType[],
 		public isInverted: boolean = false,
 		public target: Target = "Default" as Target
@@ -50,7 +61,8 @@ extends SerializableComponent<RawDFActionBlock<T>> {
 			action: this.action,
 			target: this.target,
 			inverted: !!this.isInverted,
-			args: this.args.map(a => a.toString())
+			args: this.args.map(a => a.toString()),
+			tags: this.tags.map(t => t.toString())
 		});
 	}
 
@@ -73,7 +85,7 @@ extends SerializableComponent<RawDFActionBlock<T>> {
 		return this.isInverted = !this.isInverted;
 	}
 
-	setAction(action: DFBlockAction<T>) {
+	setAction(action: Action) {
 		this.action = action;
 		return this;
 	}

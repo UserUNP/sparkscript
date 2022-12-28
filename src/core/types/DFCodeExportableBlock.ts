@@ -7,7 +7,7 @@ import SubActionBlock from "../components/SubActionBlock";
  * Any codeblock.
  */
 type DFCodeExportableBlock =
-	| ActionBlock<any>
+	| ActionBlock<any, any>
 	| DataBlock<any>
 	| SubActionBlock<any>
 	| ConditionalBlock<any>

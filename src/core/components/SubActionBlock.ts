@@ -1,4 +1,4 @@
-import { ActionNamesInBlock } from "../../mapper";
+import DFBlockAction from "../types/DFBlockAction";
 import { makeStringifier } from "../../utilities";
 import DFBaseBlockStructure from "../types/DFBaseBlockStructure";
 import DFBlockCodename from "../types/DFBlockCodename";
@@ -11,7 +11,7 @@ export interface RawDFSubActionBlock
 extends DFBaseBlockStructure<"block"> {
 	block: T;
 	args: { items: RawDFValue[] };
-	action: ActionNamesInBlock<T>;
+	action: DFBlockAction<T>;
 	subAction: string;
 	inverted: "NOT" | "";
 };
@@ -34,7 +34,7 @@ extends SerializableComponent<RawDFSubActionBlock<T>> {
 	 */
 	constructor(
 		public readonly type: T,
-		public action: ActionNamesInBlock<T>,
+		public action: DFBlockAction<T>,
 		public subAction: string,
 		public args: DFValueType[],
 		public isInverted: boolean = false
@@ -66,7 +66,7 @@ extends SerializableComponent<RawDFSubActionBlock<T>> {
 		}
 	}
 
-	setAction(action: ActionNamesInBlock<T>) {
+	setAction(action: DFBlockAction<T>) {
 		this.action = action;
 		return this;
 	}
