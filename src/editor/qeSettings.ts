@@ -19,6 +19,10 @@ export interface Isettings {
 		 * Protocol of the WebSocket. defaults to ws.
 		 */
 		protocol: "ws" | "wss" | "http" | "https";
+		/**
+		 * Endpoint to use for the Item API.
+		 */
+		endpoint: string | "codeutilities/item";
 	},
 	author?: string;
 	name: string|false;
@@ -31,8 +35,9 @@ export default function getEditorSettings(name: Isettings["name"]): Isettings {
 			port: 31371,
 			host: "localhost",
 			protocol: "ws",
+			endpoint: "codeutilities/item"
 		},
-		name,
+		name
 	};
 }
 

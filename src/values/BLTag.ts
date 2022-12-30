@@ -32,7 +32,7 @@ extends Value<"bl_tag", Ibl_tag<Action, Tag>> {
 		}, slot);
 	}
 
-	toString(): `#[${Tag}]: ${typeof this.option}` {
+	toString(): `#[${Tag}]: ${BLTag<Action, Tag>["option"]}` {
 		return `#[${this.tag}]: ${this.option}`;
 	}
 

@@ -79,7 +79,7 @@ extends SerializableComponent<{serialized: RawDFTemplate, compressed: string}> {
 						}));
 						this.cuSocket.addEventListener("message", (e) => {
 							const res = JSON.parse(e.data.toString());
-							if(res.status === "error") throw new Error(res.error)
+							if(res.status === "error") throw new Error(res.error);
 							else return true;
 						});
 						this.cuSocket.on("error", (e) => { throw e; });

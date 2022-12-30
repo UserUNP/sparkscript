@@ -37,6 +37,11 @@ makeStringifier.component = <T extends string, V extends object>(comp: Serializa
 	...value
 }));
 
+export function removeEmptyItems<T extends any[], V extends ValueOf<T>>(arr: T, replacer: V) {
+	for(let i=0;i<arr.length;i++) !!arr[i] ? void 0 : arr[i] = replacer
+	return arr;
+}
+
 export default {
 	createKeybindComponent,
 	makeStringifier,

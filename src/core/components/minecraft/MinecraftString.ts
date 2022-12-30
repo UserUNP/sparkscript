@@ -72,6 +72,10 @@ export default class MinecraftString
 		return new SimpleMinecraftString(text, { strikethrough: true, color });
 	}
 
+	static get emptyString() {
+		return new MinecraftString("§f ");
+	}
+
 	/**
 	 * Regular expression to match Minecraft color & style codes.
 	 */

@@ -59,7 +59,7 @@ function quickEditor(name: string|false, callback: (editor: Ieditor<ReturnType<t
 	template.name = settings.name;
 
 	if(settings.usingCodeutils) {
-		const socket = new WebSocket(`${settings.cuConf.protocol}://${settings.cuConf.host}:${settings.cuConf.port}`);
+		const socket = new WebSocket(`${settings.cuConf.protocol}://${settings.cuConf.host}:${settings.cuConf.port}/${settings.cuConf.endpoint}`);
 		template.cuSocket = socket;
 	}
 
