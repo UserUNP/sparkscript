@@ -1,10 +1,10 @@
 export interface Isettings {
 	/**
-	 * Set to ```true``` if you need to use codeutilities.
+	 * Set to ```true``` if you need to use codeutilities ("recode").
 	 */
 	usingCodeutils: boolean;
 	/**
-	 * Configuration for codeutilities WebSocket (if used).
+	 * Configuration for codeutilities ("recode") WebSocket (if used).
 	 */
 	cuConf: {
 		/**
