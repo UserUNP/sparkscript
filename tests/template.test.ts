@@ -1,4 +1,4 @@
-import { Template } from "../src/index";
+import { Template } from "../src/core/components/";
 
 describe("template", () => {
 

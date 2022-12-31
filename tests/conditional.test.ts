@@ -1,4 +1,4 @@
-import { ConditionalBlock } from "../src/index";
+import { ConditionalBlock } from "../src/core/components/";
 
 class TesterCond
 extends ConditionalBlock<"control", "AllPlayers"> {
