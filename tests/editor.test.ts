@@ -1,4 +1,5 @@
-import df, { player } from "../src/index";
+import df from "../src/";
+import { PlayerAction } from "../src/codeblocks/";
 
 describe("editor", () => {
 
@@ -13,7 +14,7 @@ describe("editor", () => {
       e.player.action("Kick");
     });
     expect(template.blocks).toStrictEqual([
-      new player.Action("Kick", "Default")
+      new PlayerAction("Kick", "Default")
     ]);
   });
 
