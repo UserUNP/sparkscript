@@ -3,6 +3,10 @@ Don't type a new line for a curly bracket. Don't put semicolons on curly bracket
 Long generic type parameter lists & class extend clauses can be on a new line to be readable. 
   
   
+# Adding files
+When adding files to a folder such as `codeblocks` or `core/types` for example, check for an `index.ts` file that might
+contain export some stuff to be usable by the user when importing the sparkscript package.
+  
 # Adding values/codeblocks
 For creating new values/codeblocks, you have you append it's type into the respective file in the `types` folder..  
 Files that begin with "`DF`" or "`MC`" are mostly all located in the `core/types/` folder.  

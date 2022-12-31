@@ -1,6 +1,8 @@
-## Simple to use DiamondFire library for Javascript.  
+# DiamondFire library
+__Simple to use DiamondFire library for Javascript.__
+    
 __Check out [DiamondFire](https://mcdiamondfire.com), its pretty cool.__  
-__Manual template manipulation guide by Owen https://mcdiamondfire.com/threads/code-template-manipulation.51/__  
+__Manual template manipulation guide by Owen [here](https://mcdiamondfire.com/threads/code-template-manipulation.51/)__  
   
 [![gh-actions](https://github.com/UserUNP/sparkscript/actions/workflows/build.yml/badge.svg)](https://github.com/UserUNP/sparkscript/actions/workflows/sparkscript.yml)
 [![gh-actions](https://github.com/UserUNP/sparkscript/actions/workflows/codeql.yml/badge.svg)](https://github.com/UserUNP/sparkscript/actions/workflows/codeql.yml)  
@@ -43,6 +45,11 @@ Key features:
 \> Read from template data with `require( ).default.from( )`. (wont work until bl_tag is implemented)  
 \> ~~Read & compile from Spark file, buffer or string.~~ **_till spkc v2 gets an official release._**  
 \> Easy to use template editor.  
+  
+## Actiondump
+You might need to specify the actiondump using the `setActionDump` function that's in default export.  
+Or use the `codeDump` file that exports all actiondump related functions into a default object, simply import the file:  
+`const codeDump = require("sparkscript/core/codeDump");` or `import codeDump from "sparkscript/core/codeDump";`
 
 # Build from source
 
@@ -55,8 +62,3 @@ git clone https://github.com/UserUNP/sparkscript .
 npm install
 npm run build
 ```
-
-## Actiondump
-You might need to specify the actiondump using the `setActionDump` function that's in default export.  
-Or use the `codeDump` file that exports all actiondump related functions into a default object, simply import the file:  
-`const codeDump = require("sparkscript/core/codeDump");` or `import codeDump from "sparkscript/core/codeDump";`

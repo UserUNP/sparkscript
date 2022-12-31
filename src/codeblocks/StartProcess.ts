@@ -1,7 +1,7 @@
 import DataBlock from "../core/components/DataBlock";
 import DFValueType from "../core/types/DFValueType";
 
-export default class Func
+export default class StartProcess
 <T extends string = string>
 extends DataBlock<"start_process"> {
 

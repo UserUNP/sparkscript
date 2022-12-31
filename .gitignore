@@ -1,12 +1,11 @@
 node_modules
 .vscode
 dist
-testrun.js
+temp
 yarn-error.log
 ssActiondump.json
 coverage
-done-tests
-spark
+docs
 package-lock.json
 wordle_list_templ.txt
 wordle_list_serialized_templ.json

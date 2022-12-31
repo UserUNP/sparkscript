@@ -3,10 +3,10 @@ import MinecraftString, { RawMCString } from "../core/components/minecraft/Minec
 import { ValueOf, removeEmptyItems } from "../utilities";
 import NBT = require("nbt-ts");
 
-export type SafeMetadata<ID extends `minecraft:${string}` = `minecraft:${string}`> = Imetadata<true, ID>;
-export type RawMetadata<ID extends `minecraft:${string}` = `minecraft:${string}`> = Imetadata<false, ID>;
+export type SafeMetadata<ID extends `minecraft:${string}` = `minecraft:${string}`> = IitemMetadata<true, ID>;
+export type RawMetadata<ID extends `minecraft:${string}` = `minecraft:${string}`> = IitemMetadata<false, ID>;
 
-interface Imetadata
+export interface IitemMetadata
 <Safe extends boolean = false, ID extends `minecraft:${string}` = `minecraft:${string}`> {
 	id: ID;
 	Count: Safe extends true ? number : NBT.Byte;
@@ -22,7 +22,7 @@ interface Imetadata
 
 export interface Iitem
 <Safe extends boolean = false, ID extends `minecraft:${string}` = `minecraft:${string}`> {
-	item: Imetadata<Safe, ID> | string;
+	item: IitemMetadata<Safe, ID> | string;
 }
 
 export default class MinecraftItem

@@ -127,7 +127,8 @@ export type ValueDataMapper<T extends DFValueCodename> = Parameters<typeof value
 export type VarScopeMapper<T extends keyof typeof varScopeMap> = typeof varScopeMap[T];
 /**
  * Extract string union of action names from an action block.
- * @deprecated Use `DFBlockActions` from `types/` folder instead.
+ * @deprecated Use {@link DFBlockAction} from `types/` folder instead.
+ * @see {@link DFBlockAction}
  */
 export type ActionNamesInBlock<T extends DFBlockCodename> = DFBlockAction<T>;
 /**

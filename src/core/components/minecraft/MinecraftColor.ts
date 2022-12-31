@@ -102,11 +102,11 @@ export default class MinecraftColor
 	 * @param green Green amount.
 	 * @param blue Blue amount.
 	 */
-	constructor({red, green, blue}: {red: R, green: G, blue: B}) {
-		this.red = red; this.green = green; this.blue = blue;
-		if(red < 0 || red > 255) throw new Error(`Expected red color to be in range 0 to 255, got ${red}`);
-		if(green < 0 || green > 255) throw new Error(`Expected green color to be in range 0 to 255, got ${green}`);
-		if(blue < 0 || blue > 255) throw new Error(`Expected blue color to be in range 0 to 255, got ${blue}`);
+	constructor(values: {red: R, green: G, blue: B}) {
+		if(values.red < 0 || values.red > 255) throw new Error(`Expected red color to be in range 0 to 255, got ${values.red}`);
+		if(values.green < 0 || values.green > 255) throw new Error(`Expected green color to be in range 0 to 255, got ${values.green}`);
+		if(values.blue < 0 || values.blue > 255) throw new Error(`Expected blue color to be in range 0 to 255, got ${values.blue}`);
+		this.red = values.red; this.green = values.green; this.blue = values.blue;
 	}
 
 	/**
