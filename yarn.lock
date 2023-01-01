@@ -2148,10 +2148,10 @@ typedoc@^0.23.0-beta.7:
     minimatch "^5.1.0"
     shiki "^0.10.1"
 
-typescript@^4.9.1-beta:
-  version "4.9.1-beta"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.9.1-beta.tgz#b5fe1b26f2fe3aeb14790927b25372bebf351c67"
-  integrity sha512-D4c0t1+sMOS5Hy8DQsGFfEYUuKzolXhf+7e/N0Td5etBPflEYzVwWLBrbVgHpLpLC53OJQCtxk31+NWO2SBPaA==
+typescript@^5.0.0-dev.20230101:
+  version "5.0.0-dev.20230101"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.0.0-dev.20230101.tgz#adeac192f86443f5f3415b86b0fae11b4b4ed191"
+  integrity sha512-TTcv7DOi7BC0ZQGAXqAtVgTRpnFgBcZTa5u/GpFBdzAOpADzGEP4kuilnneNhocC42gqDt5To1hsRCrWVbiUjA==
 
 update-browserslist-db@^1.0.9:
   version "1.0.10"
