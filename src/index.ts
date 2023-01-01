@@ -4,12 +4,11 @@ import WebSocket	from 'ws';
 export * as components	from "./core/components/";
 export * as values		from "./values/";
 export * as codeblocks	from "./codeblocks/";
+export * as types		from "./core/types/"
+export * as mapper		from "./mapper"
+export * as utils		from "./utilities";
 
 // Quick editor & playground.
-export * as mapper	from "./mapper"
-export * as types	from "./core/types/"
-export * as utils	from "./utilities";
-
 import codeDump							from "./core/codeDump";				export { codeDump };
 import getEditor						from "./editor/quickeditor";		export { getEditor };
 import getEditorSettings, { Isettings }	from "./editor/qeSettings";

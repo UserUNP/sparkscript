@@ -1,4 +1,4 @@
-export { default as MinecraftItem, Iitem, IitemMetadata }	from "./MinecraftItem";
+export { default as MinecraftItem, Iitem, ItemMetadata }	from "./MinecraftItem";
 export { default as BLTag, Ibl_tag }						from "./BLTag";
 export { default as Text, Itxt }							from './Text';
 export { default as Number, Inum }							from './Number';
