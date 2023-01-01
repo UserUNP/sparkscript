@@ -34,6 +34,11 @@ jobs:
         uses: borales/actions-yarn@v3.0.0
         with:
           cmd: test
+      - name: Upload docs
+        uses: actions/upload-artifact@master
+        with:
+          name: docs-site
+          path: "./docs/"
 
   deploy:
     needs: build
@@ -42,10 +47,15 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
+      - name: Download docs
+        uses: actions/download-artifact@master
+        with:
+          name: docs-site
+          path: "./docs/"
       - uses: actions/configure-pages@v2
       - uses: actions/upload-pages-artifact@v1
         with:
-          path: './docs/'
+          path: "./docs/"
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
