@@ -26,7 +26,12 @@ jobs:
       - uses: borales/actions-yarn@v3.0.0
         with:
           cmd: install --immutable
-      - uses: borales/actions-yarn@v3.0.0
+      - name: Build & generate docs
+        uses: borales/actions-yarn@v3.0.0
+        with:
+          cmd: build
+      - name: Test
+        uses: borales/actions-yarn@v3.0.0
         with:
           cmd: test
 
