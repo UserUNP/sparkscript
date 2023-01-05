@@ -42,7 +42,7 @@ console.log(code.compressed);
   
   
 Key features:  
-\> Read from template data with `require( ).default.from( )`. (wont work until bl_tag is implemented)  
+\> Read from template data with `.from( )` function.
 \> ~~Read & compile from Spark file, buffer or string.~~ **_till spkc v2 gets an official release._**  
 \> Easy to use template editor.  
   
