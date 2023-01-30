@@ -2147,9 +2147,9 @@ typedoc@^0.23.0-beta.7:
     shiki "^0.12.1"
 
 typescript@^5.0.0-dev.20230101:
-  version "5.0.0-dev.20230116"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.0.0-dev.20230116.tgz#7eb84b0b54f7c0a54dba03349ad84421d74a0f76"
-  integrity sha512-J6UMkVT1XI6VtmmL316wTW6DNk5OiMit402bFx6PGr6Ag4QgUmMiS2rOPj0TZHJCT5/8dzuPQzd7pZUtLxuW6A==
+  version "5.0.0-dev.20230130"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.0.0-dev.20230130.tgz#6eb64e2ba0d565139e58d423bcd18f5b4e1a58fa"
+  integrity sha512-4zmbh58Vt3HDAD0AvHr1ccmAkKKODriYMNajcSzUylVgXCXrNGTJOReMp54GBs67KfQFaLOpVZlLrlD2FKn9Kg==
 
 update-browserslist-db@^1.0.9:
   version "1.0.10"
