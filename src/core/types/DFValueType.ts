@@ -1,21 +1,29 @@
-import Text from "../../values/Text";
-import Number from "../../values/Number";
-import Variable from "../../values/Variable";
-import Location from "../../values/Location";
-import Potion from "../../values/Potion";
-import GameValue from "../../values/GameValue";
-import MinecraftItem from "../../values/MinecraftItem";
-import Vector from "../../values/Vector";
+import {
+	BLTag,
+	GameValue,
+	Location,
+	MinecraftItem,
+	Number,
+	Potion,
+	Sound,
+	Text,
+	Variable,
+	Vector,
+} from "../../values";
+import { Value } from "../components";
 
 /**
  * Sparkscript value type.
  */
 type DFValueType =
+	| Value<any, any>
+	| BLTag<any, any>
 	| Text
 	| Number
 	| Location
 	| Variable
 	| Potion
+	| Sound
 	| GameValue
 	| MinecraftItem
 	| Vector

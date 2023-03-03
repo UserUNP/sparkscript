@@ -1,6 +1,5 @@
-import Value from "../core/components/Value";
-import DFGameValueName from "../core/types/DFGameValueName";
-import DFTarget from "../core/types/DFTarget";
+import { Value } from "../core/components";
+import { DFGameValueName, DFTarget } from "../core/types";
 
 export interface Ig_val {
 	type: DFGameValueName;

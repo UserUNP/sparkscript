@@ -6,7 +6,7 @@ const ifNBT = <T extends boolean>(nbt: T, mcstring: SimpleMinecraftString<string
 export interface SimpleRawMCString
 <UseBytes extends boolean, Text extends string> {
 	text: Text;
-	color: `#${string}`;
+	color?: `#${string}`;
 	bold: UseBytes extends true ? Byte : boolean;
 	italic: UseBytes extends true ? Byte : boolean;
 	underlined: UseBytes extends true ? Byte : boolean;
@@ -25,7 +25,7 @@ type TsegmentOptions
 };
 export interface IsegmentOptions
 <TColor extends ColorObj = ColorObj, TObj extends TsegmentOptions<TColor> = TsegmentOptions<TColor>> {
-	color: MinecraftColor<TColor["red"], TColor["green"], TColor["blue"]>;
+	color?: MinecraftColor<TColor["red"], TColor["green"], TColor["blue"]>;
 	bold?: TObj["bold"];
 	italic?: TObj["italic"];
 	underlined?: TObj["underlined"];
@@ -45,7 +45,7 @@ export default class SimpleMinecraftString
 
 	static from(obj: SimpleRawMCString<false, string>): SimpleMinecraftString<string> {
 		return new SimpleMinecraftString(obj.text, {
-			color: MinecraftColor.from(obj.color),
+			color: obj.color ? MinecraftColor.from(obj.color) : undefined,
 			bold: (typeof obj.bold==="boolean")?obj.bold:!!obj.bold,
 			italic: (typeof obj.italic==="boolean")?obj.italic:!!obj.italic,
 			underlined: (typeof obj.underlined==="boolean")?obj.underlined:!!obj.underlined,
@@ -84,7 +84,7 @@ export default class SimpleMinecraftString
 	export<T extends boolean = false>(nbt: T): SimpleRawMCString<T, this["text"]> {
 		return {
 			text: this.text,
-			color: this.color.toString(false),
+			color: this.color?.toString(false),
 			bold: ifNBT(nbt, this, "bold"),
 			italic: ifNBT(nbt, this, "italic"),
 			underlined: ifNBT(nbt, this, "underlined"),
@@ -94,13 +94,12 @@ export default class SimpleMinecraftString
 	}
 
 	/**
-	 *
 	 * @param altCode An alternate code symbol to use.
 	 * @returns Vanilla Minecraft text with the given formatting.
 	 */
 	toString(altCode: string = "&"): string {
-		let color = this.color.toString(true);
-		let styles = [];
+		const color = this.color ? this.color.toString(true) : "";
+		const styles = [];
 		if (this.bold) styles.push("l");
 		if (this.italic) styles.push("o");
 		if (this.strikethrough) styles.push("m");

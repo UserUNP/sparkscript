@@ -16,18 +16,18 @@ import VariableCondition from "../../codeblocks/VariableCondition";
 type DFBlockType =
 	| PlayerEvent<any>
 	| PlayerAction<any>
-	| PlayerCondition
+	| PlayerCondition<any>
 	| EntityEvent<any>
 	| EntityAction<any>
-	| EntityCondition
+	| EntityCondition<any>
 	| SetVariable<any>
-	| VariableCondition
-	| SelectObject
+	| VariableCondition<any>
 	| GameAction<any>
-	| GameCondition
+	| GameCondition<any>
+	| Control<any>
+	| SelectObject
 	| Func
 	| CallFunction
-	| Control<any>
 	| Process
 	| StartProcess
 	;

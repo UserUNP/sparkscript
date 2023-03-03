@@ -1,4 +1,4 @@
-import Value from "../core/components/Value";
+import { Value } from "../core/components";
 
 export interface Inum {
 	name: `${number}`;

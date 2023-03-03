@@ -1,37 +1,37 @@
-import DFDumpScheme		from "../core/types/DFDumpScheme";
-import DFTarget			from "../core/types/DFTarget";
-import DFSafeVarScope	from "../core/types/DFSafeVarScope";
-import DFValueType		from "../core/types/DFValueType";
-import DFGameValueName	from "../core/types/DFGameValueName";
-import DFBlockAction	from "../core/types/DFBlockAction";
+import DFDumpScheme		from "../../core/types/DFDumpScheme";
+import DFTarget			from "../../core/types/DFTarget";
+import DFSafeVarScope	from "../../core/types/DFSafeVarScope";
+import DFValueType		from "../../core/types/DFValueType";
+import DFGameValueName	from "../../core/types/DFGameValueName";
+import DFBlockAction	from "../../core/types/DFBlockAction";
 
-import MCPotion			from "../core/types/MCPotion";
-import MCSound			from "../core/types/MCSound";
+import MCPotion			from "../../core/types/MCPotion";
+import MCSound			from "../../core/types/MCSound";
 
-import Template			from "../core/components/Template";
-import MinecraftString	from "../core/components/minecraft/MinecraftString";
+import Template			from "../../core/components/Template";
+import MinecraftString	from "../../core/components/minecraft/MinecraftString";
 
-import MinecraftItem	from "../values/MinecraftItem";
-import Text			 	from '../values/Text';
-import Number			from '../values/Number';
-import Variable			from '../values/Variable';
-import Location			from "../values/Location";
-import Potion			from "../values/Potion";
-import Sound			from "../values/Sound";
-import GameValue		from "../values/GameValue";
-import Vector 			from "../values/Vector";
+import MinecraftItem	from "../../values/MinecraftItem";
+import Text			 	from '../../values/Text';
+import Number			from '../../values/Number';
+import Variable			from '../../values/Variable';
+import Location			from "../../values/Location";
+import Potion			from "../../values/Potion";
+import Sound			from "../../values/Sound";
+import GameValue		from "../../values/GameValue";
+import Vector 			from "../../values/Vector";
 
-import { PlayerAction, PlayerCondition, PlayerEvent }	from "../codeblocks/Player";
-import { EntityAction, EntityCondition, EntityEvent }	from "../codeblocks/Entity";
-import { GameAction, GameCondition }					from "../codeblocks/Game";
-import SetVariable										from "../codeblocks/SetVariable";
-import VariableCondition								from "../codeblocks/VariableCondition";
-import SelectObject										from "../codeblocks/SelectObject";
-import Control											from "../codeblocks/Control";
-import Func												from "../codeblocks/Func";
-import CallFunction										from "../codeblocks/CallFunction";
-import Process											from "../codeblocks/Process";
-import StartProcess										from "../codeblocks/StartProcess";
+import { PlayerAction, PlayerCondition, PlayerEvent }	from "../../codeblocks/Player";
+import { EntityAction, EntityCondition, EntityEvent }	from "../../codeblocks/Entity";
+import { GameAction, GameCondition }					from "../../codeblocks/Game";
+import SetVariable										from "../../codeblocks/SetVariable";
+import VariableCondition								from "../../codeblocks/VariableCondition";
+import SelectObject										from "../../codeblocks/SelectObject";
+import Control											from "../../codeblocks/Control";
+import Func												from "../../codeblocks/Func";
+import CallFunction										from "../../codeblocks/CallFunction";
+import Process											from "../../codeblocks/Process";
+import StartProcess										from "../../codeblocks/StartProcess";
 
 type DefineActionFunction = {
 	/**
@@ -171,11 +171,11 @@ export default interface editor<T extends Template = Template> {
 		/**
 		 *
 		 */
-		condition: (action: DFBlockAction<"if_game">, ...args: DFValueType[]) => GameCondition;
+		condition: <Condition extends DFBlockAction<"if_game">>(condition: Condition, ...args: DFValueType[]) => GameCondition<Condition>;
 		/**
 		 * Alias for `condition`.
 		 */
-		if: (action: DFBlockAction<"if_game">, ...args: DFValueType[]) => GameCondition;
+		if: <Condition extends DFBlockAction<"if_game">>(condition: Condition, ...args: DFValueType[]) => GameCondition<Condition>;
 	}
 
 	/**
@@ -212,11 +212,11 @@ export default interface editor<T extends Template = Template> {
 		 * @param condition Action of condition.
 		 * @param args Arguments to pass.
 		 */
-		condition: (condition: DFBlockAction<"if_player">, ...args: DFValueType[]) => PlayerCondition;
+		condition: <Condition extends DFBlockAction<"if_player">>(condition: Condition, ...args: DFValueType[]) => PlayerCondition<Condition>;
 		/**
 		 * Alias for `condition`.
 		 */
-		if: (condition: DFBlockAction<"if_player">, ...args: DFValueType[]) => PlayerCondition;
+		if: <Condition extends DFBlockAction<"if_player">>(condition: Condition, ...args: DFValueType[]) => PlayerCondition<Condition>;
 	};
 	entity: {
 		/**
@@ -243,11 +243,11 @@ export default interface editor<T extends Template = Template> {
 		 * @param condition Action of condition.
 		 * @param args Arguments to pass.
 		 */
-		 condition: (condition: DFBlockAction<"if_entity">, ...args: DFValueType[]) => EntityCondition;
+		 condition: <Condition extends DFBlockAction<"if_entity">>(condition: Condition, ...args: DFValueType[]) => EntityCondition<Condition>;
 		 /**
 		  * Alias for `condition`.
 		  */
-		 if: (condition: DFBlockAction<"if_entity">, ...args: DFValueType[]) => EntityCondition;
+		 if: <Condition extends DFBlockAction<"if_entity">>(condition: Condition, ...args: DFValueType[]) => EntityCondition<Condition>;
 	};
 
 	/**
@@ -255,43 +255,43 @@ export default interface editor<T extends Template = Template> {
 	 * @param name Function name.
 	 * @param args Arguments, can be used as notes since they're not used in the function.
 	 */
-	function: <T extends string>(name: T, ...args: DFValueType[]) => Func<T>;
+	function: <T extends string>(name: T, ...args: DFValueType[]) => Func;
 	/**
 	 * Alias for `function`.
 	 */
-	func: <T extends string>(name: T, ...args: DFValueType[]) => Func<T>;
+	func: <T extends string>(name: T, ...args: DFValueType[]) => Func;
 
 	/**
 	 * Call a specific function.
 	 * @param name Function name to call.
 	 */
-	callFunction: <T extends string>(name: T) => CallFunction<T>;
+	callFunction: <T extends string>(name: T) => CallFunction;
 	/**
 	 * Alias for `callFunction`.
 	 */
-	callFunc: <T extends string>(name: T) => CallFunction<T>;
+	callFunc: <T extends string>(name: T) => CallFunction;
 
 	/**
 	 * Place a process.
 	 * @param name Function name.
 	 * @param args Arguments, can be used as notes since they're not used in the function.
 	 */
-	process: <T extends string>(name: T, ...args: DFValueType[]) => Process<T>;
+	process: <T extends string>(name: T, ...args: DFValueType[]) => Process;
 	/**
 	 * Alias for `process`.
 	 */
-	proc: <T extends string>(name: T, ...args: DFValueType[]) => Process<T>;
+	proc: <T extends string>(name: T, ...args: DFValueType[]) => Process;
 
 	/**
 	 * Start a process thread.
 	 * @param name Function name.
 	 * @param args Arguments, can be used as notes since they're not used in the function.
 	 */
-	startProcess: <T extends string>(name: T, ...args: DFValueType[]) => StartProcess<T>;
+	startProcess: <T extends string>(name: T, ...args: DFValueType[]) => StartProcess;
 	/**
 	 * Alias for `startProcess`.
 	 */
-	startProc: <T extends string>(name: T, ...args: DFValueType[]) => StartProcess<T>;
+	startProc: <T extends string>(name: T, ...args: DFValueType[]) => StartProcess;
 
 	/**
 	 * Set a variable using a specific action.
@@ -310,11 +310,11 @@ export default interface editor<T extends Template = Template> {
 	 * @param condition Condition to match for.
 	 * @param args Arguments to pass.
 	 */
-	ifVariable: (condition: DFBlockAction<"if_var">, ...args: DFValueType[]) => VariableCondition;
+	ifVariable: <Condition extends DFBlockAction<"if_var">>(condition: Condition, ...args: DFValueType[]) => VariableCondition<Condition>;
 	/**
 	 * Alias for `ifVariable`.
 	 */
-	ifVar: (condition: DFBlockAction<"if_var">, ...args: DFValueType[]) => VariableCondition;
+	ifVar: <Condition extends DFBlockAction<"if_var">>(condition: Condition, ...args: DFValueType[]) => VariableCondition<Condition>;
 
 	/**
 	 * Select an object (Entities, Items, ..etc).

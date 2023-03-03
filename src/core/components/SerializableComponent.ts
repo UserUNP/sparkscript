@@ -1,5 +1,5 @@
-import { makeStringifier } from "../../utilities";
-import Value from "./Value";
+import { DFValueType } from "../types";
+import { makeStringifier } from "../../common/utilities";
 
 export type Signature<ComponentName extends string = "serializable"> = `<@>{ [${ComponentName}] }`;
 
@@ -22,7 +22,7 @@ export default abstract class SerializableComponent<T extends object> {
 
 	/**
 	 * Serialize the object into a readable DiamondFire format.
-	 * @returns DiamondFire JSON-ified codeblock.
+	 * @returns DiamondFire codeblock object.
 	 */
-	abstract export(selfValues?: Value[]): T;
+	abstract export(selfValues?: DFValueType[]): T;
 }

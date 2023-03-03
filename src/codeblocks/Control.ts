@@ -1,8 +1,8 @@
-import ActionBlock from "../core/components/ActionBlock";
-import DFBlockAction from "../core/types/DFBlockAction";
-import DFValueType from "../core/types/DFValueType";
+import { DFBlockAction, DFValueType } from "../core/types";
+import { ActionBlock } from "../core/components";
 
-export default class Control<Action extends DFBlockAction<"control">>
+export default class Control
+<Action extends DFBlockAction<"control">>
 extends ActionBlock<"control", Action> {
 
 	/**

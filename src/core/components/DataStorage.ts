@@ -1,19 +1,18 @@
-import { ValueDataMapper } from "../../mapper";
-import DFValueCodename from "../types/DFValueCodename";
-import DFValueDataType from "../types/DFValueDataType";
+import { DFValueCodename, DFValueDataType } from "../types";
+import { ValueDataMapper } from "../../common/mapperUtils";
 
 export type RawDFValueDataRecord<T extends DFValueDataType> = {
-	[P in keyof T]: T[P];
+	[K in keyof T]: T[K];
 };
 
 /**
  * ### Data storage for a value.
  *
  * @template T Value codename.
- * @template DataType Value object data type.
+ * @template ValueData Value object data type.
  */
 export default class DataStorage
-<T extends DFValueCodename, DataType extends ValueDataMapper<T> = ValueDataMapper<T>> {
+<T extends DFValueCodename, ValueData extends ValueDataMapper<T> = ValueDataMapper<T>> {
 
 	/**
 	 * Create a new DataStorage from a JSON object.
@@ -29,7 +28,7 @@ export default class DataStorage
 		return storage;
 	}
 
-	raw: DataType = {} as DataType;
+	raw: ValueData = {} as ValueData;
 
 	/**
 	 * Set a value in the DataStorage.
@@ -37,7 +36,7 @@ export default class DataStorage
 	 * @param value Value to be set.
 	 * @returns Chainable DataStorage object.
 	 */
-	set(key: keyof DataType, value: any): this {
+	set(key: keyof ValueData, value: any): this {
 		this.raw[key] = value;
 		return this;
 	}
@@ -47,7 +46,7 @@ export default class DataStorage
 	 * @param key Key to be retrieved.
 	 * @returns Value of the key.
 	 */
-	get(key: keyof DataType) {
+	get(key: keyof ValueData) {
 		return this.raw[key];
 	}
 
@@ -70,7 +69,7 @@ export default class DataStorage
 	 * @param key Key to be checked.
 	 * @returns True if the key exists, false otherwise.
 	 */
-	has(key: keyof DataType) {
+	has(key: keyof ValueData) {
 		return key in this.keys;
 	}
 
@@ -85,7 +84,7 @@ export default class DataStorage
 	 * Remove a key from the DataStorage.
 	 * @param key Key to be removed.
 	 */
-	delete(key: keyof DataType) {
+	delete(key: keyof ValueData) {
 		delete this.raw[key];
 	}
 
@@ -93,12 +92,12 @@ export default class DataStorage
 		return Object.keys(this.raw).length;
 	}
 
-	get keys() {
-		return Object.keys(this.raw);
+	get keys(): (keyof ValueData)[] {
+		return Object.keys(this.raw) as (keyof ValueData)[];
 	}
 
-	get values() {
-		return Object.values(this.raw);
+	get values(): ValueData[keyof ValueData] {
+		return Object.values(this.raw) as ValueData[keyof ValueData];
 	}
 
 	get entries() {

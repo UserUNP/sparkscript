@@ -1,7 +1,7 @@
 import { ConditionalBlock } from "../src/core/components/";
 
 class TesterCond
-extends ConditionalBlock<"control", "AllPlayers"> {
+extends ConditionalBlock<"control", "Skip", "AllPlayers"> {
 
   constructor() {
     super("control", "Skip", [], true, "AllPlayers");

@@ -1,14 +1,8 @@
+import { OptionsInTag, getDefaultOption, getDefaultSlot } from "../common/blockTagUtils";
 import { getDump } from "../core/codeDump";
-import Value from "../core/components/Value";
-import DFDumpScheme from "../core/types/DFDumpScheme";
-import { OptionsInTag } from "../mapper";
+import { Value } from "../core/components";
+import { DFDumpScheme } from "../core/types";
 
-// export interface BLTagOption<T extends DFBlockCodename> {
-// 	block: T;
-// 	action: DFBlockActions<T>;
-// 	tag: ;
-// 	option: string;
-// }
 
 export interface Ibl_tag
 <Action extends keyof DFDumpScheme["actionsWithTags"] = keyof DFDumpScheme["actionsWithTags"], Tag extends DFDumpScheme["actionsWithTags"][Action][number] = DFDumpScheme["actionsWithTags"][Action][number]> {
@@ -19,16 +13,16 @@ export interface Ibl_tag
 }
 
 export default class BLTag
-<Action extends keyof DFDumpScheme["actionsWithTags"], Tag extends DFDumpScheme["actionsWithTags"][Action][number]>
+<Action extends keyof DFDumpScheme["actionsWithTags"], Tag extends DFDumpScheme["actionsWithTags"][Action][number] = DFDumpScheme["actionsWithTags"][Action][number]>
 extends Value<"bl_tag", Ibl_tag<Action, Tag>> {
 
-	defaultSlot = getDump().actionTags[this.tag].slot;
-	defaultOption = getDump().actionTags[this.tag].defaultOption;
+	defaultSlot = getDefaultSlot<Action, Tag>(this.tag);
+	defaultOption = getDefaultOption<Action, Tag>(this.tag);
 
 	constructor(public block: DFDumpScheme["actions"][Action]["codeblockType"][number], public action: Action, public tag: Tag, public option?: OptionsInTag<Action, Tag>, slot: number = getDump().actionTags[tag].slot) {
 		super("bl_tag", {
 			block, action,
-			tag, option: option || getDump().actionTags[tag].defaultOption
+			tag, option: option ??= getDump().actionTags[tag].defaultOption
 		}, slot);
 	}
 

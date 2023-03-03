@@ -2,6 +2,7 @@ export { default as DFAnySerializedBlock }		from "./DFAnySerializedBlock";
 export { default as DFBaseBlockStructure }		from "./DFBaseBlockStructure";
 export { default as DFBlockAction }				from "./DFBlockAction";
 export { default as DFBlockCodename }			from "./DFBlockCodename";
+export { default as DFDynamicBlockCodename }	from "./DFDynamicBlockCodename";
 export { default as DFBlockIDType }				from "./DFBlockIDType";
 export { default as DFBlockName }				from "./DFBlockName";
 export { default as DFBlockType }				from "./DFBlockType";

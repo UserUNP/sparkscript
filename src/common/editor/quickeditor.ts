@@ -1,51 +1,56 @@
-import Template	from "../core/components/Template";
-import Value	from "../core/components/Value";
+import Template	from "../../core/components/Template";
+import Value	from "../../core/components/Value";
 
-import DFValueType				from "../core/types/DFValueType";
-import DFDumpScheme				from "../core/types/DFDumpScheme";
-import DFCodeExportableBlock	from "../core/types/DFCodeExportableBlock";
+import {
+	DFValueType,
+	DFDumpScheme,
+	DFCodeExportableBlock
+} from "../../core/types";
 
-import MinecraftItem	from "../values/MinecraftItem";
-import Text			 	from '../values/Text';
-import Number			from '../values/Number';
-import Variable			from '../values/Variable';
-import Location			from "../values/Location";
-import Potion			from "../values/Potion";
-import Sound			from "../values/Sound";
-import GameValue		from "../values/GameValue";
-import Vector 			from "../values/Vector";
+import {
+	GameValue,
+	Location,
+	MinecraftItem,
+	Number,
+	Potion,
+	Sound,
+	Text,
+	Variable,
+	Vector,
+} from "../../values";
 
-import { PlayerAction, PlayerCondition, PlayerEvent }	from "../codeblocks/Player";
-import { EntityAction, EntityCondition, EntityEvent }	from "../codeblocks/Entity";
-import { GameAction, GameCondition }					from "../codeblocks/Game";
-import SetVariable										from "../codeblocks/SetVariable";
-import VariableCondition								from "../codeblocks/VariableCondition";
-import SelectObject										from "../codeblocks/SelectObject";
-import Control											from "../codeblocks/Control";
-import Func												from "../codeblocks/Func";
-import CallFunction										from "../codeblocks/CallFunction";
-import Process											from "../codeblocks/Process";
-import StartProcess										from "../codeblocks/StartProcess";
+import {
+	PlayerAction, PlayerEvent, PlayerCondition,
+	EntityAction, EntityEvent, EntityCondition,
+	GameAction, GameCondition,
+	SetVariable, VariableCondition,
+	Func, CallFunction,
+	Process, StartProcess,
+	SelectObject,
+	Control,
+} from "../../codeblocks";
 
 import Ieditor	from "./Iquickeditor";
-import mapper, { getActionOwner, codeblockSupported } from "../mapper";
+import mapper from "../../mapper";
+import { codeblockSupported } from "../mapperUtils";
 import { sparkscriptWarn } from "../utilities";
+import { getActionOwner } from "../../core/codeDump";
 
 export type ActDefs = Record<string, ((...args: any[])=>void) | keyof DFDumpScheme["actions"]>;
 
 /**
  * Generate a quick editor.
  * @param _template Template to edit.
- * @param customAction Action definitons and/or doCustomAction function
+ * @param customActionOptions Action definitons and doCustomAction function
  * @returns The quick editor.
  */
-function getEditor<T extends Template = Template>(_template: T|false, customAction: { actDefs: ActDefs, doCustomAction?: (name: string, ...args: any[]) => any }): Ieditor<T> {
+function getEditor<T extends Template = Template>(_template: T|false, customActionOptions: { actDefs?: ActDefs, doCustomAction?: (name: string, ...args: any[]) => any }): Ieditor<T> {
 	let template: T;
 	if(!_template) template = new Template(false) as T;
 	else template = _template;
 
-	const actDefs = customAction.actDefs;
-	const doCustomAction = customAction.doCustomAction;
+	const actDefs = customActionOptions.actDefs || {};
+	const doCustomAction = customActionOptions.doCustomAction;
 	const editor: Ieditor<typeof template> = {
 		_from: (other) => {
 			template._blocks = other.blocks;
@@ -95,13 +100,13 @@ function getEditor<T extends Template = Template>(_template: T|false, customActi
 		game: {
 			//* Game value.
 			value: (value, target, slot?) => new GameValue(value, target, slot),
-			val: (val, target, slot?) => new GameValue(val, target, slot),
+			val: (value, target, slot?) => new GameValue(value, target, slot),
 			//* Game action.
 			action: (action, ...args) => template.add(new GameAction(action, ...args)),
 			act: (action, ...args) => template.add(new GameAction(action, ...args)),
 			//* Game condition.
-			condition: (condition, ...args) => template.add(new GameCondition(condition, ...args)._setEditorCustomActions(actDefs)),
-			if: (condition, ...args) => template.add(new GameCondition(condition, ...args)._setEditorCustomActions(actDefs)),
+			condition: (condition, ...args) => template.add(new GameCondition(condition, ...args)),
+			if: (condition, ...args) => template.add(new GameCondition(condition, ...args)),
 		},
 
 		//* Codeblocks.
@@ -112,8 +117,8 @@ function getEditor<T extends Template = Template>(_template: T|false, customActi
 			event: (event) => template.add(new PlayerEvent(event)),
 			evt: (event) => template.add(new PlayerEvent(event)),
 
-			condition: (condition, ...args) => template.add(new PlayerCondition(condition, "Default", ...args)._setEditorCustomActions(actDefs)),
-			if: (condition, ...args) => template.add(new PlayerCondition(condition, "Default", ...args)._setEditorCustomActions(actDefs)),
+			condition: (condition, ...args) => template.add(new PlayerCondition(condition, "Default", ...args)),
+			if: (condition, ...args) => template.add(new PlayerCondition(condition, "Default", ...args)),
 		},
 		entity: {
 			action: (action, ...args) => template.add(new EntityAction(action, "Default", ...args)),
@@ -122,8 +127,8 @@ function getEditor<T extends Template = Template>(_template: T|false, customActi
 			event: (event) => template.add(new EntityEvent(event)),
 			evt: (event) => template.add(new EntityEvent(event)),
 
-			condition: (condition, ...args) => template.add(new EntityCondition(condition, "Default", ...args)._setEditorCustomActions(actDefs)),
-			if: (condition, ...args) => template.add(new EntityCondition(condition, "Default", ...args)._setEditorCustomActions(actDefs)),
+			condition: (condition, ...args) => template.add(new EntityCondition(condition, "Default", ...args)),
+			if: (condition, ...args) => template.add(new EntityCondition(condition, "Default", ...args)),
 		},
 
 		function: (name, ...args) => template.add(new Func(name, ...args)),
@@ -141,8 +146,8 @@ function getEditor<T extends Template = Template>(_template: T|false, customActi
 		setVariable: (action, variable, ...args) => template.add(new SetVariable(action, variable, ...args)),
 		setVar: (action, variable, ...args) => template.add(new SetVariable(action, variable, ...args)),
 
-		ifVariable: (condition, ...args) => template.add(new VariableCondition(condition, ...args)._setEditorCustomActions(actDefs)),
-		ifVar: (condition, ...args) => template.add(new VariableCondition(condition, ...args)._setEditorCustomActions(actDefs)),
+		ifVariable: (condition, ...args) => template.add(new VariableCondition(condition, ...args)),
+		ifVar: (condition, ...args) => template.add(new VariableCondition(condition, ...args)),
 
 		select: (condition, ...args) => template.add(new SelectObject(condition, ...args)),
 		sel: (condition, ...args) => template.add(new SelectObject(condition, ...args)),
@@ -161,7 +166,7 @@ function getEditor<T extends Template = Template>(_template: T|false, customActi
  * @param args Arguments to pass to the action.
  * @returns User-specified output.
  */
-getEditor.defaultCustomAction = (tempToModify: Template, actDefs: ActDefs, name: string, ...args: any[]) => {
+getEditor.doCustomAction = (tempToModify: Template, actDefs: ActDefs, name: string, ...args: any[]) => {
 	if(actDefs[name]) {
 		const action = actDefs[name];
 		if(typeof action === "string") {
@@ -192,8 +197,7 @@ getEditor.defaultActDefs = {} as Record<string, ((...args: any[])=>void)>;
 getEditor.applyActions = <T extends Template>(editor: Ieditor<T>, actDefs: ActDefs, doCustomAction?: (name: string, ...args: any[]) => any) => {
 	for(const name in actDefs) {
 		editor.action[name] = (...args: any[]) => {
-			doCustomAction ? doCustomAction(name, ...args) :
-			getEditor.defaultCustomAction(editor.getTemplate(), actDefs, name, ...args);
+			doCustomAction ? doCustomAction(name, ...args) : getEditor.doCustomAction(editor.getTemplate(), actDefs, name, ...args);
 		}
 	};
 }

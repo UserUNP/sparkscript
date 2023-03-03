@@ -1,7 +1,6 @@
-import DFBaseBlockStructure from "../types/DFBaseBlockStructure";
+import { DFBaseBlockStructure, DFBracketBlockDirection, DFBracketBlockType } from "../types";
 import SerializableComponent from "./SerializableComponent";
-import DFBracketBlockDirection from "../types/DFBracketBlockDirection";
-import DFBracketBlockType from "../types/DFBracketBlockType";
+
 
 export interface RawDFBracketBlock
 <T extends DFBracketBlockType = DFBracketBlockType, S extends DFBracketBlockDirection = DFBracketBlockDirection>

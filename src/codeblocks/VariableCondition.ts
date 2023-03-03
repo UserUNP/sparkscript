@@ -1,16 +1,16 @@
-import ConditionalBlock from "../core/components/ConditionalBlock";
-import DFValueType from "../core/types/DFValueType";
-import DFBlockAction from "../core/types/DFBlockAction";
+import { DFBlockAction, DFValueType } from "../core/types";
+import { ConditionalBlock } from "../core/components";
 
 export default class VariableCondition
-extends ConditionalBlock<"if_var", "Default"> {
+<Condition extends DFBlockAction<"if_var">>
+extends ConditionalBlock<"if_var", Condition> {
 
 	/**
 	 * If a specific variable has or is equal to a property.
 	 * @param condition Condition to match for.
 	 * @param args Arguments to pass.
 	 */
-	constructor(condition: DFBlockAction<"if_var">, ...args: DFValueType[]) {
+	constructor(condition: Condition, ...args: DFValueType[]) {
 		super("if_var", condition, args, false);
 	}
 }

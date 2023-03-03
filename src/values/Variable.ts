@@ -1,12 +1,19 @@
-import Value from "../core/components/Value";
-import DFSafeVarScope from "../core/types/DFSafeVarScope";
-import DFVarScope from "../core/types/DFVarScope";
-import { varScopeMap } from "../mapper";
+import { DFSafeVarScope, DFVarScope } from "../core/types";
+
+import { Value } from "../core/components";
 
 export interface Ivar {
 	name: string;
 	scope: DFVarScope;
 }
+
+export const varScopeMap = {
+	"local": "local",
+	"game": "unsaved",
+	"save": "saved",
+	"unsaved": "unsaved",
+	"saved": "saved",
+} as const;
 
 export default class Variable
 extends Value<"var", Ivar> {

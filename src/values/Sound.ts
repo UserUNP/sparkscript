@@ -1,5 +1,5 @@
-import Value from "../core/components/Value";
-import MCSound from "../core/types/MCSound";
+import { Value } from "../core/components";
+import { MCSound } from "../core/types";
 
 export interface Isnd {
 	sound: MCSound;

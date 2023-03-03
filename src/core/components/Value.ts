@@ -1,8 +1,10 @@
-import SerializableComponent from "./SerializableComponent";
-import { ValueDataMapper } from "../../mapper";
-import { makeStringifier } from "../../utilities";
-import DFValueCodename from "../types/DFValueCodename";
+import { DFValueCodename, DFValueType } from "../types";
+
+import { ValueDataMapper } from "../../common/mapperUtils";
+import { makeStringifier } from "../../common/utilities";
+
 import DataStorage from "./DataStorage";
+import SerializableComponent from "./SerializableComponent";
 
 export interface RawDFValue
 <T extends DFValueCodename = DFValueCodename, DataType extends ValueDataMapper<T> = ValueDataMapper<T>> {
@@ -43,9 +45,9 @@ extends SerializableComponent<RawDFValue<T, DataType>> {
 		return makeStringifier(this.type, JSON.stringify(this.data));
 	}
 
-	export(selfValues: Value[]) {
+	export(selfValues: DFValueType[]): RawDFValue<T, DataType> {
 		return {
-			slot: this.slot || selfValues.indexOf(this as unknown as Value), //! find a solution
+			slot: this.slot || selfValues.indexOf(this as unknown as DFValueType),
 			item: {
 				id: this.type,
 				data: this.data.raw

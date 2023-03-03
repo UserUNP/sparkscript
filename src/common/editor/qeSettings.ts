@@ -1,10 +1,10 @@
 export interface Isettings {
 	/**
-	 * Set to ```true``` if you need to use codeutilities ("recode").
+	 * Set to `true` if you need to use recode ("codeutilities").
 	 */
 	usingCodeutils: boolean;
 	/**
-	 * Configuration for codeutilities ("recode") WebSocket (if used).
+	 * Configuration for recode ("codeutilities") WebSocket (if used).
 	 */
 	cuConf: {
 		/**
@@ -25,7 +25,7 @@ export interface Isettings {
 		endpoint: string | "codeutilities/item";
 	},
 	author?: string;
-	name: string|false;
+	name: string | false;
 }
 
 export default function getEditorSettings(name: Isettings["name"]): Isettings {

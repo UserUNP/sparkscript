@@ -43,11 +43,11 @@ const template = df("The entire wordle.", (e, s) => {
   wordsBuffer = [];
   for(let i = 0; i < items.length; i++) {
     if(i!=0 && i % 26 == 0) {
-      e.setVar("AppendList", listVar, ...wordsBuffer);
+      e.setVar("AppendValue", listVar, ...wordsBuffer);
       wordsBuffer = [];
     }
     if(i == theEntireWordle.length-1) {
-      e.setVar("AppendList", listVar, ...wordsBuffer);
+      e.setVar("AppendValue", listVar, ...wordsBuffer);
       break;
     }
     wordsBuffer.push(items[i]);

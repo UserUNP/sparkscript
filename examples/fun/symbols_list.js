@@ -7,7 +7,7 @@ const t = df("symbols", (e) => {
   const blockamount = 50;
 
   e.defAction("addSyms", (symbols) => {
-    e.setVariable("AppendList", e.var("symbolsTable"), ...symbols);
+    e.setVariable("AppendValue", e.var("symbolsTable"), ...symbols);
   });
 
   for (let i = 0; i < blockamount; i++) {

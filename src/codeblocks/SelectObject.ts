@@ -1,6 +1,5 @@
-import SubActionBlock from "../core/components/SubActionBlock";
-import DFValueType from "../core/types/DFValueType";
-import DFBlockAction from "../core/types/DFBlockAction";
+import { DFBlockAction, DFValueType } from "../core/types";
+import { SubActionBlock } from "../core/components";
 
 export default class SelectObject
 extends SubActionBlock<"select_obj"> {

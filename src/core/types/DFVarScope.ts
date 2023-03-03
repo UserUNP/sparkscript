@@ -1,5 +1,6 @@
 /**
  * DiamondFire variable scope.
+ * @remark
  * - "local" - Local variable.
  * - "unsaved" - Game variable.
  * - "save" - Saved variable.

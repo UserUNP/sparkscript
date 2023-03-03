@@ -1,5 +1,5 @@
 import DFBlockAction from "../types/DFBlockAction";
-import { makeStringifier } from "../../utilities";
+import { makeStringifier } from "../../common/utilities";
 import DFBaseBlockStructure from "../types/DFBaseBlockStructure";
 import DFBlockCodename from "../types/DFBlockCodename";
 import DFValueType from "../types/DFValueType";
@@ -43,7 +43,7 @@ extends SerializableComponent<RawDFSubActionBlock<T>> {
 	}
 
 	toString(): string {
-		return makeStringifier.component(this, this.type, {
+		return makeStringifier.component(this._componentName, this.type, {
 			action: this.action,
 			subAction: this.subAction,
 			inverted: this.isInverted,

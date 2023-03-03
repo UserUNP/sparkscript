@@ -1,13 +1,9 @@
-import { makeStringifier } from "../../utilities";
-import BLTag from "../../values/BLTag";
-import DFBaseBlockStructure from "../types/DFBaseBlockStructure";
-import DFBlockAction from "../types/DFBlockAction";
-import DFBlockCodename from "../types/DFBlockCodename";
-import DFDumpScheme from "../types/DFDumpScheme";
-import DFTarget from "../types/DFTarget";
-import DFValueType from "../types/DFValueType";
+import { DFBaseBlockStructure, DFBlockAction, DFBlockCodename, DFTarget, DFValueType } from "../types";
+
+import { makeStringifier } from "../../common/utilities";
 import SerializableComponent from "./SerializableComponent";
 import Value, { RawDFValue } from "./Value";
+import { BLTagArray, getActionTags } from "../../common/blockTagUtils";
 
 export interface RawDFActionBlock
 <T extends DFBlockCodename = DFBlockCodename, Action extends DFBlockAction<T> = DFBlockAction<T>>
@@ -18,8 +14,6 @@ extends DFBaseBlockStructure<"block"> {
 	target: DFTarget;
 	inverted: "NOT" | "";
 };
-
-type TagArray<T extends DFBlockCodename, Action extends DFBlockAction<T>> = Action extends keyof DFDumpScheme["actionsWithTags"] ? BLTag<Action, DFDumpScheme["actionsWithTags"][Action][number]>[] : [];
 
 /**
  * ### Action block.
@@ -33,10 +27,9 @@ extends SerializableComponent<RawDFActionBlock<T>> {
 
 	/**
 	 * The tags of the action on this action block.
-	 * @deprecated
-	 * @note i am unsure how tf to make an initializer for this..
+	 * @remark Will be an empty array if the action has no tags.
 	 */
-	tags: TagArray<T, Action> = [] as TagArray<T, Action>;
+	readonly tags: BLTagArray<T, Action> = getActionTags(this.type, this.action);
 
 	/**
 	 * Create a new action codeblock.
@@ -57,7 +50,7 @@ extends SerializableComponent<RawDFActionBlock<T>> {
 	}
 
 	toString(): string {
-		return makeStringifier.component(this, this.type, {
+		return makeStringifier.component(this._componentName, this.type, {
 			action: this.action,
 			target: this.target,
 			inverted: !!this.isInverted,
@@ -73,7 +66,7 @@ extends SerializableComponent<RawDFActionBlock<T>> {
 			args: { items: this.args.map(arg => arg.export(this.args as Value[])) },
 			action: this.action,
 			target: this.target,
-			inverted: this.isInverted ? "NOT": ""
+			inverted: this.isInverted ? "NOT" : ""
 		}
 	}
 

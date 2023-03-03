@@ -1,13 +1,15 @@
-import { Ig_val } from "../../values/GameValue";
-import { Iloc } from "../../values/Location";
-import { Iitem } from "../../values/MinecraftItem";
-import { Inum } from "../../values/Number";
-import { Ipot } from "../../values/Potion";
-import { Isnd } from "../../values/Sound";
-import { Itxt } from "../../values/Text";
-import { Ivar } from "../../values/Variable";
-import { Ivec } from "../../values/Vector";
-import { Ibl_tag } from "../../values/BLTag";
+import {
+	Ibl_tag,
+	Ig_val,
+	Iloc,
+	Iitem,
+	Inum,
+	Ipot,
+	Isnd,
+	Itxt,
+	Ivar,
+	Ivec,
+} from "../../values";
 
 /**
  * Type of a value's data.

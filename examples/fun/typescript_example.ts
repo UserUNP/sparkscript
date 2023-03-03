@@ -31,10 +31,10 @@ for(const kit in kits) {
 console.log(editor.getTemplate().blocks);
 
 editor.player.event("Join");
-editor.ifVariable("=", kitVar, editor.false).then(editor => {
-  editor.player.action("SendMessage", editor.txt("Welcome %default!"));
-  editor.setVar("=", kitVar, editor.txt("basic"));
-});
-editor.callFunction("loadKit "+kitVar); // gets coerced into %var(%default kit)
+const ifKit = editor.ifVariable("=", kitVar, editor.false);
+ifKit.push(editor.player.action("SendMessage", editor.txt("Welcome %default!")));
+ifKit.push(editor.setVar("=", kitVar, editor.txt("basic")));
+
+editor.callFunction("loadKit " + kitVar); // gets coerced into %var(%default kit)
 
 console.log(editor.getTemplate().export().compressed);

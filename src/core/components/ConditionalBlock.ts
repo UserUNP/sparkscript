@@ -1,38 +1,41 @@
-import Ieditor from "../../editor/Iquickeditor";
-import getEditor, { ActDefs } from "../../editor/quickeditor";
-import DFAnySerializedBlock from "../types/DFAnySerializedBlock";
-import DFBlockCodename from "../types/DFBlockCodename";
-import DFTarget from "../types/DFTarget";
-import DFValueType from "../types/DFValueType";
+import { BLTagArray, getActionTags } from "../../common/blockTagUtils";
+import { makeStringifier } from "../../common/utilities";
+
+import {
+	DFCodeExportableBlock,
+	DFAnySerializedBlock,
+	DFBracketBlockType,
+	DFBlockCodename,
+	DFBlockAction,
+	DFValueType,
+	DFTarget
+} from "../types";
+
+import SerializableComponent from "./SerializableComponent";
 import { RawDFActionBlock } from "./ActionBlock";
 import BracketBlock from "./BracketBlock";
-import DFBracketBlockType from "../types/DFBracketBlockType";
-import SerializableComponent from "./SerializableComponent";
-import Value from "./Value";
-import DFCodeExportableBlock from "../types/DFCodeExportableBlock";
 import Template from "./Template";
-import { makeStringifier } from "../../utilities";
-import DFBlockAction from "../types/DFBlockAction";
+import Value from "./Value";
 
 export interface RawDFConditionalBlock
-<T extends DFBlockCodename = DFBlockCodename>
-extends RawDFActionBlock<T> {
+	<T extends DFBlockCodename = DFBlockCodename>
+	extends RawDFActionBlock<T> {
 	__sparkscriptInternalBlocks?: DFAnySerializedBlock[];
 	__sparkscriptBracketPairType?: DFBracketBlockType;
 }
 
 /**
- * ### Conditional "if" block.
+ * ### Conditional block.
  *
  * @template T Block codename.
  * @template Target Selection to target.
  */
 export default abstract class ConditionalBlock
-<T extends DFBlockCodename, Target extends DFTarget = DFTarget>
-extends SerializableComponent<RawDFConditionalBlock<T>> {
+	<T extends DFBlockCodename, Action extends DFBlockAction<T>, Target extends DFTarget = DFTarget>
+	extends SerializableComponent<RawDFConditionalBlock<T>> {
 
 	static conditionalBlockHandler(raw: RawDFConditionalBlock) {
-		if(!raw.__sparkscriptBracketPairType || !raw.__sparkscriptInternalBlocks) throw new Error(`Trying to export an unknown codeblock that is not a conditional block. Type ${raw.block} is not a conditional block.`);
+		if (!raw.__sparkscriptBracketPairType || !raw.__sparkscriptInternalBlocks) throw new Error(`silly :P :^) !! :bangbang:`);
 		const opening = new BracketBlock("open", raw.__sparkscriptBracketPairType).export();
 		const closing = new BracketBlock("close", raw.__sparkscriptBracketPairType).export();
 		const content = raw.__sparkscriptInternalBlocks;
@@ -41,9 +44,24 @@ extends SerializableComponent<RawDFConditionalBlock<T>> {
 		return [raw, opening, ...content, closing] as const;
 	}
 
+	/**
+	 * Reference property to the opening bracket of this conditional block.
+	 */
 	openingBracket: BracketBlock<"norm", "open"> = new BracketBlock("open", "norm");
+	/**
+	 * Reference property to the closing bracket of this conditional block.
+	 */
 	closingBracket: BracketBlock<"norm", "close"> = new BracketBlock("close", "norm");
-	_selfEditor: Ieditor;
+	/**
+	 * Inside template.
+	 */
+	private _internalTemplate: Template = new Template("conditional block");
+
+	/**
+	 * The tags of the action on this conditional block.
+	 * @remark Will be an empty array if the action has no tags.
+	 */
+	readonly tags: BLTagArray<T, Action> = getActionTags(this.type, this.action);
 
 	/**
 	 * Create a new conditional codeblock.
@@ -55,24 +73,20 @@ extends SerializableComponent<RawDFConditionalBlock<T>> {
 	 */
 	constructor(
 		public readonly type: T,
-		public action: DFBlockAction<T>,
+		public action: Action,
 		public args: DFValueType[],
 		public isInverted: boolean = false,
-		public target: Target = "Default" as Target,
-		editorCustomActions?: ActDefs
+		public target: Target = "Default" as Target
 	) {
 		super("conditional block");
-		if(editorCustomActions) this._selfEditor = getEditor(new Template(`${this}`), {
-			actDefs: editorCustomActions
-		}); else this._selfEditor = getEditor.default(`${this}`);
 	}
 
 	/**
 	 * Add to inside blocks.
 	 * @param blocks Codeblock(s) to add to the template.
 	 */
-	 push(...blocks: DFCodeExportableBlock[]) {
-		this._selfEditor.getTemplate().push(...blocks);
+	push(...blocks: DFCodeExportableBlock[]) {
+		this._internalTemplate.push(...blocks);
 		return this;
 	}
 
@@ -80,8 +94,8 @@ extends SerializableComponent<RawDFConditionalBlock<T>> {
 	 * Remove from inside blocks.
 	 * @param index Index of the codeblock to remove.
 	 */
-	 pop(index?: number) {
-		this._selfEditor.getTemplate().pop(index);
+	pop(index?: number) {
+		this._internalTemplate.pop(index);
 		return this;
 	}
 
@@ -94,31 +108,11 @@ extends SerializableComponent<RawDFConditionalBlock<T>> {
 	}
 
 	/**
-	 * Once the condition is met.
-	 * @param callback Editor callback.
+	 * Stringify the component into JSON pseudo-code.
+	 * @returns String representation
 	 */
-	then(callback: (editor: Ieditor) => void) {
-		callback(this._selfEditor);
-		return this;
-	}
-
-	else(callback: (editor: Ieditor) => void) {
-		callback(this._selfEditor);
-		return this;
-	}
-
-	/**
-	 * Re-set this block's editor's custom actions to a specific
-	 */
-	_setEditorCustomActions(editorCustomActions?: ActDefs) {
-		const t = this._selfEditor.getTemplate();
-		const newEditor = editorCustomActions ? getEditor(t, {actDefs: editorCustomActions}) : getEditor.default(t);
-		this._selfEditor = newEditor;
-		return this;
-	}
-
 	toString(): string {
-		return makeStringifier.component(this, this.type, {
+		return makeStringifier.component(this._componentName, this.type, {
 			action: this.action,
 			target: this.target,
 			inverted: !!this.isInverted,
@@ -135,12 +129,12 @@ extends SerializableComponent<RawDFConditionalBlock<T>> {
 			target: this.target,
 			inverted: this.isInverted ? "NOT" : "",
 
-			__sparkscriptInternalBlocks: this._selfEditor.getTemplate()._blocks.map(b => b.export()),
+			__sparkscriptInternalBlocks: this._internalTemplate._blocks.map(b => b.export()),
 			__sparkscriptBracketPairType: "norm"
 		}
 	}
 
-	setAction(action: DFBlockAction<T>) {
+	setAction(action: Action) {
 		this.action = action;
 		return this;
 	}

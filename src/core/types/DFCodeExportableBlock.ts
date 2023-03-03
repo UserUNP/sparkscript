@@ -10,7 +10,7 @@ type DFCodeExportableBlock =
 	| ActionBlock<any, any>
 	| DataBlock<any>
 	| SubActionBlock<any>
-	| ConditionalBlock<any>
+	| ConditionalBlock<any, any>
 	;
 
 export default DFCodeExportableBlock;

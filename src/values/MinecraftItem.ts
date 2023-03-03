@@ -1,7 +1,8 @@
-import Value, { RawDFValue } from "../core/components/Value";
-import MinecraftString, { RawMCString } from "../core/components/minecraft/MinecraftString";
-import { ValueOf, removeEmptyItems } from "../utilities";
 import NBT = require("nbt-ts");
+import { RawMCString } from "../core/components/minecraft/MinecraftString";
+import { Value, MinecraftString } from "../core/components";
+import { ValueOf, removeEmptyItems } from "../common/utilities";
+import { RawDFValue } from "../core/components/Value";
 
 export type SafeMetadata<ID extends `minecraft:${string}` = `minecraft:${string}`> = ItemMetadata<true, ID>;
 export type RawMetadata<ID extends `minecraft:${string}` = `minecraft:${string}`> = ItemMetadata<false, ID>;
@@ -48,7 +49,7 @@ extends Value<"item", Iitem<boolean, ID>> {
 		slot?: number
 	) {
 		id = id.indexOf("minecraft:") == -1 ? `minecraft:${id}` as ID : id
-		if(typeof name === "string") name = new MinecraftString(name as `§f${T}`);
+		if(typeof name === "string") name = new MinecraftString(name as `§r${T}`);
 		super("item", { item: {
 			id,
 			Count: count,
@@ -75,13 +76,13 @@ extends Value<"item", Iitem<boolean, ID>> {
 	}
 
 	addLore<T extends string>(text: T | MinecraftString<T>) {
-		if(typeof text === "string") (this.data.raw.item as SafeMetadata<ID>).tag.display.Lore.push(new MinecraftString(`§f${text}`).export())
+		if(typeof text === "string") (this.data.raw.item as SafeMetadata<ID>).tag.display.Lore.push(new MinecraftString(`§r${text}`).export())
 		else (this.data.raw.item as SafeMetadata<ID>).tag.display.Lore.push(text.export());
 		return this;
 	}
 
 	setLore<T extends string>(index: number, text: T | MinecraftString<T>) {
-		const string = typeof text === "string" ? new MinecraftString(`§f${text}`) : text;
+		const string = typeof text === "string" ? new MinecraftString(`§r${text}`) : text;
 		const display = (this.data.raw.item as SafeMetadata<ID>).tag.display;
 		display.Lore[index] = string.export();
 		display.Lore = removeEmptyItems(display.Lore, MinecraftString.emptyString.export());

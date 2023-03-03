@@ -1,9 +1,8 @@
-import ActionBlock from "../core/components/ActionBlock";
-import ConditionalBlock from "../core/components/ConditionalBlock";
-import DFValueType from "../core/types/DFValueType";
-import DFBlockAction from "../core/types/DFBlockAction";
+import { DFBlockAction, DFValueType } from "../core/types";
+import { ActionBlock, ConditionalBlock } from "../core/components";
 
-export class GameAction<Action extends DFBlockAction<"game_action">>
+export class GameAction
+<Action extends DFBlockAction<"game_action">>
 extends ActionBlock<"game_action", Action> {
 
 	/**
@@ -17,12 +16,13 @@ extends ActionBlock<"game_action", Action> {
 }
 
 export class GameCondition
-extends ConditionalBlock<"if_game"> {
+<Condition extends DFBlockAction<"if_game">>
+extends ConditionalBlock<"if_game", Condition> {
 
 	/**
 	 *
 	 */
-	constructor(action: DFBlockAction<"if_game">, ...args: DFValueType[]) {
+	constructor(action: Condition, ...args: DFValueType[]) {
 		super("if_game", action, args, false);
 	}
 }

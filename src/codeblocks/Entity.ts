@@ -1,10 +1,8 @@
-import ActionBlock from "../core/components/ActionBlock";
-import ConditionalBlock from "../core/components/ConditionalBlock";
-import DFTarget from "../core/types/DFTarget";
-import DFValueType from "../core/types/DFValueType";
-import DFBlockAction from "../core/types/DFBlockAction";
+import { DFBlockAction, DFTarget, DFValueType } from "../core/types";
+import { ActionBlock, ConditionalBlock } from "../core/components";
 
-export class EntityAction<Action extends DFBlockAction<"entity_action">>
+export class EntityAction
+<Action extends DFBlockAction<"entity_action">>
 extends ActionBlock<"entity_action", Action> {
 
 	/**
@@ -17,7 +15,8 @@ extends ActionBlock<"entity_action", Action> {
 	}
 }
 
-export class EntityEvent<Action extends DFBlockAction<"entity_event">>
+export class EntityEvent
+<Action extends DFBlockAction<"entity_event">>
 extends ActionBlock<"entity_event", Action> {
 
 	/**
@@ -30,7 +29,8 @@ extends ActionBlock<"entity_event", Action> {
 }
 
 export class EntityCondition
-extends ConditionalBlock<"if_entity"> {
+<Condition extends DFBlockAction<"if_entity">>
+extends ConditionalBlock<"if_entity", Condition> {
 
 	/**
 	 * If an entity did something.
@@ -38,7 +38,7 @@ extends ConditionalBlock<"if_entity"> {
 	 * @param target Target of the condition.
 	 * @param args Arguments to pass.
 	 */
-	constructor(condition: DFBlockAction<"if_entity">, target?: DFTarget, ...args: DFValueType[]) {
+	constructor(condition: Condition, target?: DFTarget, ...args: DFValueType[]) {
 		super("if_entity", condition, args, false, target);
 	}
 }

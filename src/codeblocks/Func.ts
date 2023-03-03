@@ -1,8 +1,7 @@
-import DataBlock from "../core/components/DataBlock";
-import DFValueType from "../core/types/DFValueType";
+import { DFValueType } from "../core/types";
+import { DataBlock } from "../core/components";
 
 export default class Func
-<T extends string = string>
 extends DataBlock<"func"> {
 
 	/**
@@ -10,7 +9,7 @@ extends DataBlock<"func"> {
 	 * @param name Function name.
 	 * @param args Arguments, can be used as notes since they're not used in the function.
 	 */
-	constructor(name: T, ...args: DFValueType[]) {
+	constructor(name: string, ...args: DFValueType[]) {
 		super("func", name, args);
 	}
 }

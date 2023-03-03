@@ -1,12 +1,12 @@
 import zlib from "node:zlib";
 import WebSocket from 'ws';
-import getEditor from "../../editor/quickeditor";
-import DFCodeExportableBlock from "../types/DFCodeExportableBlock";
-import DFAnySerializedBlock from "../types/DFAnySerializedBlock";
-import { sparkscriptWarn } from "../../utilities";
+
+import { DFAnySerializedBlock, DFCodeExportableBlock } from "../types";
+
+import { sparkscriptWarn } from "../../common/utilities";
+import blockExportHandler from "../../common/blockExportHandler";
+
 import SerializableComponent from "./SerializableComponent";
-import ConditionalBlock from "./ConditionalBlock";
-import mapper from "../../mapper";
 
 export interface RawDFTemplate {
 	blocks: DFAnySerializedBlock[];
@@ -21,26 +21,11 @@ export interface RawDFTemplate {
 export default class Template
 extends SerializableComponent<{serialized: RawDFTemplate, compressed: string}> {
 
-	static from(raw: RawDFTemplate): Template {
-		const template = new Template(raw.name || false, raw.author);
-		const blocks = raw.blocks.map(b => {
-			if(b.id === "bracket") throw new Error(`Found a bracket block while parsing template "${template.name}" with no parent block. Either fix your code or this might be a bug.`);
-			return mapper.from(b);
-		}) as DFCodeExportableBlock[];
-		template.push(...blocks);
-		return template;
-	}
-
 	/**
 	 * Never use this unless you want to explicitly set the codeblocks array.
 	 */
 	_blocks: DFCodeExportableBlock[] = [];
 	cuSocket?: WebSocket;
-
-	/**
-	 * Self editor.
-	 */
-	public readonly self = getEditor.default(this);
 
 	/**
 	 * Create a new template.
@@ -57,12 +42,7 @@ extends SerializableComponent<{serialized: RawDFTemplate, compressed: string}> {
 		if(this.length == 0) sparkscriptWarn("Exporting an empty template", true);
 
 		const serialized: RawDFTemplate = { blocks: [], name: `${this.name}`, author: `${this.author}` };
-		for (const block of this._blocks) {
-			const serializedBlockBuffer: DFAnySerializedBlock[] = [];
-			if(block instanceof ConditionalBlock) serializedBlockBuffer.push(...ConditionalBlock.conditionalBlockHandler(block.export()));
-			else serializedBlockBuffer.push(block.export());
-			serialized.blocks.push(...serializedBlockBuffer);
-		}
+		for (const block of this._blocks) serialized.blocks.push(...blockExportHandler(block));
 
 		const compressed = zlib.gzipSync(JSON.stringify(serialized)).toString("base64");
 		return {

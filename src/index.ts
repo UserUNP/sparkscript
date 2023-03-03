@@ -2,17 +2,17 @@ import zlib 		from "node:zlib";
 import WebSocket	from 'ws';
 
 export * as components	from "./core/components/";
+export * as types		from "./core/types/"
 export * as values		from "./values/";
 export * as codeblocks	from "./codeblocks/";
-export * as types		from "./core/types/"
-export * as mapper		from "./mapper"
-export * as utils		from "./utilities";
+export * as utils		from "./common/utilities";
 
 // Quick editor & playground.
 import codeDump							from "./core/codeDump";				export { codeDump };
-import getEditor						from "./editor/quickeditor";		export { getEditor };
-import getEditorSettings, { Isettings }	from "./editor/qeSettings";
-import Ieditor 							from "./editor/Iquickeditor";
+import getEditor						from "./common/editor/quickeditor";		export { getEditor };
+import * as mapper						from "./mapper";					export { mapper };
+import getEditorSettings, { Isettings }	from "./common/editor/qeSettings";
+import Ieditor 							from "./common/editor/Iquickeditor";
 import Template, { RawDFTemplate }		from "./core/components/Template";
 
 /**
@@ -24,7 +24,7 @@ function quickEditor(name: string|false, callback: (editor: Ieditor<ReturnType<t
 	const template = new Template(name);
 
 	// Get the editor.
-	const editor = template.self;
+	const editor = getEditor.default(template);
 	getEditor.applyActions(editor, getEditor.defaultActDefs);
 	const settings = getEditorSettings(name)
 
@@ -47,7 +47,12 @@ function quickEditor(name: string|false, callback: (editor: Ieditor<ReturnType<t
  */
 quickEditor.from = (raw: string, callback?: (editor: Ieditor<ReturnType<typeof quickEditor>>, settings: Isettings) => void) => {
 	const data = JSON.parse(zlib.gunzipSync(Buffer.from(raw, "base64")).toString()) as RawDFTemplate;
-	const template = Template.from(data);
+	const template = new Template(data.name || false, data.author);
+	const blocks = data.blocks.map(b => {
+		if(b.id === "bracket") throw new Error(`Found a bracket block while parsing template "${template.name}" with no parent block. Either fix your code or this might be a bug.`);
+		return mapper.default.from(b);
+	});
+	template.push(...blocks);
 	return quickEditor(template.name, (e, s) => {
 		e._from(template);
 		if(callback) callback(e, s);

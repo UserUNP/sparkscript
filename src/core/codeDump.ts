@@ -27,7 +27,35 @@ export function loadDump(maybeDump: unknown) {
 	laodedDump = maybeDump
 };
 
+
+
 export default {
 	loadDump,
 	getDump,
 };
+
+// ---------------------------------------------------------------------------------
+
+import { DFBlockCodename, DFBlockName } from "./types";
+
+export function getCodeblockByType<T extends DFBlockCodename>(type: T) {
+	const codeblock = getDump().codeblocks[type];
+	if(!codeblock) return null;
+	return codeblock;
+}
+
+export function getCodeblockByName<T extends DFBlockName>(name: T) {
+	return getDump().codeblocks[getDump().codeblockNames[name]];
+}
+
+export function getActionOwner<T extends keyof DFDumpScheme["actions"]>(action: T) {
+	return (getDump().actions[action].codeblockType || null) as DFDumpScheme["actions"][T]["codeblockType"];
+}
+
+export function getCodeblockActions<T extends DFBlockCodename>(type: T): DFDumpScheme["codeblocks"][T]["actions"] {
+	return getDump().codeblocks[type].actions;
+}
+
+export function getCodeblockType<T extends DFBlockName>(name: T) {
+	return getDump().codeblockNames[name];
+}

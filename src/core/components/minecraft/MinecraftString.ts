@@ -1,5 +1,4 @@
 import MCStyleCode from "../../types/MCStyleCode";
-import MCStyle from "../../types/MCStyle";
 import MinecraftColor from "./MinecraftColor";
 import SimpleMinecraftString from "./SimpleMinecraftString";
 import { SimpleRawMCString, IsegmentOptions } from "./SimpleMinecraftString";
@@ -73,7 +72,7 @@ export default class MinecraftString
 	}
 
 	static get emptyString() {
-		return new MinecraftString("§f ");
+		return new MinecraftString("§r ");
 	}
 
 	/**
@@ -93,7 +92,7 @@ export default class MinecraftString
 	 * Clean stripped coloring & styling codes text
 	 */
 	text: string;
-	raw: `§f${T}`;
+	raw: `§r${T}`;
 
 	/**
 	 * Construct a Minecraft string from a string of text,
@@ -101,11 +100,11 @@ export default class MinecraftString
 	 * @param text The text to parse.
 	 * @param unsafe Test the length against the Java string limit instead of Minecraft's.
 	 */
-	constructor(text: `§f${T}`, unsafe: boolean=false) {
-		text = text.indexOf("§f") == -1 ? `§f${text}` as `§f${T}` : text;
+	constructor(text: `§r${T}`, unsafe: boolean=false) {
+		text = text.indexOf("§r") === -1 ? `§r${text}` as `§r${T}` : text;
 		if(text.length > MinecraftString.mcStringLimit || text.length > MinecraftString.javaStringLimit) {
-			if(unsafe) throw new Error(`A Minecraft string shouldn't surpass the Java String limit. Overshot by ${text.length-MinecraftString.javaStringLimit} chars, includes 2 chars for the default text color "§f".`);
-			else throw new Error(`String too big. limit is ${MinecraftString.mcStringLimit} chars. Overshot by ${text.length-MinecraftString.mcStringLimit} chars, includes 2 chars for the default text color "§f".`)
+			if(unsafe) throw new Error(`A Minecraft string shouldn't surpass the Java String limit. Overshot by ${text.length-MinecraftString.javaStringLimit} chars, includes 2 chars for the default text color "§r".`);
+			else throw new Error(`String too big. limit is ${MinecraftString.mcStringLimit} chars. Overshot by ${text.length-MinecraftString.mcStringLimit} chars, includes 2 chars for the default text color "§r".`)
 		}
 		this.raw = text;
 		const colorSegments = text.match(MinecraftString.colorRegex);
@@ -128,8 +127,16 @@ export default class MinecraftString
 
 			if(colorSegment.length > 0) this.segments.push(new SimpleMinecraftString(colorSegment, { color }));
 			if(styleSegments) for(let styleSegment of styleSegments) {
-				const style = MinecraftString.styleMap[styleSegment.substring(1,2) as MCStyleCode] as Exclude<MCStyle, "reset">;
-				colorSegmentStyleOpts[style] = true;
+				const style = MinecraftString.styleMap[styleSegment.substring(1, 2) as MCStyleCode];
+				if (style === "reset") {
+					colorSegmentStyleOpts.color = undefined;
+					colorSegmentStyleOpts.obfuscated = false;
+					colorSegmentStyleOpts.bold = false;
+					colorSegmentStyleOpts.strikethrough = false;
+					colorSegmentStyleOpts.underlined = false;
+					colorSegmentStyleOpts.italic = false;
+				}
+				else colorSegmentStyleOpts[style] = true;
 				styleSegment = styleSegment.replace(new RegExp(`§${styleSegment.substring(1,2)}`, "g"), "");
 				if(styleSegment.length > 0) this.segments.push(new SimpleMinecraftString(styleSegment, {...colorSegmentStyleOpts, [style]: true }));
 				colorSegment = colorSegment.replace(styleSegment, "");

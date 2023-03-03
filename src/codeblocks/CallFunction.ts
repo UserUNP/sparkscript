@@ -1,14 +1,13 @@
-import DataBlock from "../core/components/DataBlock";
+import { ActionBlock } from "../core/components";
 
 export default class CallFunction
-<T extends string = string>
-extends DataBlock<"call_func"> {
+extends ActionBlock<"call_func", string> {
 
 	/**
 	 * Call a specific function.
 	 * @param name Function name to call.
 	 */
-	constructor(name: T) {
+	constructor(name: string) {
 		super("call_func", name, []);
 	}
 }

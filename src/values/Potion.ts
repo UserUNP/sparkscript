@@ -1,5 +1,5 @@
-import Value from "../core/components/Value";
-import MCPotion from "../core/types/MCPotion";
+import { Value } from "../core/components";
+import { MCPotion } from "../core/types";
 
 export interface Ipot {
 	pot: MCPotion;

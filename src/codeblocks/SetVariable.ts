@@ -1,9 +1,9 @@
-import ActionBlock from "../core/components/ActionBlock";
-import DFValueType from "../core/types/DFValueType";
-import DFBlockAction from "../core/types/DFBlockAction";
-import Variable from "../values/Variable";
+import { DFBlockAction, DFValueType } from "../core/types";
+import { ActionBlock } from "../core/components";
+import { Variable } from "../values";
 
-export default class SetVariable<Action extends DFBlockAction<"set_var">>
+export default class SetVariable
+<Action extends DFBlockAction<"set_var">>
 extends ActionBlock<"set_var", Action> {
 
 	variable: Variable;

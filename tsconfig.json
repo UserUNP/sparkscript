@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"alwaysStrict": true,
-		"target": "ES5",
+		"target": "ES2016",
 		"module": "CommonJS",
 		"sourceMap": true,
 		"outDir": "./dist/lib/",
@@ -31,7 +31,6 @@
 		"importHelpers": true
 	},
 	"buildOptions": {
-		"verbose": true,
 	},
 	"exclude": [
 		"node_modules",

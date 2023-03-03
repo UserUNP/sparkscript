@@ -1,4 +1,5 @@
-import Value from "../core/components/Value";
+import { Value } from "../core/components";
+
 export interface Itxt {
 	name: string
 };
