@@ -22,7 +22,7 @@ export interface ItemMetadata
 }
 
 export interface Iitem
-<Safe extends boolean = false, ID extends `minecraft:${string}` = `minecraft:${string}`> {
+	<Safe extends boolean = false, ID extends `minecraft:${string}` = `minecraft:${string}`> {
 	item: ItemMetadata<Safe, ID> | string;
 }
 
@@ -49,24 +49,26 @@ extends Value<"item", Iitem<boolean, ID>> {
 		slot?: number
 	) {
 		id = id.indexOf("minecraft:") == -1 ? `minecraft:${id}` as ID : id
-		if(typeof name === "string") name = new MinecraftString(name as `§r${T}`);
-		super("item", { item: {
-			id,
-			Count: count,
-			tag: {
-				Tags: [],
-				PublicBukkitValues: {},
-				display: {
-					Name: name instanceof MinecraftString ? name.export() : name,
-					Lore: []
+		if (typeof name === "string") name = new MinecraftString(name as `§f§r${T}`);
+		super("item", {
+			item: {
+				id,
+				Count: count,
+				tag: {
+					Tags: [],
+					PublicBukkitValues: {},
+					display: {
+						Name: name instanceof MinecraftString ? name.export() : name,
+						Lore: []
+					}
 				}
 			}
-		} }, slot);
+		}, slot);
 	}
 
 	setTag(key: string, value: ValueOf<SafeMetadata["tag"]["PublicBukkitValues"]>) {
 		(this.data.raw.item as SafeMetadata<ID>).tag.PublicBukkitValues[`hypercube:${key}`] =
-			typeof value==="number" ? new NBT.Int(value).value : `${value}`;
+			typeof value === "number" ? new NBT.Int(value).value : `${value}`;
 		return this;
 	}
 
@@ -76,13 +78,13 @@ extends Value<"item", Iitem<boolean, ID>> {
 	}
 
 	addLore<T extends string>(text: T | MinecraftString<T>) {
-		if(typeof text === "string") (this.data.raw.item as SafeMetadata<ID>).tag.display.Lore.push(new MinecraftString(`§r${text}`).export())
+		if (typeof text === "string") (this.data.raw.item as SafeMetadata<ID>).tag.display.Lore.push(new MinecraftString(`§f§r${text}`).export())
 		else (this.data.raw.item as SafeMetadata<ID>).tag.display.Lore.push(text.export());
 		return this;
 	}
 
 	setLore<T extends string>(index: number, text: T | MinecraftString<T>) {
-		const string = typeof text === "string" ? new MinecraftString(`§r${text}`) : text;
+		const string = typeof text === "string" ? new MinecraftString(`§f§r${text}`) : text;
 		const display = (this.data.raw.item as SafeMetadata<ID>).tag.display;
 		display.Lore[index] = string.export();
 		display.Lore = removeEmptyItems(display.Lore, MinecraftString.emptyString.export());
@@ -91,13 +93,13 @@ extends Value<"item", Iitem<boolean, ID>> {
 	export(containingBlockArguments: Value[]) {
 		const result = { ...super.export(containingBlockArguments) };
 		result.item.data.item = result.item.data.item as RawMetadata<ID>;
-		if(typeof result.item.data.item === "string") throw new Error("You either a smart fella or a fart smella");
+		if (typeof result.item.data.item === "string") throw new Error("You either a smart fella or a fart smella");
 
 		const display = (result.item.data.item as RawMetadata<ID>).tag.display;
 		display.Name = JSON.stringify(result.item.data.item.tag.display.Name);
 		display.Lore = removeEmptyItems(display.Lore, JSON.stringify(MinecraftString.emptyString.export())).map(l => JSON.stringify(l));
 		result.item.data.item = NBT.stringify(result.item.data.item as unknown as NBT.TagObject);
-		return result as RawDFValue<"item", {item: string}>;
+		return result as RawDFValue<"item", { item: string }>;
 	}
 
 }

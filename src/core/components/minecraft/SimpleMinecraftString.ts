@@ -1,7 +1,7 @@
 import MinecraftColor, { ColorObj } from "./MinecraftColor";
 import { Byte } from "nbt-ts";
 
-const ifNBT = <T extends boolean>(nbt: T, mcstring: SimpleMinecraftString<string>, property: Exclude<keyof IsegmentOptions, "color">): T extends true ? Byte : T extends false ? boolean : never => nbt ? (new Byte(mcstring[property] ? 1 : 0) as T extends true ? Byte : T extends false ? boolean : never ) : (mcstring[property] as T extends true ? Byte : T extends false ? boolean : never );
+const ifNBT = <T extends boolean>(nbt: T, mcstring: SimpleMinecraftString<string>, property: Exclude<keyof SegmentOptions, "color">): T extends true ? Byte : T extends false ? boolean : never => nbt ? (new Byte(mcstring[property] ? 1 : 0) as T extends true ? Byte : T extends false ? boolean : never) : (mcstring[property] as T extends true ? Byte : T extends false ? boolean : never);
 
 export interface SimpleRawMCString
 <UseBytes extends boolean, Text extends string> {
@@ -15,22 +15,22 @@ export interface SimpleRawMCString
 }
 
 type TsegmentOptions
-<TColor extends ColorObj = ColorObj> = {
-	color: MinecraftColor<TColor["red"], TColor["green"], TColor["blue"]>;
+<Color extends ColorObj = ColorObj> = {
+	color?: MinecraftColor<Color["red"], Color["green"], Color["blue"]>;
 	bold: boolean;
 	italic: boolean;
 	underlined: boolean;
 	strikethrough: boolean;
 	obfuscated: boolean;
 };
-export interface IsegmentOptions
-<TColor extends ColorObj = ColorObj, TObj extends TsegmentOptions<TColor> = TsegmentOptions<TColor>> {
-	color?: MinecraftColor<TColor["red"], TColor["green"], TColor["blue"]>;
-	bold?: TObj["bold"];
-	italic?: TObj["italic"];
-	underlined?: TObj["underlined"];
-	strikethrough?: TObj["strikethrough"];
-	obfuscated?: TObj["obfuscated"];
+export interface SegmentOptions
+<Color extends ColorObj = ColorObj, Obj extends TsegmentOptions<Color> = TsegmentOptions<Color>> {
+	color?: MinecraftColor<Color["red"], Color["green"], Color["blue"]>;
+	bold?: Obj["bold"];
+	italic?: Obj["italic"];
+	underlined?: Obj["underlined"];
+	strikethrough?: Obj["strikethrough"];
+	obfuscated?: Obj["obfuscated"];
 }
 
 /**
@@ -41,16 +41,16 @@ export interface IsegmentOptions
  * @template U Effects to apply.
  */
 export default class SimpleMinecraftString
-<T extends string, Color extends ColorObj = ColorObj, U extends IsegmentOptions<Color> = IsegmentOptions<Color>> {
+	<T extends string, Color extends ColorObj = ColorObj, U extends SegmentOptions<Color> = SegmentOptions<Color>> {
 
 	static from(obj: SimpleRawMCString<false, string>): SimpleMinecraftString<string> {
 		return new SimpleMinecraftString(obj.text, {
 			color: obj.color ? MinecraftColor.from(obj.color) : undefined,
-			bold: (typeof obj.bold==="boolean")?obj.bold:!!obj.bold,
-			italic: (typeof obj.italic==="boolean")?obj.italic:!!obj.italic,
-			underlined: (typeof obj.underlined==="boolean")?obj.underlined:!!obj.underlined,
-			strikethrough: (typeof obj.strikethrough==="boolean")?obj.strikethrough:!!obj.strikethrough,
-			obfuscated: (typeof obj.obfuscated==="boolean")?obj.obfuscated:!!obj.obfuscated
+			bold: (typeof obj.bold === "boolean") ? obj.bold : !!obj.bold,
+			italic: (typeof obj.italic === "boolean") ? obj.italic : !!obj.italic,
+			underlined: (typeof obj.underlined === "boolean") ? obj.underlined : !!obj.underlined,
+			strikethrough: (typeof obj.strikethrough === "boolean") ? obj.strikethrough : !!obj.strikethrough,
+			obfuscated: (typeof obj.obfuscated === "boolean") ? obj.obfuscated : !!obj.obfuscated
 		});
 	}
 
@@ -73,8 +73,7 @@ export default class SimpleMinecraftString
 		this.underlined = options.underlined || false;
 		this.strikethrough = options.strikethrough || false;
 		this.obfuscated = options.obfuscated || false;
-		const colors = MinecraftColor.colors.white.map(c => parseInt(c, 16));
-		this.color = options.color || new MinecraftColor({red: colors[0], green: colors[1], blue: colors[2]});
+		this.color = options.color;
 	}
 
 	/**
@@ -105,6 +104,6 @@ export default class SimpleMinecraftString
 		if (this.strikethrough) styles.push("m");
 		if (this.underlined) styles.push("n");
 		if (this.obfuscated) styles.push("k");
-		return `${altCode?styles:""}${styles.join(altCode)}${color}${this.text}`;
+		return `${altCode ? styles : ""}${styles.join(altCode)}${color}${this.text}`;
 	}
 }

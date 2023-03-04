@@ -1,8 +1,3 @@
-// import { RawDFActionBlock } from "./core/components/ActionBlock";
-// import { RawDFConditionalBlock } from "./core/components/ConditionalBlock";
-// import { RawDFDataBlock } from "./core/components/DataBlock";
-// import { RawDFSubActionBlock } from "./core/components/SubActionBlock";
-import { RawDFValueDataRecord } from "./core/components/DataStorage";
 import { RawDFValue } from "./core/components/Value";
 
 import {
@@ -11,30 +6,6 @@ import {
 	DFValueCodename,
 	DFValueType,
 } from "./core/types";
-
-// import {
-// 	PlayerAction, PlayerEvent,
-// 	EntityAction, EntityEvent,
-// 	GameAction,
-// 	SetVariable,
-// 	Func, CallFunction,
-// 	Process, StartProcess,
-// 	SelectObject,
-// 	Control,
-// } from "./codeblocks";
-
-// import {
-// 	BLTag,			Ibl_tag,
-// 	GameValue,		Ig_val,
-// 	Location,		Iloc,
-// 	MinecraftItem,	Iitem,
-// 	Number,			Inum,
-// 	Potion,			Ipot,
-// 	Sound,			Isnd,
-// 	Text,			Itxt,
-// 	Variable,		Ivar,
-// 	Vector,			Ivec,
-// } from "./values";
 
 import {
 	SparkscriptMapper,
@@ -45,18 +16,18 @@ import {
 
 
 export function blockMapper<T extends DFBlockCodename>(type: T, serializedData: Parameters<typeof blockMap[T]>["0"] | DFCodeSerializedBlock): SparkscriptMapper<T> {
-	if(typeof serializedData !== "object" || !("args" in serializedData) || !("block" in serializedData)) throw new Error("Cannot map serialized block data because it is invalid.");
+	if (typeof serializedData !== "object" || !("args" in serializedData) || !("block" in serializedData)) throw new Error("Cannot map serialized block data because it is invalid.");
 	const args = serializedData.args.items.map((i: RawDFValue) => valueMapper(i.item.id, i))
 	const constructor = blockMap[type];
-	if(!constructor) throw new Error(`Type "${type}" cannot be recongized as a DiamondFire block type. Template may be corrupted or just invalid.`);
+	if (!constructor) throw new Error(`Type "${type}" cannot be recongized as a DiamondFire block type. Template may be corrupted or just invalid.`);
 	return constructor(serializedData, args as DFValueType[]) as SparkscriptMapper<T>;
 }
 export function valueMapper<T extends DFValueCodename>(type: T, serializedData: RawDFValue<T, ValueDataMapper<T>>): SparkscriptMapper<T> {
-	if(typeof serializedData !== "object" || !("slot" in serializedData) || !("item" in serializedData)) throw new Error("Cannot map serialized value data because it is invalid.");
+	if (typeof serializedData !== "object" || !("slot" in serializedData) || !("item" in serializedData)) throw new Error("Cannot map serialized value data because it is invalid.");
 	const constructor = valueMap[type];
-	if(!constructor) throw new Error(`Type "${type}" cannot be recongized as a DiamondFire value type. Template may be corrupted or just invalid.`);
+	if (!constructor) throw new Error(`Type "${type}" cannot be recongized as a DiamondFire value type. Template may be corrupted or just invalid.`);
 	return constructor({
-		v: serializedData.item.data as RawDFValueDataRecord<any>,
+		v: serializedData.item.data as any,
 		s: serializedData.slot
 	}) as SparkscriptMapper<T>
 }
@@ -79,8 +50,8 @@ const mapper: DefaultMapperFunction = <T extends DFBlockCodename | DFValueCodena
 	type: T,
 	serializedData: (T extends DFBlockCodename ? Parameters<typeof blockMap[T]>["0"] | DFCodeSerializedBlock : T extends DFValueCodename ? RawDFValue<T, ValueDataMapper<T>> : never)
 ) => {
-	if(typeof serializedData !== "object") throw new Error(`Cannot map a variable with type ${typeof serializedData}.`);
-	if(isOfTypeRawValue(serializedData)) return valueMapper<(T extends DFBlockCodename ? never : T)>(
+	if (typeof serializedData !== "object") throw new Error(`Cannot map a variable with type ${typeof serializedData}.`);
+	if (isOfTypeRawValue(serializedData)) return valueMapper<(T extends DFBlockCodename ? never : T)>(
 		type as (T extends DFBlockCodename ? never : T),
 		serializedData
 	);
@@ -108,7 +79,7 @@ type FromFunction<T extends DFCodeSerializedBlock | RawDFValue> = SparkscriptMap
  * @returns New instance of the respective sparkscript class.
  */
 mapper.from = <T extends DFCodeSerializedBlock | RawDFValue>(raw: T): FromFunction<T> => {
-	if(isOfTypeRawValue(raw)) return mapper(raw.item.id, raw) as FromFunction<T>;
+	if (isOfTypeRawValue(raw)) return mapper(raw.item.id, raw) as FromFunction<T>;
 	else return mapper(raw.block, raw) as FromFunction<T>;
 }
 

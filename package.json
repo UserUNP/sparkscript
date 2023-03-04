@@ -1,6 +1,6 @@
 {
 	"name": "sparkscript",
-	"version": "1.0.0-alpha.4",
+	"version": "1.0.0-alpha.5.1",
 	"description": "DiamondFire for Javascript.",
 	"main": "./dist/lib/index.js",
 	"types": "./dist/types/index.d.ts",

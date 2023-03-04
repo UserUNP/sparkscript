@@ -4,6 +4,7 @@ dist
 temp
 yarn-error.log
 ssActiondump.json
+.test.js
 coverage
 docs
 package-lock.json

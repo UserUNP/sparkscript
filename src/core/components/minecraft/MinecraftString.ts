@@ -1,7 +1,7 @@
 import MCStyleCode from "../../types/MCStyleCode";
 import MinecraftColor from "./MinecraftColor";
 import SimpleMinecraftString from "./SimpleMinecraftString";
-import { SimpleRawMCString, IsegmentOptions } from "./SimpleMinecraftString";
+import { SimpleRawMCString, SegmentOptions } from "./SimpleMinecraftString";
 import MCColorCode from "../../types/MCColorCode";
 
 export type RawMCString<UseBytes extends boolean, Segments extends string[]> = SimpleRawMCString<UseBytes, Segments[number]>[];
@@ -72,7 +72,7 @@ export default class MinecraftString
 	}
 
 	static get emptyString() {
-		return new MinecraftString("§r ");
+		return new MinecraftString("§f§r ");
 	}
 
 	/**
@@ -82,7 +82,7 @@ export default class MinecraftString
 	static readonly colorRegex = /§[\dA-F].*?(?=§[\dA-F])|§[\dA-F].*/gi;
 	static readonly styleRegex = /§[K-OR].*?(?=§[K-OR])|§[K-OR].*/gi;
 	static readonly javaStringLimit = 2_147_483_647;
-	static readonly mcStringLimit = 262144;
+	static readonly mcStringLimit = 262_144;
 
 	/**
 	 * The segments of the Minecraft string.
@@ -92,7 +92,7 @@ export default class MinecraftString
 	 * Clean stripped coloring & styling codes text
 	 */
 	text: string;
-	raw: `§r${T}`;
+	raw: `§f§r${T}`;
 
 	/**
 	 * Construct a Minecraft string from a string of text,
@@ -100,23 +100,23 @@ export default class MinecraftString
 	 * @param text The text to parse.
 	 * @param unsafe Test the length against the Java string limit instead of Minecraft's.
 	 */
-	constructor(text: `§r${T}`, unsafe: boolean=false) {
-		text = text.indexOf("§r") === -1 ? `§r${text}` as `§r${T}` : text;
-		if(text.length > MinecraftString.mcStringLimit || text.length > MinecraftString.javaStringLimit) {
-			if(unsafe) throw new Error(`A Minecraft string shouldn't surpass the Java String limit. Overshot by ${text.length-MinecraftString.javaStringLimit} chars, includes 2 chars for the default text color "§r".`);
-			else throw new Error(`String too big. limit is ${MinecraftString.mcStringLimit} chars. Overshot by ${text.length-MinecraftString.mcStringLimit} chars, includes 2 chars for the default text color "§r".`)
+	constructor(text: `§f§r${T}`, unsafe: boolean = false) {
+		text = text.indexOf("§f§r") === -1 ? `§f§r${text}` as `§f§r${T}` : text;
+		if (text.length > MinecraftString.mcStringLimit || text.length > MinecraftString.javaStringLimit) {
+			if (unsafe) throw new Error(`A Minecraft string shouldn't surpass the Java String limit. Overshot by ${text.length - MinecraftString.javaStringLimit} chars, includes 4 chars for the default text color "§f§r".`);
+			else throw new Error(`String too big. limit is ${MinecraftString.mcStringLimit} chars. Overshot by ${text.length - MinecraftString.mcStringLimit} chars, includes 4 chars for the default text color "§f§r".`);
 		}
 		this.raw = text;
 		const colorSegments = text.match(MinecraftString.colorRegex);
-		if(!colorSegments) throw new Error("??? what the..");
-		for(let colorSegment of colorSegments) {
-			const color = MinecraftColor.fromCode(colorSegment.substring(1,2) as MCColorCode);
+		if (!colorSegments) throw new Error("Unable to parse: I purposefully added '§f§r' to the beginning at every mc string. How tf do you even manage this.");
+		for (let colorSegment of colorSegments) {
+			const color = MinecraftColor.fromCode(colorSegment.substring(1, 2) as MCColorCode);
 			const styleSegments = colorSegment.match(MinecraftString.styleRegex);
 
-			colorSegment = colorSegment.replace(new RegExp(`§${colorSegment.substring(1,2)}`, "g"), "");
-			if(styleSegments) colorSegment = colorSegment.replace(new RegExp(`${styleSegments.join("|")}`, "g"), "");
+			colorSegment = colorSegment.replace(new RegExp(`§${colorSegment.substring(1, 2)}`, "g"), "");
+			if (styleSegments) colorSegment = colorSegment.replace(new RegExp(`${styleSegments.join("|")}`, "g"), "");
 
-			const colorSegmentStyleOpts: IsegmentOptions = {
+			const colorSegmentOpts: SegmentOptions = {
 				color,
 				obfuscated: false,
 				bold: false,
@@ -125,21 +125,21 @@ export default class MinecraftString
 				italic: false
 			};
 
-			if(colorSegment.length > 0) this.segments.push(new SimpleMinecraftString(colorSegment, { color }));
-			if(styleSegments) for(let styleSegment of styleSegments) {
-				const style = MinecraftString.styleMap[styleSegment.substring(1, 2) as MCStyleCode];
-				if (style === "reset") {
-					colorSegmentStyleOpts.color = undefined;
-					colorSegmentStyleOpts.obfuscated = false;
-					colorSegmentStyleOpts.bold = false;
-					colorSegmentStyleOpts.strikethrough = false;
-					colorSegmentStyleOpts.underlined = false;
-					colorSegmentStyleOpts.italic = false;
-				}
-				else colorSegmentStyleOpts[style] = true;
-				styleSegment = styleSegment.replace(new RegExp(`§${styleSegment.substring(1,2)}`, "g"), "");
-				if(styleSegment.length > 0) this.segments.push(new SimpleMinecraftString(styleSegment, {...colorSegmentStyleOpts, [style]: true }));
+			if (colorSegments.length > 0) this.segments.push(new SimpleMinecraftString(colorSegment, { color }))
+			if (styleSegments) for (let styleSegment of styleSegments) {
+				const styleCode = styleSegment.substring(1, 2) as MCStyleCode;
+				const style = MinecraftString.styleMap[styleCode];
+				styleSegment = styleSegment.replace(new RegExp(`§${styleCode}`, "g"), "");
 				colorSegment = colorSegment.replace(styleSegment, "");
+				if (style === "reset") {
+					colorSegmentOpts.color = undefined;
+					colorSegmentOpts.obfuscated = false;
+					colorSegmentOpts.bold = false;
+					colorSegmentOpts.strikethrough = false;
+					colorSegmentOpts.underlined = false;
+					colorSegmentOpts.italic = false;
+				} else colorSegmentOpts[style] = true;
+				if (styleSegment.length > 0) this.segments.push(new SimpleMinecraftString(styleSegment, colorSegmentOpts));	
 			}
 		}
 		this.text = this.segments.map(s => s.text).join("");
@@ -149,7 +149,7 @@ export default class MinecraftString
 	 * Export the Minecraft string to a list of simple Minecraft strings.
 	 * @returns Vanilla Minecraft text with the given formatting.
 	 */
-	export<T extends boolean = false>(nbt: T=false as T): RawMCString<T, this["segments"][number]["text"][]> {
+	export<T extends boolean = false>(nbt: T = false as T): RawMCString<T, this["segments"][number]["text"][]> {
 		return this.segments.map(s => s.export(nbt));
 	}
 }
