@@ -14,7 +14,7 @@
 		"madge": "madge --circular --extensions ts ./src"
 	},
 	"author": "UserUNP",
-	"license": "ISC",
+	"license": "MIT",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/UserUNP/sparkscript.git"
