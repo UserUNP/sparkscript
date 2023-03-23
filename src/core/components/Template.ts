@@ -1,4 +1,4 @@
-import zlib from "node:zlib";
+import zlib from "zlib";
 import WebSocket from 'ws';
 
 import { DFAnySerializedBlock, DFCodeExportableBlock } from "../types";

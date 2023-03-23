@@ -39,6 +39,11 @@ jobs:
         with:
           name: docs-site
           path: "./docs/"
+      - name: Upload bundle
+        uses: actions/upload-artifact@master
+        with:
+          name: bundle
+          path: "./bundle.js"
 
   deploy:
     needs: build
