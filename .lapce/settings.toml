@@ -1,0 +1,3 @@
+[lapce-typescript.volt]
+serverPath = ""
+serverArgs = ["--stdio"]
