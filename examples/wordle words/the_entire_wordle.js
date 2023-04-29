@@ -31,7 +31,7 @@ const template = df("The entire wordle.", (e, s) => {
 
   let wordsBuffer = [];
   for (let i = 0; i < wordsAmount; i++) {
-    if(i!=0 && i % 50 == 0) {
+    if(i!=0 && i % 100 == 0) {
       e.action.addWords(wordsBuffer);
       wordsBuffer = [];
     }

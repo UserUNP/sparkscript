@@ -1,6 +1,6 @@
 {
 	"name": "sparkscript",
-	"version": "1.0.0-alpha.6",	
+	"version": "1.0.0-alpha.6",
 	"description": "DiamondFire for Javascript.",
 	"main": "./dist/lib/index.js",
 	"types": "./dist/types/index.d.ts",
@@ -40,17 +40,15 @@
 		"rimraf": "^5.0.0",
 		"ts-jest": "^29.0.3",
 		"typedoc": "^0.24.1",
-		"typescript": "^5.0.0-dev.20230101"
+		"typescript": "beta"
 	},
 	"files": [
-		"./dist",
-		"./src",
-		"./README.md",
-		"./LICENSE"
+		"./dist", "./src",
+		"./README.md", "./LICENSE"
 	],
 	"keywords": [
 		"diamondfire", "df",
-		"sparkscript", "spark",
+		"sparkscript", "spkc",
 		"minecraft", "mc"
 	]
 }
