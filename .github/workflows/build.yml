@@ -1,69 +1,45 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: build & deploy docs
+name: build & test
 
 on:
   push:
-    branches: [ "master" ]
+    branches:
+      - master
   pull_request:
-    branches: [ "master" ]
+    types:
+      - labeled
 
 jobs:
   build:
+    if: ${{ github.event.label.name == "enhancement" || github.event.label.name == "bug" || github.event.label.name == "dependencies" }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [ 16.x, 18.x ]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        node-version: 
+          - 16.x
+          - latest
 
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
+        name: Use Node.js ${{ matrix.node-version }}
         with:
           node-version: ${{ matrix.node-version }}
-      - uses: borales/actions-yarn@v3.0.0
+
+      - uses: pnpm/action-setup@v2
         with:
-          cmd: install --immutable
-      - name: Build & generate docs
-        uses: borales/actions-yarn@v3.0.0
-        with:
-          cmd: build
-      - name: Test
-        uses: borales/actions-yarn@v3.0.0
-        with:
-          cmd: test
-      - name: Upload docs
-        uses: actions/upload-artifact@master
-        with:
-          name: docs-site
-          path: "./docs/"
+          version: latest
+          run_install: true
+
+      - run: npm run build
+        name: Build
+      - run: npm run test
+        name: Test
+
       - name: Upload bundle
         uses: actions/upload-artifact@master
         with:
           name: bundle
           path: "./bundle.js"
-
-  deploy:
-    needs: build
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    permissions:
-      pages: write
-      id-token: write
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download docs
-        uses: actions/download-artifact@master
-        with:
-          name: docs-site
-          path: "./docs/"
-      - uses: actions/configure-pages@v2
-      - uses: actions/upload-pages-artifact@v1
-        with:
-          path: "./docs/"
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v1

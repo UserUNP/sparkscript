@@ -1,0 +1,36 @@
+name: build & deploy docs
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/configure-pages@v2
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: latest
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+          run_install: true
+      - run: npm docs
+
+      - uses: actions/upload-pages-artifact@v1
+        with:
+          path: "./docs/"
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
