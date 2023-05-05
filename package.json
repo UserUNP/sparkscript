@@ -9,10 +9,11 @@
 		"crlfix": "find . -type f -print0 | xargs -0 dos2unix",
 		"cleanbuild": "rimraf ./dist && tsc",
 		"buildwatch": "rimraf ./dist && tsc -w",
-		"build": "tsc && typedoc && npm run bundle",
+		"build": "tsc && npm run bundle",
+        "docs": "typedoc",
 		"test": "jest tests/",
 		"simplifydump": "node ./scripts/simplifyActionDump",
-		"madge": "madge --circular --extensions ts ./src"
+		"madge": "madge --image deps_graph.svg --circular --extensions ts --ts-config ./tsconfig.json ./src"
 	},
 	"author": "UserUNP",
 	"license": "MIT",
@@ -37,6 +38,7 @@
 		"@types/ws": "^8.5.3",
 		"browserify": "^17.0.0",
 		"jest": "^29.3.1",
+		"madge": "^6.0.0",
 		"rimraf": "^5.0.0",
 		"ts-jest": "^29.0.3",
 		"typedoc": "^0.24.1",
