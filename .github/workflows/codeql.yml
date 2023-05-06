@@ -23,7 +23,6 @@ on:
 
 jobs:
   analyze:
-    if: ${{ github.event.label.name == "enhancement" || github.event.label.name == "bug" || github.event.label.name == "dependencies" }}
     runs-on: ubuntu-latest
     permissions:
       actions: read

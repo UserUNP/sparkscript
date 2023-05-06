@@ -13,7 +13,6 @@ on:
 
 jobs:
   build:
-    if: ${{ github.event.label.name == "enhancement" || github.event.label.name == "bug" || github.event.label.name == "dependencies" }}
     runs-on: ubuntu-latest
     strategy:
       matrix:

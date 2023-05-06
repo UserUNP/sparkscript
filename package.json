@@ -10,7 +10,7 @@
 		"cleanbuild": "rimraf ./dist && tsc",
 		"buildwatch": "rimraf ./dist && tsc -w",
 		"build": "tsc && npm run bundle",
-        "docs": "typedoc",
+        "gendocs": "typedoc",
 		"test": "jest tests/",
 		"simplifydump": "node ./scripts/simplifyActionDump",
 		"madge": "madge --image deps_graph.svg --circular --extensions ts --ts-config ./tsconfig.json ./src"
