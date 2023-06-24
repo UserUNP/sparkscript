@@ -1,3 +1,6 @@
+# DEPRECATED
+I'm no longer maintaining this.
+
 # DiamondFire library
 __Simple to use DiamondFire library for Javascript.__
     
